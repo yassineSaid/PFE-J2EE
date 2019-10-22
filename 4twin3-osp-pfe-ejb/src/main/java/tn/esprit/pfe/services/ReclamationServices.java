@@ -6,7 +6,9 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
+import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.Reclamation;
 import tn.esprit.pfe.interfaces.ReclamationServiceRemote;
 
@@ -29,24 +31,32 @@ public class ReclamationServices implements ReclamationServiceRemote {
 
 
 	@Override
-	public void updateReclamation(int id, String text) {
-		// TODO Auto-generated method stub
+	public void updateReclamation(Reclamation rec) {
+		int query = em.createQuery("update Reclamation rec set rec.textRec :text where rec.idReclamation = :id").
+				setParameter("text",rec.getTextRec()).setParameter("id",rec.getIdReclamation())
+				.executeUpdate();
 		
 	}
 
 
 	@Override
 	public void deleteReclamation(int id) {
-		// TODO Auto-generated method stub
+		Reclamation rec = em.find(Reclamation.class, id);
+		
+			em.remove(rec);
 		
 	}
 
 
 	@Override
-	public List<String> getallReclamation() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Reclamation> getReclamationByEtudiant(int ide) {
+		Query query = em.createQuery("select r.textRec from Reclamation r where r.etudiant_id= :ide");
+		query.setParameter("ide", ide);
+		return query.getResultList();
 	}
+
+
+	
 	
 	
 
