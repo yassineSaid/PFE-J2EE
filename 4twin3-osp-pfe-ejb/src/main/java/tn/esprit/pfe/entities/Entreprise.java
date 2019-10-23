@@ -61,7 +61,7 @@ public class Entreprise implements Serializable {
 		Pays = pays;
 		EmailEntreprise = emailEntreprise;
 		TelEntreprise = telEntreprise;
-		EmiailResponsable = emiailResponsable;
+		EmailResponsable = emiailResponsable;
 		NomPrenomResponsable = nomPrenomResponsable;
 		TelResponsable = telResponsable;
 	}
@@ -118,12 +118,12 @@ public class Entreprise implements Serializable {
 		TelEntreprise = telEntreprise;
 	}
 
-	public String getEmiailResponsable() {
-		return EmiailResponsable;
+	public String getEmailResponsable() {
+		return EmailResponsable;
 	}
 
-	public void setEmiailResponsable(String emiailResponsable) {
-		EmiailResponsable = emiailResponsable;
+	public void setEmailResponsable(String emiailResponsable) {
+		EmailResponsable = emiailResponsable;
 	}
 
 	public String getNomPrenomResponsable() {

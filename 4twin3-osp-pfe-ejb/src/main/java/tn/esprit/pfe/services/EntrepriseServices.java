@@ -30,7 +30,7 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		en.setPays(ent.getPays());
 		en.setEmailEntreprise(ent.getEmailEntreprise());
 		en.setTelEntreprise(ent.getTelEntreprise());
-		en.setEmiailResponsable(ent.getEmiailResponsable());
+		en.setEmailResponsable(ent.getEmailResponsable());
 		en.setNomPrenomResponsable(ent.getNomPrenomResponsable());
 		en.setTelResponsable(ent.getTelResponsable());
 		
