@@ -2,9 +2,14 @@ package tn.esprit.pfe.interfaces;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
 
 import tn.esprit.pfe.entities.Reclamation;
 
+
+@Remote
 public interface ReclamationServiceRemote {
 
 	
@@ -16,7 +21,8 @@ public interface ReclamationServiceRemote {
 	//afficher les soutenances non noté + notifier l'enseignant affecte
 	//afficher les soutenances qui attend un rapporteur
 	//notifier l'etudiant lors de l'ajout d'une note
-
+     //stat note
+      
 	
 	
 }
