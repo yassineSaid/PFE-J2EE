@@ -14,19 +14,19 @@ import javax.persistence.Table;
 @Entity
 @Table
 @PrimaryKeyJoinColumn(name = "id")
-public class Enseigant extends User {
+public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Column
 	private boolean enabled;
 
-	public Enseigant() {
+	public Enseignant() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Enseigant(String lastname, String firstname, String email, String password) {
+	public Enseignant(String lastname, String firstname, String email, String password) {
 		super(lastname, firstname, email, password);
 		this.enabled=false;
 	}
