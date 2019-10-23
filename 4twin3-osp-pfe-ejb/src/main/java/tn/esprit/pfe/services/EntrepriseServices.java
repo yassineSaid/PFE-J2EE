@@ -10,17 +10,30 @@ import tn.esprit.pfe.interfaces.EntrepriseServiceRemote;
 @Stateless
 @LocalBean
 public class EntrepriseServices implements EntrepriseServiceRemote {
-	@PersistenceContext
+	@PersistenceContext(unitName = "4twin3-osp-pfe-ejb")
 	EntityManager em;
 	@Override
-	public void addEntreprise(Entreprise ent) {
+	public int addEntreprise(Entreprise ent) {
 		// TODO Auto-generated method stub
 			em.persist(ent);
+			return ent.getId();
+			
 	}
 
 	@Override
-	public void updateEntreprise(int id) {
+	public void updateEntreprise(Entreprise ent) {
 		// TODO Auto-generated method stub
+		Entreprise en = em.find(Entreprise.class, ent.getId());
+		en.setNameEntreprise(ent.getNameEntreprise());
+		en.setAdresse(ent.getAdresse());
+		en.setSiteweb(ent.getSiteweb());
+		en.setPays(ent.getPays());
+		en.setEmailEntreprise(ent.getEmailEntreprise());
+		en.setTelEntreprise(ent.getTelEntreprise());
+		en.setEmailResponsable(ent.getEmailResponsable());
+		en.setNomPrenomResponsable(ent.getNomPrenomResponsable());
+		en.setTelResponsable(ent.getTelResponsable());
+		
 		
 	}
 
