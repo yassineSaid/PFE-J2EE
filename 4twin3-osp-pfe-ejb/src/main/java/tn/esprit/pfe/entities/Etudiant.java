@@ -22,14 +22,18 @@ public class Etudiant extends User {
 	
 	@OneToOne(mappedBy="etudiant")
 	private Reclamation Reclamation;
+	
+	@Column
+	private String identifiant;
 
 	public Etudiant() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Etudiant(String lastname, String firstname, String email, String password) {
+	public Etudiant(String lastname, String firstname, String email, String password, String identifiant) {
 		super(lastname, firstname, email, password);
+		this.identifiant=identifiant;
 		// TODO Auto-generated constructor stub
 	}
 
