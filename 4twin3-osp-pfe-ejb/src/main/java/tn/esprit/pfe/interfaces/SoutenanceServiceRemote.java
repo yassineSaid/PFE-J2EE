@@ -1,7 +1,9 @@
 package tn.esprit.pfe.interfaces;
 
-import tn.esprit.pfe.entities.Soutenance;
+import javax.ejb.Remote;
 
+import tn.esprit.pfe.entities.Soutenance;
+@Remote
 public interface SoutenanceServiceRemote {
 	public void addSoutenance(Soutenance ent);
 	public void updateSoutenance(int id);
