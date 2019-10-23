@@ -2,23 +2,17 @@ package tn.esprit.pfe.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 
 
 @Entity
 @Table
-@PrimaryKeyJoinColumn(name = "id")
 public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Column
+	@Column(nullable=false)
 	private boolean enabled;
 
 	public Enseignant() {
