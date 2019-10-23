@@ -25,6 +25,12 @@ public class Etudiant extends User {
 	
 	@Column
 	private String identifiant;
+	
+	@OneToOne(mappedBy="etudiant")
+	private InternshipAgreemen internshipAgreemen;
+	
+	@OneToOne(mappedBy="etudiant")
+	private SheetPFE sheetPFE;
 
 	public Etudiant() {
 		super();
