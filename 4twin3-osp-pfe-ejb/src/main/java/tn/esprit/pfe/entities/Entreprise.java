@@ -39,7 +39,7 @@ public class Entreprise implements Serializable {
 	private String TelEntreprise;
 	
 	@Column 
-	private String EmiailResponsable;
+	private String EmailResponsable;
 	
 	@Column
 	private String NomPrenomResponsable;
