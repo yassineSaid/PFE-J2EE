@@ -14,13 +14,14 @@ import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AllowEnseignant;
 import tn.esprit.pfe.entities.Enseignant;
+import tn.esprit.pfe.entities.SuperAdmin;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.services.UserService;
 import utilities.ValidationError;
 
-@Path("enseignant")
+@Path("superAdmin")
 @RequestScoped
-public class EnseignantWebServices {
+public class SuperAdminWebServices {
 
 	@EJB
 	UserService us;
@@ -28,9 +29,8 @@ public class EnseignantWebServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@AllowEnseignant
-	public Response addEnseignant(User e) {
-		Set<ValidationError> violations=us.addUser(e);
+	public Response addSuperAdmin(SuperAdmin sa) {
+		Set<ValidationError> violations=us.addUser(sa);
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
 		}
