@@ -1,13 +1,16 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name= "Entreprise")
@@ -39,13 +42,20 @@ public class Entreprise implements Serializable {
 	private String TelEntreprise;
 	
 	@Column 
-	private String EmiailResponsable;
+	private String EmailResponsable;
 	
 	@Column
 	private String NomPrenomResponsable;
 	
 	@Column
 	private String TelResponsable;
+	
+	@OneToOne(mappedBy="entreprise",fetch=FetchType.EAGER)
+	@JsonIgnore
+	private InternshipAgreemen internshipAgreemen;
+	
+	@OneToOne(mappedBy="entreprise")
+	private SheetPFE sheetPFE;
 
 	public Entreprise() {
 		super();
@@ -61,7 +71,7 @@ public class Entreprise implements Serializable {
 		Pays = pays;
 		EmailEntreprise = emailEntreprise;
 		TelEntreprise = telEntreprise;
-		EmiailResponsable = emiailResponsable;
+		EmailResponsable = emiailResponsable;
 		NomPrenomResponsable = nomPrenomResponsable;
 		TelResponsable = telResponsable;
 	}
@@ -118,12 +128,12 @@ public class Entreprise implements Serializable {
 		TelEntreprise = telEntreprise;
 	}
 
-	public String getEmiailResponsable() {
-		return EmiailResponsable;
+	public String getEmailResponsable() {
+		return EmailResponsable;
 	}
 
-	public void setEmiailResponsable(String emiailResponsable) {
-		EmiailResponsable = emiailResponsable;
+	public void setEmailResponsable(String emiailResponsable) {
+		EmailResponsable = emiailResponsable;
 	}
 
 	public String getNomPrenomResponsable() {
@@ -140,6 +150,22 @@ public class Entreprise implements Serializable {
 
 	public void setTelResponsable(String telResponsable) {
 		TelResponsable = telResponsable;
+	}
+	
+	public InternshipAgreemen getInternshipAgreemen() {
+		return internshipAgreemen;
+	}
+
+	public void setInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
+		this.internshipAgreemen = internshipAgreemen;
+	}
+
+	public SheetPFE getSheetPFE() {
+		return sheetPFE;
+	}
+
+	public void setSheetPFE(SheetPFE sheetPFE) {
+		this.sheetPFE = sheetPFE;
 	}
 	
 	
