@@ -11,7 +11,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-@Entity(name="T_InternshipAgreemen")
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity(name="InternshipAgreemen")
 public class InternshipAgreemen implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -19,6 +21,7 @@ public class InternshipAgreemen implements Serializable {
 	private int id;
 	private Date startDate;
 	private Date endDate;
+	private String etat;
 	private Entreprise entreprise;
 	private Etudiant etudiant;
 	
@@ -63,6 +66,14 @@ public class InternshipAgreemen implements Serializable {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getEtat() {
+		return etat;
+	}
+
+	public void setEtat(String etat) {
+		this.etat = etat;
 	}
 
 	@OneToOne

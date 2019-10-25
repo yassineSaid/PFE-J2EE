@@ -9,10 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-@Entity(name="T_SheetPFE")
+@Entity(name="SheetPFE")
 public class SheetPFE implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -22,33 +23,35 @@ public class SheetPFE implements Serializable {
 	private String description;
 	private String problematic;
 	private String features;
-	private List<Categorie> categorie;
+	private List<Categorie> categories;
 	private String keywords;
+	private EtatSheetPFE etat;
+	private String note;
 	private Entreprise entreprise;
 	private Etudiant etudiant;
 	
 	public SheetPFE() {
 	}
 
-	public SheetPFE(String title, String description, String problematic, String features, List<Categorie> categorie,
+	public SheetPFE(String title, String description, String problematic, String features, List<Categorie> categories,
 			String keywords) {
 		
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
-		this.categorie = categorie;
+		this.categories = categories;
 		this.keywords = keywords;
 	}
 	
-	public SheetPFE(int id,String title, String description, String problematic, String features, List<Categorie> categorie,
+	public SheetPFE(int id,String title, String description, String problematic, String features, List<Categorie> categories,
 			String keywords) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
-		this.categorie = categorie;
+		this.categories = categories;
 		this.keywords = keywords;
 	}
 
@@ -95,13 +98,13 @@ public class SheetPFE implements Serializable {
 		this.features = features;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
-	public List<Categorie> getCategorie() {
-		return categorie;
+	@ManyToMany
+	public List<Categorie> getCategories() {
+		return categories;
 	}
 
-	public void setCategorie(List<Categorie> categorie) {
-		this.categorie = categorie;
+	public void setCategories(List<Categorie> categories) {
+		this.categories = categories;
 	}
 
 	public String getKeywords() {
@@ -112,6 +115,23 @@ public class SheetPFE implements Serializable {
 		this.keywords = keywords;
 	}
 	
+	
+	public EtatSheetPFE getEtat() {
+		return etat;
+	}
+
+	public void setEtat(EtatSheetPFE etat) {
+		this.etat = etat;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
 	@OneToOne
 	public Entreprise getEntreprise() {
 		return entreprise;
@@ -121,7 +141,7 @@ public class SheetPFE implements Serializable {
 		this.entreprise = entreprise;
 	}
 
-	@OneToOne
+	@OneToOne(mappedBy="sheetPFE")
 	public Etudiant getEtudiant() {
 		return etudiant;
 	}
