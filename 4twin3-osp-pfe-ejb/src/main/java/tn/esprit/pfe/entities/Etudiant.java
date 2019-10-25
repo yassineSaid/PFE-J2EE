@@ -32,6 +32,8 @@ public class Etudiant extends User {
 		super(lastname, firstname, email, password);
 		// TODO Auto-generated constructor stub
 	}
+	
+	
 
 	
 }
