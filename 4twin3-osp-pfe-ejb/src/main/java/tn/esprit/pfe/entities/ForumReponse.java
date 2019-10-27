@@ -32,17 +32,12 @@ public class ForumReponse implements Serializable{
 	public ForumReponse() {
 		super();
 	}
-	public ForumReponse(int id_Reponse, String conetnu_Reponse) {
+	public ForumReponse( String conetnu_Reponse) {
 		super();
-		this.id_Reponse = id_Reponse;
+		
 		Conetnu_Reponse = conetnu_Reponse;
 	}
-	public int getId_Reponse() {
-		return id_Reponse;
-	}
-	public void setId_Reponse(int id_Reponse) {
-		this.id_Reponse = id_Reponse;
-	}
+	
 	public String getConetnu_Reponse() {
 		return Conetnu_Reponse;
 	}
