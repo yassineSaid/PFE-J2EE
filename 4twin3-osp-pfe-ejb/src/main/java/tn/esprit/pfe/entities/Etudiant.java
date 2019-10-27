@@ -6,6 +6,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity
@@ -22,9 +24,10 @@ public class Etudiant extends User {
 	private String identifiant;
 	
 	@OneToOne(mappedBy="etudiant")
+	@JsonIgnore
 	private InternshipAgreemen internshipAgreemen;
 	
-	@OneToOne(mappedBy="etudiant")
+	@OneToOne
 	private SheetPFE sheetPFE;
 
 	public Etudiant() {
@@ -37,6 +40,8 @@ public class Etudiant extends User {
 		this.identifiant=identifiant;
 		// TODO Auto-generated constructor stub
 	}
+	
+	
 
 	
 }

@@ -1,3 +1,4 @@
+
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
@@ -138,3 +139,4 @@ public class User implements Serializable {
 	}
 
 }
+
