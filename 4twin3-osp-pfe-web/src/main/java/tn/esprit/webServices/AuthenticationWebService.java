@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -28,6 +29,8 @@ import tn.esprit.pfe.services.UserService;
 @Path("authentication")
 @RequestScoped
 public class AuthenticationWebService {
+	
+	private static final String AUTHENTICATION_SCHEME = "Bearer";
 
 	@EJB
 	UserService us;
@@ -50,7 +53,8 @@ public class AuthenticationWebService {
 			response.put("user",user);
 			String token=issueToken(user);
 			response.put("token",token);
-			return Response.status(Status.OK).entity(response).build();
+			NewCookie cookie=new NewCookie("token", AUTHENTICATION_SCHEME+" "+token,"/",uriInfo.getBaseUri().getHost().toString(),"",600,false);
+			return Response.status(Status.OK).entity(response).cookie(cookie).build();
 		}
 	}
 
