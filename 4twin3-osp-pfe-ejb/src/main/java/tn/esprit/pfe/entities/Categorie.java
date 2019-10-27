@@ -1,6 +1,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 @Entity
 @Table( name = "Categorie")
@@ -29,9 +31,10 @@ public class Categorie implements Serializable{
 	
 	@Column
 	private boolean exixtecommemodule;
+	
+	@ManyToMany(mappedBy="categories")
+	private List<SheetPFE> sheetPFEs;
 
-	
-	
 	public Categorie() {
 		super();
 	}
@@ -75,6 +78,16 @@ public class Categorie implements Serializable{
 	public void setExixtecommemodule(boolean exixtecommemodule) {
 		this.exixtecommemodule = exixtecommemodule;
 	}
+
+	public List<SheetPFE> getSheetPFEs() {
+		return sheetPFEs;
+	}
+
+	public void setSheetPFEs(List<SheetPFE> sheetPFEs) {
+		this.sheetPFEs = sheetPFEs;
+	}
+	
+	
 	
 
 }

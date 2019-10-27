@@ -1,13 +1,16 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name= "Entreprise")
@@ -46,6 +49,13 @@ public class Entreprise implements Serializable {
 	
 	@Column
 	private String TelResponsable;
+	
+	@OneToOne(mappedBy="entreprise",fetch=FetchType.EAGER)
+	@JsonIgnore
+	private InternshipAgreemen internshipAgreemen;
+	
+	@OneToOne(mappedBy="entreprise")
+	private SheetPFE sheetPFE;
 
 	public Entreprise() {
 		super();
@@ -140,6 +150,22 @@ public class Entreprise implements Serializable {
 
 	public void setTelResponsable(String telResponsable) {
 		TelResponsable = telResponsable;
+	}
+	
+	public InternshipAgreemen getInternshipAgreemen() {
+		return internshipAgreemen;
+	}
+
+	public void setInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
+		this.internshipAgreemen = internshipAgreemen;
+	}
+
+	public SheetPFE getSheetPFE() {
+		return sheetPFE;
+	}
+
+	public void setSheetPFE(SheetPFE sheetPFE) {
+		this.sheetPFE = sheetPFE;
 	}
 	
 	

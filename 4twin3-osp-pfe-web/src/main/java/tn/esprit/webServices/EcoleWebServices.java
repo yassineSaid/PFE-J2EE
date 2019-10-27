@@ -1,35 +1,45 @@
 package tn.esprit.webServices;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.User;
-import tn.esprit.pfe.services.UserService;
+import tn.esprit.pfe.entities.Ecole;
+import tn.esprit.pfe.services.EcoleService;
 import utilities.ValidationError;
 
-@Path("enseignant")
+@Path("ecole")
 @RequestScoped
-public class EnseignantWebServices {
+public class EcoleWebServices {
 
 	@EJB
-	UserService us;
+	EcoleService es;
+	
+	@Context
+	private HttpHeaders headers;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Enseignant"})
-	public Response addEnseignant(User e) {
-		Set<ValidationError> violations=us.addUser(e);
+	@Secure(role={"Admin"})
+	public Response addEcole(Ecole e) {
+		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+		AuthenticationFilter af=new AuthenticationFilter();
+		Set<ValidationError> violations=es.addEcole(e, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
 		}

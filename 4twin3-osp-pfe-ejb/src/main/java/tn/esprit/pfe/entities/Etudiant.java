@@ -1,15 +1,12 @@
 package tn.esprit.pfe.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
@@ -25,6 +22,13 @@ public class Etudiant extends User {
 	
 	@Column
 	private String identifiant;
+	
+	@OneToOne(mappedBy="etudiant")
+	@JsonIgnore
+	private InternshipAgreemen internshipAgreemen;
+	
+	@OneToOne
+	private SheetPFE sheetPFE;
 
 	public Etudiant() {
 		super();
@@ -36,6 +40,8 @@ public class Etudiant extends User {
 		this.identifiant=identifiant;
 		// TODO Auto-generated constructor stub
 	}
+	
+	
 
 	
 }
