@@ -36,7 +36,15 @@ public class EcoleService implements EcoleServiceRemote {
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		} else {
+		} else if (admin.getEcole()!=null) {
+			ValidationError error = new ValidationError();
+			error.setClassName("Admin");
+			error.setErrorMessage("Cet admin a déjà une école, modifiez l'école qui existe déjà ou supprimez la");
+			error.setPropertyPath("Ecole");
+			errors.add(error);
+			return errors;
+		}
+		else {
 			try {
 				e.setAdmin(admin);
 				em.persist(e);
@@ -45,6 +53,7 @@ public class EcoleService implements EcoleServiceRemote {
 				return null;
 			}catch (ConstraintViolationException ex) {
 				Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+				errors.clear();
 				errors.addAll(ValidationError.fromViolations(violations));
 				return errors;
 			}catch (PersistenceException ex) {
@@ -65,7 +74,7 @@ public class EcoleService implements EcoleServiceRemote {
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		}else if (ecole == null) {
+		}else if (e == null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Ecole");
 			error.setErrorMessage("Cette école n'éxiste pas");
@@ -76,42 +85,80 @@ public class EcoleService implements EcoleServiceRemote {
 			if (e.getAdmin()==admin) {
 				e.setAdresse(ecole.getAdresse());
 				e.setNom(ecole.getNom());
+				try {
+					em.flush();
+					return null;
+				}catch (ConstraintViolationException ex) {
+					Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+					errors.clear();
+					errors.addAll(ValidationError.fromViolations(violations));
+					return errors;
+				}catch (PersistenceException ex) {
+					return errors;
+				}
 			}
 			else {
 				ValidationError error = new ValidationError();
 				error.setClassName("Ecole");
-				error.setErrorMessage("Cet adminj n'a pas le droit de modifier cette école");
+				error.setErrorMessage("Cet admin n'a pas le droit de modifier cette école");
 				error.setPropertyPath("Admin");
 				errors.add(error);
 				return errors;
 			}
-			return null;
 		}
-		//return null;
 	}
 
 	@Override
 	public Set<ValidationError> supprimerEcole(int idEcole, int idAdmin) {
-		// TODO Auto-generated method stub
+		Set<ValidationError> errors = new HashSet<>();
+		Admin admin = em.find(Admin.class, idAdmin);
+		Ecole e = em.find(Ecole.class, idEcole);
+		if (admin == null) {
+			ValidationError error = new ValidationError();
+			error.setClassName("Admin");
+			error.setErrorMessage("Cet admin n'éxiste pas");
+			error.setPropertyPath("Admin");
+			errors.add(error);
+			return errors;
+		}else if (e == null) {
+			ValidationError error = new ValidationError();
+			error.setClassName("Ecole");
+			error.setErrorMessage("Cette école n'éxiste pas");
+			error.setPropertyPath("Ecole");
+			errors.add(error);
+			return errors;
+		} else {
+			if (e.getAdmin()==admin) {
+				admin.setEcole(null);
+				em.remove(e);
+			}
+			else {
+				ValidationError error = new ValidationError();
+				error.setClassName("Ecole");
+				error.setErrorMessage("Cet admin n'a pas le droit de supprimer cette école");
+				error.setPropertyPath("Admin");
+				errors.add(error);
+				return errors;
+			}
+		}
 		return null;
 	}
 
 	@Override
-	public Ecole getEcoleWithIdAdmin(int idAdmin) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Ecole getEcoleWithIdEcole(int idEcole) {
-		// TODO Auto-generated method stub
-		return null;
+	public Ecole getEcole(int idEcole, int idAdmin) {
+		Admin admin = em.find(Admin.class, idAdmin);
+		if (admin == null) {
+			return null;
+		} else if (admin.getEcole().getId()==idEcole) {
+			return admin.getEcole();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public List<Ecole> getListEcole() {
-		// TODO Auto-generated method stub
-		return null;
+		return em.createQuery("from Ecole",Ecole.class).getResultList();
 	}
 
 }

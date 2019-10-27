@@ -17,6 +17,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table
 public class Ecole implements Serializable {
@@ -34,13 +36,11 @@ public class Ecole implements Serializable {
 	@Column
 	@NotNull
 	@NotBlank
-	@NotEmpty
 	private String nom;
 
 	@Column
 	@NotNull
 	@NotBlank
-	@NotEmpty
 	private String adresse;
 	
 	@Lob
@@ -48,6 +48,7 @@ public class Ecole implements Serializable {
     private byte[] logo;
 	
 	@OneToOne(mappedBy="ecole")
+	@JsonIgnore
 	private Admin admin;
 
 	public String getNom() {

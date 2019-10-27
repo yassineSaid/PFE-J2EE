@@ -38,13 +38,19 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		System.out.println("request filter invoked...");
 		// Get the Authorization header from the request
-		String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+		//String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+		if (requestContext.getCookies().get("token")==null) {
+			abortWithUnauthorized(requestContext);
+			return;
+		}
+		String authorizationHeader = requestContext.getCookies().get("token").getValue();
 		// Validate the Authorization header
 		if (!isTokenBasedAuthentication(authorizationHeader)) {
 			abortWithUnauthorized(requestContext);
 			return;
 		}
 		// Extract the token from the Authorization header
+		//String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
 		String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
 		try {
 			// Validate the token
@@ -96,7 +102,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	}
 	
 	public int getIdUser(HttpHeaders headers) {
-		String authorizationHeader = headers.getRequestHeader(HttpHeaders.AUTHORIZATION).get(0);
+		String authorizationHeader = headers.getCookies().get("token").getValue();
 		String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
 		String keyString = "simplekey";
 		Key key = new SecretKeySpec(keyString.getBytes(), 0, keyString.getBytes().length, "DES");
