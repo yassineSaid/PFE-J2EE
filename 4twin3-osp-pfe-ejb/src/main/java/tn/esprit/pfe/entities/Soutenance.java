@@ -66,6 +66,7 @@ public class Soutenance implements Serializable {
 	private int NoteSoutenance;
 	@Column
 	private List<Jury> jury;
+	
 	public int getId() {
 		return id;
 	}
