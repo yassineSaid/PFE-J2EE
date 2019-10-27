@@ -22,4 +22,5 @@ public class SoutenanceWebService {
 		rst.addSoutenance(s);	
 	}
 	
+	
 }

@@ -22,15 +22,22 @@ public class SoutenanceServices implements SoutenanceServiceRemote {
 	}
 
 	@Override
-	public void updateSoutenance(int id) {
+	public void updateSoutenance(Soutenance s) {
 		// TODO Auto-generated method stub
-		
+		Soutenance en = em.find(Soutenance.class, s.getId());
+		s.setTitre(s.getTitre());
+		s.setSalle(s.getSalle());
+		s.setNoteSoutenance(s.getNoteSoutenance());
+		s.setHeureSoutenance(s.getHeureSoutenance());
+		s.setDescription(s.getDescription());
+		s.setDateSoutenance(s.getDateSoutenance());
 	}
 
 	@Override
 	public void deleteSoutenance(int id) {
 		// TODO Auto-generated method stub
-		
+		Soutenance s = em.find(Soutenance.class, id);	
+		em.remove(s);
 	}
 
 }
