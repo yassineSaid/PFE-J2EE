@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,7 +23,7 @@ public class Soutenance implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,int noteSoutenance) {
+	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,float noteSoutenance) {
 		Titre = titre;
 		Description = description;
 		this.dateSoutenance = dateSoutenance;
@@ -31,6 +32,15 @@ public class Soutenance implements Serializable {
 		NoteSoutenance = noteSoutenance;
 	}
 
+	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance) {
+		Titre = titre;
+		Description = description;
+		this.dateSoutenance = dateSoutenance;
+		Salle = salle;
+		HeureSoutenance = heureSoutenance;
+	
+	}
+	
 	public Soutenance() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -55,7 +65,11 @@ public class Soutenance implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date HeureSoutenance;
 	@Column
-	private int NoteSoutenance;
+	private float NoteSoutenance;
+	
+	@OneToOne(mappedBy="soutenance")
+	private Reclamation Reclamation;
+	
 	public int getId() {
 		return id;
 	}
@@ -104,11 +118,11 @@ public class Soutenance implements Serializable {
 		HeureSoutenance = heureSoutenance;
 	}
 
-	public int getNoteSoutenance() {
+	public float  getNoteSoutenance() {
 		return NoteSoutenance;
 	}
 
-	public void setNoteSoutenance(int noteSoutenance) {
+	public void setNoteSoutenance(float noteSoutenance) {
 		NoteSoutenance = noteSoutenance;
 	}
 

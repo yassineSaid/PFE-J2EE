@@ -38,8 +38,8 @@ public class ReclamationServices implements ReclamationServiceRemote {
 	public void updateReclamation(Reclamation rec) {
 		try
 		{
-			int query = em.createQuery("update Reclamation rec set rec.textRec =  :text , rec.etudiant = :etudiant where rec.idReclamation = :id").
-					setParameter("text",rec.getTextRec()).setParameter("etudiant", rec.getEtudiant()).setParameter("id",rec.getIdReclamation())
+			int query = em.createQuery("update Reclamation rec set rec.textRec =  :text where rec.idReclamation = :id").
+					setParameter("text",rec.getTextRec()).setParameter("id",rec.getIdReclamation())
 					.executeUpdate();
 		}
 		catch (Exception e )
@@ -68,14 +68,22 @@ public class ReclamationServices implements ReclamationServiceRemote {
 
 	@Override
 	public List<Reclamation> getAllReclamation() {
-		Query query = em.createQuery("select   r.dateAjout ,r.textRec , r.etudiant.firstname , r.etudiant.lastname  from Reclamation r ORDER BY r.dateAjout desc");
+		Query query = em.createQuery("select   r.dateAjout ,r.textRec ,r.etudiant.nom , r.etudiant.prenom ,  r.soutenance.Description  from Reclamation r ORDER BY r.dateAjout desc");
 		return query.getResultList();
 	}
 	
 	@Override
 	public List<Reclamation> getReclamationByEtudiant(String nom , String prenom ) {
-		Query query = em.createQuery("select  r.textRec , r.dateAjout from Reclamation r where r.etudiant.firstname = :nom AND r.etudiant.lastname = :prenom ").setParameter("nom",nom)
+		Query query = em.createQuery("select  r.textRec , r.dateAjout, r.soutenance.Titre from Reclamation r where r.etudiant.nom = :nom AND r.etudiant.prenom = :prenom ").setParameter("nom",nom)
 				.setParameter("prenom", prenom);
+		return query.getResultList();
+	}
+	
+	
+	
+	@Override
+	public List<Reclamation> getReclamationBySoutenance(int id ) {
+		Query query = em.createQuery("select  r.textRec , r.dateAjout, r.soutenance.Titre from Reclamation r where r.etudiant.id = :id ").setParameter("id",id);
 		return query.getResultList();
 	}
 	
