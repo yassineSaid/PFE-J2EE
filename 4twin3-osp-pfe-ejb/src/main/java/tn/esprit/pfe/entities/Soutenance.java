@@ -2,6 +2,7 @@ package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,9 +18,16 @@ import javax.persistence.TemporalType;
 public class Soutenance implements Serializable {
 	
 
+	public Soutenance(List<Jury> jury) {
+		super();
+		this.jury = jury;
+	}
+
 	/**
 	 * 
 	 */
+	
+	
 	private static final long serialVersionUID = 1L;
 
 	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,int noteSoutenance) {
@@ -56,6 +64,8 @@ public class Soutenance implements Serializable {
 	private Date HeureSoutenance;
 	@Column
 	private int NoteSoutenance;
+	@Column
+	private List<Jury> jury;
 	public int getId() {
 		return id;
 	}
@@ -110,6 +120,14 @@ public class Soutenance implements Serializable {
 
 	public void setNoteSoutenance(int noteSoutenance) {
 		NoteSoutenance = noteSoutenance;
+	}
+
+	public List<Jury> getJury() {
+		return jury;
+	}
+
+	public void setJury(List<Jury> jury) {
+		this.jury = jury;
 	}
 
 }
