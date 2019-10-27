@@ -13,11 +13,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import tn.esprit.pfe.entities.Reclamation;
+import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.ReclamationServiceRemote;
 
 @Path("/reclamation")
@@ -27,23 +31,24 @@ public class ReclamationWebServices {
 	
 
 	
-	@EJB
+	@EJB(beanName="ReclamationServices")
 	ReclamationServiceRemote rst;
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("addRec")
-	public void addReclamation(Reclamation rec) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addReclamation(Reclamation rec) {
 		rst.addReclamation(rec);	
+		return Response.status(Status.CREATED).entity(rec).build();
 	}
+	
 	
 	
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	public void updateReclamation(Reclamation rec) {	
+	@Produces(MediaType.APPLICATION_JSON)
+	public void updateReclamation(Reclamation rec ) {	
 		rst.updateReclamation(rec);
 
 	}
@@ -51,18 +56,52 @@ public class ReclamationWebServices {
 	
 	
 	@DELETE
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("deleteRec/{idReclamation}")
-	public void deleteClient(@QueryParam("idReclamation") int idRec) {
-	 rst.deleteReclamation(idRec);
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("{idReclamation}")
+	public void deleteClient(@PathParam("idReclamation") int idReclamation) {
+		try {
+			
+	 rst.deleteReclamation(idReclamation);}
+		catch(Exception ex) {
+			System.out.println(ex);
+		}
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getReclamationByEtudiant")
-	public List<Reclamation> getReclamation(@QueryParam("etudiant_id") int ide){
-		return rst.getReclamationByEtudiant(ide);
+	
+	public List<Reclamation> getReclamation(){
+		return rst.getAllReclamation();
 	}
 	
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getById/{nom}/{prenom}")
+	public List<Reclamation> getClientById(@PathParam("nom") String nom , @PathParam("prenom") String prenom) {
+		return rst.getReclamationByEtudiant(nom,prenom);
+
+	}
+	
+	@Path("/nombreReclamation")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Object[]> nombreDeReclamation() {
+	
+	   return rst.nombreDeReclamationSelonDateAjout();
+		
+	}
+	
+	@Path("/nombreReclamationM")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Object[]> nombreDeReclamationParMois() {
+	
+	   return rst.nombreDeReclamationParMois();
+		
+	}
+	
+	
+		
+	
 }

@@ -1,31 +1,38 @@
 package rest.utilities.authentication;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.security.Key;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Priority;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 import io.jsonwebtoken.Jwts;
 
-@AllowSuperAdmin
+@Secure(role= {})
 @Provider
 @Priority(Priorities.AUTHENTICATION)
-public class AuthenticationFilterSuperAdmin implements ContainerRequestFilter {
+public class AuthenticationFilter implements ContainerRequestFilter {
 
 	private static final String AUTHENTICATION_SCHEME = "Bearer";
-	private String role = "SuperAdmin";
 
 	// ======================================
 	// = Injection Points =
 	// ======================================
 	ContainerRequestContext requestContext;
+	
+	@Context
+    private ResourceInfo resourceInfo;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -67,6 +74,10 @@ public class AuthenticationFilterSuperAdmin implements ContainerRequestFilter {
 		// Throw an Exception if the token is invalid
 		try {
 			// Validate the token
+			Method method =resourceInfo.getResourceMethod();
+			Secure s=method.getAnnotation(Secure.class);
+			List<String> roles=Arrays.asList(s.role());
+
 			String keyString = "simplekey";
 			Key key = new SecretKeySpec(keyString.getBytes(), 0, keyString.getBytes().length, "DES");
 			System.out.println("the key is : " + key);
@@ -74,7 +85,7 @@ public class AuthenticationFilterSuperAdmin implements ContainerRequestFilter {
 			System.out.println("test:" + Jwts.parser().setSigningKey(key).parseClaimsJws(token));
 			System.out.println("#### valid token : " + token);
 			System.out.println("#### role : " + role);
-			if (!role.equals(this.role)) {
+			if (!roles.contains(role)) {
 				System.out.println("#### invalid role : " + role);
 				(this.requestContext).abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 			}
@@ -82,6 +93,15 @@ public class AuthenticationFilterSuperAdmin implements ContainerRequestFilter {
 			System.out.println("#### invalid token : " + token);
 			(this.requestContext).abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 		}
+	}
+	
+	public int getIdUser(HttpHeaders headers) {
+		String authorizationHeader = headers.getRequestHeader(HttpHeaders.AUTHORIZATION).get(0);
+		String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
+		String keyString = "simplekey";
+		Key key = new SecretKeySpec(keyString.getBytes(), 0, keyString.getBytes().length, "DES");
+		int id = (int) Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().get("id");
+		return id;
 	}
 
 }

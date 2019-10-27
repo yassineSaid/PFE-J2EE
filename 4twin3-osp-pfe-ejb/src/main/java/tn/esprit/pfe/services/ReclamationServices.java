@@ -7,9 +7,11 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.Reclamation;
+import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.ReclamationServiceRemote;
 
 
@@ -22,38 +24,80 @@ public class ReclamationServices implements ReclamationServiceRemote {
 	EntityManager em;
 	
 	
-	public void addReclamation(Reclamation rec) {
+	public int addReclamation(Reclamation rec) {
+	
 	
 		em.persist(rec);
+		return rec.getIdReclamation();
 
 		
 	}
-
+	
 
 	@Override
 	public void updateReclamation(Reclamation rec) {
-		int query = em.createQuery("update Reclamation rec set rec.textRec :text where rec.idReclamation = :id").
-				setParameter("text",rec.getTextRec()).setParameter("id",rec.getIdReclamation())
-				.executeUpdate();
+		try
+		{
+			int query = em.createQuery("update Reclamation rec set rec.textRec =  :text , rec.etudiant = :etudiant where rec.idReclamation = :id").
+					setParameter("text",rec.getTextRec()).setParameter("etudiant", rec.getEtudiant()).setParameter("id",rec.getIdReclamation())
+					.executeUpdate();
+		}
+		catch (Exception e )
+		{
+			System.out.println(e);
+		}
+	
 		
 	}
 
 
 	@Override
-	public void deleteReclamation(int id) {
-		Reclamation rec = em.find(Reclamation.class, id);
+	public void deleteReclamation(int idReclamation) {
 		
-			em.remove(rec);
+		try {
+		Reclamation r = em.find(Reclamation.class, idReclamation);
+		System.out.println(r);
+		em.remove(r);
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
 		
 	}
 
 
 	@Override
-	public List<Reclamation> getReclamationByEtudiant(int ide) {
-		Query query = em.createQuery("select r.textRec from Reclamation r where r.etudiant_id= :ide");
-		query.setParameter("ide", ide);
+	public List<Reclamation> getAllReclamation() {
+		Query query = em.createQuery("select   r.dateAjout ,r.textRec , r.etudiant.firstname , r.etudiant.lastname  from Reclamation r ORDER BY r.dateAjout desc");
 		return query.getResultList();
 	}
+	
+	@Override
+	public List<Reclamation> getReclamationByEtudiant(String nom , String prenom ) {
+		Query query = em.createQuery("select  r.textRec , r.dateAjout from Reclamation r where r.etudiant.firstname = :nom AND r.etudiant.lastname = :prenom ").setParameter("nom",nom)
+				.setParameter("prenom", prenom);
+		return query.getResultList();
+	}
+	
+	
+	//stat
+	
+	@Override
+	public List<Object[]> nombreDeReclamationSelonDateAjout() {
+		// TODO Auto-generated method stub
+		List<Object[]> reclamation = em.createQuery("select  dateAjout , count(*)  from Reclamation group by  dateAjout", Object[].class).getResultList();
+		return reclamation;
+	}
+	
+	@Override
+	public List<Object[]> nombreDeReclamationParMois() {
+		// TODO Auto-generated method stub
+		List<Object[]> reclamation = em.createQuery("select  dateAjout , count(*)  from Reclamation group by Month (dateAjout) ", Object[].class).getResultList();
+		return reclamation;
+	}
+	
+   
+	
 
 
 	

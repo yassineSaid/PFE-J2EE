@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.ejb.EJB;
@@ -24,7 +22,6 @@ import javax.ws.rs.core.UriInfo;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import tn.esprit.pfe.entities.Enseignant;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.services.UserService;
 
@@ -67,7 +64,7 @@ public class AuthenticationWebService {
 		System.out.println("uriInfo.getAbsolutePath().toString() : " + uriInfo.getAbsolutePath().toString());
 		System.out.println("Expiration date: " + toDate(LocalDateTime.now().plusMinutes(15L)));
 		System.out.println("role: "+ user.getClass().getSimpleName());
-		String jwtToken = Jwts.builder().setSubject(user.getEmail()).claim("role", user.getRole()).setIssuer(uriInfo.getAbsolutePath().toString())
+		String jwtToken = Jwts.builder().setSubject(user.getEmail()).claim("role", user.getRole()).claim("id", user.getId()).setIssuer(uriInfo.getAbsolutePath().toString())
 				.setIssuedAt(new Date()).setExpiration(toDate(LocalDateTime.now().plusMinutes(15L)))
 				.signWith(SignatureAlgorithm.HS512, key).compact();
 		System.out.println("the returned token is : " + jwtToken);
