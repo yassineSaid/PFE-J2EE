@@ -71,6 +71,14 @@ public class InternshipAgreemen implements Serializable {
 		this.endDate = endDate;
 	}
 
+	public String getPdf() {
+		return pdf;
+	}
+
+	public void setPdf(String pdf) {
+		this.pdf = pdf;
+	}
+
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}

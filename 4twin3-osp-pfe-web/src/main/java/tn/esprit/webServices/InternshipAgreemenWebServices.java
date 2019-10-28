@@ -1,7 +1,5 @@
 package tn.esprit.webServices;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -20,9 +18,10 @@ import tn.esprit.pfe.entities.InternshipAgreemen;
 import tn.esprit.pfe.interfaces.InternshipAgreemenRemote;
 
 
-@Path("Agreemen")
+@Path("agreemen")
 public class InternshipAgreemenWebServices {
 	
+
 	@EJB
 	InternshipAgreemenRemote Iagreemen;
 	
@@ -31,17 +30,25 @@ public class InternshipAgreemenWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addAgreemen(InternshipAgreemen internshipAgreemen) {
 		
-	  if(Iagreemen.addInternshipAgreemen(internshipAgreemen) > 0)
-		  
-	     return Response.status(Status.CREATED).entity(internshipAgreemen.getId()).build();
-	  
-	    return Response.status(Status.BAD_REQUEST).entity("erreur").build();
+		int id = Iagreemen.addInternshipAgreemen(internshipAgreemen);		  
+		 
+	    return Response.status(Status.CREATED).entity(Iagreemen.getAgreemenById(id)).build();
+	    
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<InternshipAgreemen> getAllAgreemen() {		
-	     return Iagreemen.getAllAgreemen();
+	public Response getAllAgreemen() {		
+	   
+		List<InternshipAgreemen> listInternshipAgreemens = Iagreemen.getAllAgreemen();
+		
+		if(listInternshipAgreemens.size()!=0) {
+			
+			 return Response.status(Status.ACCEPTED).entity(listInternshipAgreemens).build();
+		}
+		
+		 return Response.status(Status.NO_CONTENT).build();
+	
 	
 	}
 	
@@ -49,30 +56,36 @@ public class InternshipAgreemenWebServices {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAgreemenById(@PathParam(value="id") int id) {	
+	public Response getAgreemenById(@PathParam(value="id") int id) {
 		
-		return Response.status(Status.CREATED).entity(Iagreemen.getAgreemenById(id)).build();
+		if(Iagreemen.getAgreemenById(id) != null)
+			  return Response.status(Status.ACCEPTED).entity(Iagreemen.getAgreemenById(id)).build();
+		
+		return  Response.status(Status.NOT_FOUND).build();
+	}
+	
+	@GET
+	@Path("/etudiant/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAgreemenByEtudiant() {	
+		
+		if(Iagreemen.getAgreemenByEtudiant() != null)
+		  return Response.status(Status.ACCEPTED).entity(Iagreemen.getAgreemenByEtudiant()).build();
+	
+		return  Response.status(Status.NOT_FOUND).build();
 	
 	}
 	
-//	@GET
-//	@Path("/etudiant/{id}")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response getAgreemenByEtudiant(@PathParam(value="id") int id) {	
-//		
-//		return Response.status(Status.CREATED).entity(Iagreemen.getAgreemenByEtudiant(id)).build();
-//	
-//	}
-	
 	@PUT
 	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateInternshipAgreemen(@PathParam(value="id") int id) {	
 		
 		if(Iagreemen.updateInternshipAgreemen(id))
-	    	return Response.status(Status.ACCEPTED).entity("success").build();
+	    	return Response.status(Status.ACCEPTED).entity(Iagreemen.getAgreemenById(id)).build();
 		
-    	return Response.status(Status.BAD_REQUEST).entity("erreur").build();
+    	return Response.status(Status.NOT_MODIFIED).build();
 
 	}
 	
@@ -80,10 +93,11 @@ public class InternshipAgreemenWebServices {
 	@Path("/{id}")
     public Response removeInternshipAgreemen(@PathParam(value="id") int id) {	
 		
-		Iagreemen.removeInternshipAgreemen(id);
+		if(Iagreemen.removeInternshipAgreemen(id))
 	    	return Response.status(Status.ACCEPTED).entity("success").build();
+		
+		return Response.status(Status.BAD_REQUEST).build();
 	}
-	
 	
 	
 }
