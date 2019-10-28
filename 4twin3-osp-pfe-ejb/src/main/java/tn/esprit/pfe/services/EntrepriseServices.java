@@ -5,6 +5,11 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import tn.esprit.pfe.entities.Entreprise;
+import tn.esprit.pfe.entities.EntrepriseStudent;
+import tn.esprit.pfe.entities.EntrepriseSupervisor;
+import tn.esprit.pfe.entities.InternshipCataloge;
+import tn.esprit.pfe.entities.InternshipOffer;
+import tn.esprit.pfe.entities.JobOffer;
 import tn.esprit.pfe.interfaces.EntrepriseServiceRemote;
 
 @Stateless
@@ -42,6 +47,84 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		Entreprise ent = em.find(Entreprise.class, id);	
 		em.remove(ent);
+	}
+
+	@Override
+	public void LoginEntreprise(String email, String Password) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInternshipOffer(int idEnt, InternshipOffer inoff) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateInternshipOffer(int idEnt, InternshipOffer inoff) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteInternshipOffer(int idEnt, InternshipOffer inoff) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSupervisor(int idEnt, EntrepriseSupervisor es) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateSupervisor(int idEnt, EntrepriseSupervisor es) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteSupervisor(int idEnt, EntrepriseSupervisor es) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addJobOffre(int idEnt, JobOffer jo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateJobOffre(int idEnt, JobOffer jo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteJobOffre(int idEnt, JobOffer jo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInternshipCatalog(int idEnt, InternshipCataloge ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateInternshipCatalog(int idEnt, InternshipCataloge ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void affectStudent(int idEnt, EntrepriseStudent es) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

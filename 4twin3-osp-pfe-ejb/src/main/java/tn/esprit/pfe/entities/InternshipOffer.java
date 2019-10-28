@@ -33,6 +33,10 @@ public class InternshipOffer implements Serializable {
 	@Temporal (TemporalType.DATE)
 	private Date dateFin;
 
+	
+	//@Column
+	//private String Mot_cle;
+	
 	public InternshipOffer(String offreName, String description, Date dateDebut, Date dateFin) {
 		super();
 		OffreName = offreName;
@@ -40,6 +44,19 @@ public class InternshipOffer implements Serializable {
 		this.dateDebut = dateDebut;
 		this.dateFin = dateFin;
 	}
+	
+	
+
+	public InternshipOffer(int id, String offreName, String description, Date dateDebut, Date dateFin) {
+		super();
+		this.id = id;
+		OffreName = offreName;
+		Description = description;
+		this.dateDebut = dateDebut;
+		this.dateFin = dateFin;
+	}
+
+
 
 	public InternshipOffer() {
 		super();

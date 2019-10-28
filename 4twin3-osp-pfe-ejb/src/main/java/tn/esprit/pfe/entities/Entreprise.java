@@ -53,6 +53,11 @@ public class Entreprise implements Serializable {
 	@Column
 	private String TelResponsable;
 	
+	@Column
+	private String Password;
+	
+	
+	
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.LAZY)
 	private List<InternshipAgreemen> internshipAgreemens = new ArrayList<>();
@@ -67,8 +72,29 @@ public class Entreprise implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Entreprise(int id, String nameEntreprise, String adresse, String siteweb, String pays,
+			String emailEntreprise, String telEntreprise, String emailResponsable, String nomPrenomResponsable,
+			String telResponsable, String password) {
+		super();
+		this.id = id;
+		NameEntreprise = nameEntreprise;
+		Adresse = adresse;
+		Siteweb = siteweb;
+		Pays = pays;
+		EmailEntreprise = emailEntreprise;
+		TelEntreprise = telEntreprise;
+		EmailResponsable = emailResponsable;
+		NomPrenomResponsable = nomPrenomResponsable;
+		TelResponsable = telResponsable;
+		Password = password;
+	
+	}
+
+
+
 	public Entreprise(String nameEntreprise, String adresse, String siteweb, String pays, String emailEntreprise,
-			String telEntreprise, String emiailResponsable, String nomPrenomResponsable, String telResponsable) {
+			String telEntreprise, String emailResponsable, String nomPrenomResponsable, String telResponsable,
+			String password) {
 		super();
 		NameEntreprise = nameEntreprise;
 		Adresse = adresse;
@@ -76,9 +102,11 @@ public class Entreprise implements Serializable {
 		Pays = pays;
 		EmailEntreprise = emailEntreprise;
 		TelEntreprise = telEntreprise;
-		EmailResponsable = emiailResponsable;
+		EmailResponsable = emailResponsable;
 		NomPrenomResponsable = nomPrenomResponsable;
 		TelResponsable = telResponsable;
+		Password = password;
+		
 	}
 
 	public int getId() {
