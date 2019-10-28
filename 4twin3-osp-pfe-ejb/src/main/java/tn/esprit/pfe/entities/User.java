@@ -42,13 +42,13 @@ public class User implements Serializable {
 	@NotNull(message = "Donnez un nom de famille")
 	@NotBlank(message = "Donnez un nom de famille")
 	@NotEmpty(message = "Donnez un nom de famille")
-	private String lastname;
+	private String nom;
 
 	@Column
 	@NotNull(message = "Donnez un prenom")
 	@NotBlank(message = "Donnez un prenom")
 	@NotEmpty(message = "Donnez un prenom")
-	private String firstname;
+	private String prenom;
 
 	@Column(nullable = false, unique = true)
 	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\." + "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
@@ -61,7 +61,7 @@ public class User implements Serializable {
 	@Length(min = 8, message = "Le mot de passe doit contenir un minimum de 8 caractères")
 	@NotNull
 	@Transient
-	private String plainPassword;
+	private String plainPassword="testtest";
 
 	@Column
 	private String role;
@@ -70,10 +70,10 @@ public class User implements Serializable {
 		super();
 	}
 
-	public User(String lastname, String firstname, String email, String plainPassword) {
+	public User(String nom, String prenom, String email, String plainPassword) {
 		super();
-		this.lastname = lastname;
-		this.firstname = firstname;
+		this.nom = nom;
+		this.prenom = prenom;
 		this.email = email;
 		this.plainPassword = plainPassword;
 		this.password = this.createPwd(plainPassword);
@@ -83,20 +83,20 @@ public class User implements Serializable {
 		return id;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public String getNom() {
+		return nom;
 	}
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setNom(String nom) {
+		this.nom = nom;
 	}
 
-	public String getFirstname() {
-		return firstname;
+	public String getPrenom() {
+		return prenom;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setPrenom(String prenom) {
+		this.prenom = prenom;
 	}
 
 	public String getEmail() {

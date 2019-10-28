@@ -30,6 +30,9 @@ public class Reclamation implements Serializable{
 	@OneToOne
 	private Etudiant etudiant;
 	
+	@OneToOne
+	private Soutenance soutenance;
+	
 	@Temporal (TemporalType.DATE)
 	private Date dateAjout;
 	
@@ -107,10 +110,44 @@ public class Reclamation implements Serializable{
 
 
 
+	
+
+
+
+
 	@Override
 	public String toString() {
-		return "Reclamation [idReclamation=" + idReclamation + ", textRec=" + textRec + ", etudiant=" + etudiant + "]";
+		return "Reclamation [idReclamation=" + idReclamation + ", textRec=" + textRec + ", etudiant=" + etudiant
+				+ ", soutenance=" + soutenance + ", dateAjout=" + dateAjout + "]";
 	}
+
+
+
+
+	public Soutenance getSoutenance() {
+		return soutenance;
+	}
+
+
+
+
+	public void setSoutenance(Soutenance soutenance) {
+		this.soutenance = soutenance;
+	}
+
+
+
+
+	public Reclamation(int idReclamation, String textRec, Etudiant etudiant, Soutenance soutenance, Date dateAjout) {
+		super();
+		this.idReclamation = idReclamation;
+		this.textRec = textRec;
+		this.etudiant = etudiant;
+		this.soutenance = soutenance;
+		this.dateAjout = dateAjout;
+	}
+	
+	
 	
 	
 	

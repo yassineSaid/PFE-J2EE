@@ -20,13 +20,13 @@ public interface ReclamationServiceRemote {
 	public void deleteReclamation(int id);
      public List<Reclamation> getAllReclamation();
      public List<Reclamation> getReclamationByEtudiant(String nom , String prenom);
+     public List<Reclamation> getReclamationBySoutenance(int id);
      public  List<Object[]> nombreDeReclamationSelonDateAjout();
      public  List<Object[]> nombreDeReclamationParMois();
-	//ajouter note a soutenance
-	//afficher les soutenances non noté + notifier l'enseignant affecte
+	//afficher les soutenances non noté (done ) + notifier l'enseignant affecte
 	//afficher les soutenances qui attend un rapporteur
 	//notifier l'etudiant lors de l'ajout d'une note
-     //stat note
+     //stat note (moyenne note , nbrsoutenance note et non note , nb etudiant qui ont eu une mension tres bien ) 
       //trello entre enseignant et etudiant
 	
 	

@@ -12,8 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import rest.utilities.authentication.AllowEnseignant;
-import tn.esprit.pfe.entities.Enseignant;
+import rest.utilities.authentication.Secure;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.services.UserService;
 import utilities.ValidationError;
@@ -28,7 +27,7 @@ public class EnseignantWebServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@AllowEnseignant
+	@Secure(role={"Enseignant"})
 	public Response addEnseignant(User e) {
 		Set<ValidationError> violations=us.addUser(e);
 		if (violations==null) {

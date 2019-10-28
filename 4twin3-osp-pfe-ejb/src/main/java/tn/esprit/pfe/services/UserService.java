@@ -1,7 +1,6 @@
 package tn.esprit.pfe.services;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.LocalBean;
@@ -12,7 +11,6 @@ import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import tn.esprit.pfe.entities.SuperAdmin;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.UserServiceRemote;
 import utilities.BCrypt;

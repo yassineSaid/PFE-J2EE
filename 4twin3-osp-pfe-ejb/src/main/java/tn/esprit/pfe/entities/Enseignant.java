@@ -11,7 +11,6 @@ import javax.persistence.Table;
 public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;
-	
 	@Column(nullable=false)
 	private boolean enabled;
 
