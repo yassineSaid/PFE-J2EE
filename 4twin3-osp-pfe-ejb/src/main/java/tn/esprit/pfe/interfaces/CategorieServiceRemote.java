@@ -15,7 +15,8 @@ public interface CategorieServiceRemote {
 	
 	public List<String>getCategorielesplusdemandées();
 	
-	public  void addCategoriecommemodule(Categorie c);
+	
+	public void addCategoriecommemodule(Categorie c, String name);
 	
 
 }
