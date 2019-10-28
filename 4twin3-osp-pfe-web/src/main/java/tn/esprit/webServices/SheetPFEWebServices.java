@@ -35,21 +35,21 @@ public class SheetPFEWebServices {
 		return Response.status(Status.CREATED).entity(sheetPFE).build();
 
 	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllSheetPFE() {
-
-		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetPFE();
-
-		if (listSheetPFE.size() != 0) {
-
-			return Response.status(Status.ACCEPTED).entity(listSheetPFE).build();
-		}
-
-		return Response.status(Status.NO_CONTENT).build();
-
-	}
+//	
+//	@GET
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getAllSheetPFE() {
+//
+//		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetPFE();
+//
+//		if (listSheetPFE.size() != 0) {
+//
+//			return Response.status(Status.ACCEPTED).entity(listSheetPFE).build();
+//		}
+//
+//		return Response.status(Status.NO_CONTENT).build();
+//
+//	}
 	
 	@GET
 	@Path("/{id}")
@@ -61,18 +61,18 @@ public class SheetPFEWebServices {
 		
 		return  Response.status(Status.NOT_FOUND).build();
 	}
-
-	@GET
-	@Path("/etudiant")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAgreemenByEtudiant() {	
-		
-		if(IsheetPFE.getSheetPFEByEtudiant() != null)
-		  return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEByEtudiant()).build();
-	
-		return  Response.status(Status.NOT_FOUND).build();
-	
-	}
+//
+//	@GET
+//	@Path("/etudiant")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getAgreemenByEtudiant() {	
+//		
+//		if(IsheetPFE.getSheetPFEByEtudiant() != null)
+//		  return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEByEtudiant()).build();
+//	
+//		return  Response.status(Status.NOT_FOUND).build();
+//	
+//	}
 	
 	
 	@PUT
@@ -100,56 +100,56 @@ public class SheetPFEWebServices {
 
 	}
 	
-	@POST
-	@Path("/cancel")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response requestCancelInternship(SheetPFE sheetPFE) {
-
-		IsheetPFE.requestCancelInternship(sheetPFE.getId());
-		return Response.status(Status.CREATED).entity(IsheetPFE.getResquest(sheetPFE.getId())).build();
-
-	}
-	@GET
-	@Path("/cancel")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllCancelSheetPFE() {	
-		
-		List<RequestCancelInternship> listRequest = IsheetPFE.getAllRequest();
-
-		if (listRequest.size() != 0) {
-
-			return Response.status(Status.ACCEPTED).entity(listRequest).build();
-		}
-
-		return Response.status(Status.NO_CONTENT).build();
-
-	}
+//	@POST
+//	@Path("/cancel")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response requestCancelInternship(SheetPFE sheetPFE) {
+//
+//		IsheetPFE.requestCancelInternship(sheetPFE.getId());
+//		return Response.status(Status.CREATED).entity(IsheetPFE.getResquest(sheetPFE.getId())).build();
+//
+//	}
+//	@GET
+//	@Path("/cancel")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getAllCancelSheetPFE() {	
+//		
+//		List<RequestCancelInternship> listRequest = IsheetPFE.getAllRequest();
+//
+//		if (listRequest.size() != 0) {
+//
+//			return Response.status(Status.ACCEPTED).entity(listRequest).build();
+//		}
+//
+//		return Response.status(Status.NO_CONTENT).build();
+//
+//	}
 	
-	@GET
-	@Path("/cancel/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getResquest(@PathParam(value="id") int id) {
-		
-		if(IsheetPFE.getResquest(id) != null)
-			  return Response.status(Status.ACCEPTED).entity(IsheetPFE.getResquest(id)).build();
-		
-		return  Response.status(Status.NOT_FOUND).build();
-	}
+//	@GET
+//	@Path("/cancel/{id}")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getResquest(@PathParam(value="id") int id) {
+//		
+//		if(IsheetPFE.getResquest(id) != null)
+//			  return Response.status(Status.ACCEPTED).entity(IsheetPFE.getResquest(id)).build();
+//		
+//		return  Response.status(Status.NOT_FOUND).build();
+//	}
 	
 	
-	@PUT
-	@Path("/cancel")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateInternshipAgreemen(RequestCancelInternship request) {	
-		
-		if(IsheetPFE.updateRequest(request))
-	    	return Response.status(Status.ACCEPTED).entity(request).build();
-		
-    	return Response.status(Status.NOT_MODIFIED).build();
-
-	}
-	
+//	@PUT
+//	@Path("/cancel")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response updateInternshipAgreemen(RequestCancelInternship request) {	
+//		
+//		if(IsheetPFE.updateRequest(request))
+//	    	return Response.status(Status.ACCEPTED).entity(request).build();
+//		
+//    	return Response.status(Status.NOT_MODIFIED).build();
+//
+//	}
+//	
 	
 }

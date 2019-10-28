@@ -55,14 +55,14 @@ public class InternshipAgreemenWebServices {
 	
 	}
 	
-	@GET
-	@Path("/etudiant/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAgreemenByEtudiant(@PathParam(value="id") int id) {	
-		
-		return Response.status(Status.CREATED).entity(Iagreemen.getAgreemenByEtudiant(id)).build();
-	
-	}
+//	@GET
+//	@Path("/etudiant/{id}")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getAgreemenByEtudiant(@PathParam(value="id") int id) {	
+//		
+//		return Response.status(Status.CREATED).entity(Iagreemen.getAgreemenByEtudiant(id)).build();
+//	
+//	}
 	
 	@PUT
 	@Path("/{id}")

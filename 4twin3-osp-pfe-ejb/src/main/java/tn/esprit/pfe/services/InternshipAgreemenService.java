@@ -33,14 +33,7 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
 		return em.find(InternshipAgreemen.class, id);
 	}
 
-	@Override
-	public InternshipAgreemen getAgreemenByEtudiant(int etudiantId) {
-			 TypedQuery<InternshipAgreemen> query = em.createQuery(
-					  "select i from InternshipAgreemen i join i.etudiant e where e.id=:etudiantId", 
-					  InternshipAgreemen.class);
-					  query.setParameter("etudiantId", etudiantId);
-					  return query.getSingleResult();
-	}
+	
 
 	@Override
 	public boolean updateInternshipAgreemen(int id) {
@@ -55,8 +48,17 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
 	}
 
 	@Override
-	public void removeInternshipAgreemen(int id) {
-		em.remove(em.find(InternshipAgreemen.class, id));
+	public InternshipAgreemen getAgreemenByEtudiant() {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	@Override
+	public boolean removeInternshipAgreemen(int id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
 
 }
