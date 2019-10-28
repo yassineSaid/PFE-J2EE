@@ -21,7 +21,7 @@ public class ForumQuestion implements Serializable{
 
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id_Question; 
 	@Column

@@ -17,7 +17,7 @@ public class ForumReponse implements Serializable{
 	
 	
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id_Reponse; 
 	@Column
