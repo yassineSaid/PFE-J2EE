@@ -1,15 +1,19 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -18,46 +22,46 @@ public class SheetPFE implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)	
 	private int id;
 	private String title;
 	private String description;
 	private String problematic;
 	private String features;
+	@ManyToMany(fetch=FetchType.EAGER)
 	private List<Categorie> categories;
-	private String keywords;
+	private String qrcode;
+	@Enumerated(EnumType.STRING)
 	private EtatSheetPFE etat;
 	private String note;
+	@ManyToOne
 	private Entreprise entreprise;
+	@OneToOne
 	private Etudiant etudiant;
 	
 	public SheetPFE() {
 	}
 
-	public SheetPFE(String title, String description, String problematic, String features, List<Categorie> categories,
-			String keywords) {
+	public SheetPFE(String title, String description, String problematic, String features, List<Categorie> categories) {
 		
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
 		this.categories = categories;
-		this.keywords = keywords;
 	}
 	
-	public SheetPFE(int id,String title, String description, String problematic, String features, List<Categorie> categories,
-			String keywords) {
+	public SheetPFE(int id,String title, String description, String problematic, String features, List<Categorie> categories) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
 		this.categories = categories;
-		this.keywords = keywords;
 	}
 
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
 		return id;
 	}
@@ -98,7 +102,6 @@ public class SheetPFE implements Serializable {
 		this.features = features;
 	}
 
-	@ManyToMany
 	public List<Categorie> getCategories() {
 		return categories;
 	}
@@ -106,16 +109,15 @@ public class SheetPFE implements Serializable {
 	public void setCategories(List<Categorie> categories) {
 		this.categories = categories;
 	}
-
-	public String getKeywords() {
-		return keywords;
+	
+	public String getQrcode() {
+		return qrcode;
 	}
 
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
+	public void setQrcode(String qrcode) {
+		this.qrcode = qrcode;
 	}
-	
-	
+
 	public EtatSheetPFE getEtat() {
 		return etat;
 	}
@@ -132,7 +134,6 @@ public class SheetPFE implements Serializable {
 		this.note = note;
 	}
 
-	@OneToOne
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}
@@ -141,7 +142,6 @@ public class SheetPFE implements Serializable {
 		this.entreprise = entreprise;
 	}
 
-	@OneToOne(mappedBy="sheetPFE")
 	public Etudiant getEtudiant() {
 		return etudiant;
 	}
