@@ -23,11 +23,11 @@ public class Etudiant extends User {
 	@Column
 	private String identifiant;
 	
-	@JsonIgnore
 	@OneToOne(mappedBy="etudiant")
+	@JsonIgnore
 	private InternshipAgreemen internshipAgreemen;
-	@JsonIgnore
-	@OneToOne(mappedBy="etudiant")
+	
+	@OneToOne
 	private SheetPFE sheetPFE;
 
 	public Etudiant() {
@@ -40,39 +40,6 @@ public class Etudiant extends User {
 		this.identifiant=identifiant;
 		// TODO Auto-generated constructor stub
 	}
-
-	public Reclamation getReclamation() {
-		return Reclamation;
-	}
-
-	public void setReclamation(Reclamation reclamation) {
-		Reclamation = reclamation;
-	}
-
-	public String getIdentifiant() {
-		return identifiant;
-	}
-
-	public void setIdentifiant(String identifiant) {
-		this.identifiant = identifiant;
-	}
-
-	public InternshipAgreemen getInternshipAgreemen() {
-		return internshipAgreemen;
-	}
-
-	public void setInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
-		this.internshipAgreemen = internshipAgreemen;
-	}
-
-	public SheetPFE getSheetPFE() {
-		return sheetPFE;
-	}
-
-	public void setSheetPFE(SheetPFE sheetPFE) {
-		this.sheetPFE = sheetPFE;
-	}
-	
 	
 	
 

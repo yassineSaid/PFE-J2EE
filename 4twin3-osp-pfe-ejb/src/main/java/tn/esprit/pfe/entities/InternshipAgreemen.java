@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,17 +18,11 @@ public class InternshipAgreemen implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-	@Temporal (TemporalType.DATE)
 	private Date startDate;
-	@Temporal (TemporalType.DATE)
 	private Date endDate;
-	private String pdf;
-	@ManyToOne
+	private String etat;
 	private Entreprise entreprise;
-	@OneToOne
 	private Etudiant etudiant;
 	
 	
@@ -47,6 +40,8 @@ public class InternshipAgreemen implements Serializable {
 		this.endDate = endDate;
 	}
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
 		return id;
 	}
@@ -55,6 +50,7 @@ public class InternshipAgreemen implements Serializable {
 		this.id = id;
 	}
 
+	@Temporal (TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -63,6 +59,7 @@ public class InternshipAgreemen implements Serializable {
 		this.startDate = startDate;
 	}
 
+	@Temporal (TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -71,14 +68,15 @@ public class InternshipAgreemen implements Serializable {
 		this.endDate = endDate;
 	}
 
-	public String getPdf() {
-		return pdf;
+	public String getEtat() {
+		return etat;
 	}
 
-	public void setPdf(String pdf) {
-		this.pdf = pdf;
+	public void setEtat(String etat) {
+		this.etat = etat;
 	}
 
+	@OneToOne
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}
@@ -87,6 +85,7 @@ public class InternshipAgreemen implements Serializable {
 		this.entreprise = entreprise;
 	}
 
+	@OneToOne
 	public Etudiant getEtudiant() {
 		return etudiant;
 	}

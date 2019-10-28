@@ -1,17 +1,12 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,7 +19,7 @@ public class Entreprise implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.AUTO)
 	@Column
 	private int id;
 	
@@ -55,13 +50,12 @@ public class Entreprise implements Serializable {
 	@Column
 	private String TelResponsable;
 	
-	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
-			fetch=FetchType.LAZY)
-	private List<InternshipAgreemen> internshipAgreemens = new ArrayList<>();
+	@OneToOne(mappedBy="entreprise",fetch=FetchType.EAGER)
+	@JsonIgnore
+	private InternshipAgreemen internshipAgreemen;
 	
-	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
-			fetch=FetchType.EAGER)
-	private List<SheetPFE> sheetPFEs = new ArrayList<>();
+	@OneToOne(mappedBy="entreprise")
+	private SheetPFE sheetPFE;
 
 	public Entreprise() {
 		super();
@@ -158,6 +152,21 @@ public class Entreprise implements Serializable {
 		TelResponsable = telResponsable;
 	}
 	
+	public InternshipAgreemen getInternshipAgreemen() {
+		return internshipAgreemen;
+	}
 
+	public void setInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
+		this.internshipAgreemen = internshipAgreemen;
+	}
+
+	public SheetPFE getSheetPFE() {
+		return sheetPFE;
+	}
+
+	public void setSheetPFE(SheetPFE sheetPFE) {
+		this.sheetPFE = sheetPFE;
+	}
+	
 	
 }
