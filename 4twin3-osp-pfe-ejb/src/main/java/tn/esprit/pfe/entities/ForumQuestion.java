@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -34,7 +35,13 @@ public class ForumQuestion implements Serializable{
 	
 	@OneToMany(mappedBy="forumquestion", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
+	
 	private List<ForumReponse> ForumReponse = new ArrayList<>();
+    
+	
+	@ManyToOne
+	private Etudiant etudiant;
+	
 	
 	public ForumQuestion() {
 		super();
@@ -63,6 +70,20 @@ public class ForumQuestion implements Serializable{
 	public void setQuestion_resolu(boolean question_resolu) {
 		Question_resolu = question_resolu;
 	}
+	public List<ForumReponse> getForumReponse() {
+		return ForumReponse;
+	}
+	public void setForumReponse(List<ForumReponse> forumReponse) {
+		ForumReponse = forumReponse;
+	}
+	public Etudiant getEtudiant() {
+		return etudiant;
+	}
+	public void setEtudiant(Etudiant etudiant) {
+		this.etudiant = etudiant;
+	}
+	
+	
 	
 	
 	

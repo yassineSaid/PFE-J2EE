@@ -27,6 +27,8 @@ public class ForumReponse implements Serializable{
 	@ManyToOne
 	private ForumQuestion forumquestion;
 	
+	@ManyToOne
+	private Etudiant etudiant;
 	
 	
 	public ForumReponse() {
@@ -43,7 +45,19 @@ public class ForumReponse implements Serializable{
 	}
 	public void setConetnu_Reponse(String conetnu_Reponse) {
 		Conetnu_Reponse = conetnu_Reponse;
-	} 
+	}
+	public ForumQuestion getForumquestion() {
+		return forumquestion;
+	}
+	public void setForumquestion(ForumQuestion forumquestion) {
+		this.forumquestion = forumquestion;
+	}
+	/*public Etudiant getEtudiant() {
+		return etudiant;
+	}
+	public void setEtudiant(Etudiant etudiant) {
+		this.etudiant = etudiant;
+	} */
 	
 	
 	
