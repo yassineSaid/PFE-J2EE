@@ -3,6 +3,7 @@ package tn.esprit.pfe.entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -18,50 +20,75 @@ import javax.persistence.Table;
 @Entity
 @Table(name= "Entreprise")
 public class Entreprise implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id;
-	
+
 	@Column
 	private String NameEntreprise;
-	
+
 	@Column
 	private String Adresse;
-	
+
 	@Column
 	private String Siteweb;
-	
+
 	@Column
 	private String Pays;
-	
+
 	@Column
 	private String EmailEntreprise;
-	
+
 	@Column
 	private String TelEntreprise;
-	
+
 	@Column 
 	private String EmailResponsable;
-	
+
 	@Column
 	private String NomPrenomResponsable;
-	
+
 	@Column
 	private String TelResponsable;
-	
+
 	@Column
 	private String Password;
-	
-	
-	
+
+	@Column
+	private int xp;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<InternshipOffer > InternshipOffers ;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<EntrepriseSupervisor > EntrepriseSupervisors ;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<InternshipCataloge > InternshipCataloges;
+
+	@ManyToOne
+	Packs Packs;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<JobOffer > JobOffers;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<EntrepriseStudent > EntrepriseStudents;
+
+
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.LAZY)
 	private List<InternshipAgreemen> internshipAgreemens = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private List<SheetPFE> sheetPFEs = new ArrayList<>();
@@ -87,7 +114,7 @@ public class Entreprise implements Serializable {
 		NomPrenomResponsable = nomPrenomResponsable;
 		TelResponsable = telResponsable;
 		Password = password;
-	
+
 	}
 
 
@@ -106,7 +133,7 @@ public class Entreprise implements Serializable {
 		NomPrenomResponsable = nomPrenomResponsable;
 		TelResponsable = telResponsable;
 		Password = password;
-		
+
 	}
 
 	public int getId() {
@@ -204,8 +231,8 @@ public class Entreprise implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	
-	
-	
+
+
+
+
 }

@@ -1,12 +1,16 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,9 +27,17 @@ public class Packs implements Serializable {
 	
 	@Column
 	private String Description;
+	
+	@OneToMany(mappedBy="packs", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<Entreprise > Entreprises;
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getNom() {
@@ -44,18 +56,33 @@ public class Packs implements Serializable {
 		Description = description;
 	}
 
+	public Set<Entreprise> getEntreprises() {
+		return Entreprises;
+	}
+
+	public void setEntreprises(Set<Entreprise> entreprises) {
+		Entreprises = entreprises;
+	}
+
 	public Packs(int id, String nom, String description) {
 		super();
 		this.id = id;
 		Nom = nom;
 		Description = description;
 	}
-	
-	public Packs( String nom, String description) {
+
+	public Packs(String nom, String description, Set<Entreprise> entreprises) {
 		super();
 		Nom = nom;
 		Description = description;
+		Entreprises = entreprises;
 	}
+
+	public Packs() {
+		super();
+	}
+
+	
 	
 	
 }
