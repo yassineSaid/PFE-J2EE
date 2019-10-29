@@ -38,7 +38,10 @@ public class InternshipOffer implements Serializable {
 	private Date datePublier;
 	
 	@ManyToOne
-	Entreprise Entreprise;
+	Entreprise entreprise;
+	
+	@ManyToOne
+	InternshipCataloge internshipCataloge;
 	
 	@Column
 	private String Sujet;
@@ -99,11 +102,11 @@ public class InternshipOffer implements Serializable {
 	}
 
 	public Entreprise getEntreprise() {
-		return Entreprise;
+		return entreprise;
 	}
 
 	public void setEntreprise(Entreprise entreprise) {
-		Entreprise = entreprise;
+		this.entreprise = entreprise;
 	}
 
 	public String getSujet() {
@@ -163,6 +166,14 @@ public class InternshipOffer implements Serializable {
 	}
 
 	
+
+	public InternshipCataloge getInternshipCataloge() {
+		return internshipCataloge;
+	}
+
+	public void setInternshipCataloge(InternshipCataloge internshipCataloge) {
+		this.internshipCataloge = internshipCataloge;
+	}
 
 	public InternshipOffer(String offreName, String description, Date dateDebut, Date dateFin, Date datePublier,
 			String sujet, String reference, String objectifdustage, String mission, String profilrecherche,

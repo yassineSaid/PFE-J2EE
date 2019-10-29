@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -28,13 +29,24 @@ public class InternshipCataloge implements Serializable{
 	@Column
 	private String Description;
 	
-	@OneToMany(mappedBy="internshipCataloge ", cascade = 	{CascadeType.ALL}, 
+	@OneToMany(mappedBy="internshipCataloge", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<JobOffer > JobOffers;
+	private Set<JobOffer> joboffers;
 
-	@OneToMany(mappedBy="internshipCataloge ", cascade = 	{CascadeType.ALL}, 
+	@OneToMany(mappedBy="internshipCataloge", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<InternshipOffer > InternshipOffers;
+	private Set<InternshipOffer> internshipoffers;
+	
+	@ManyToOne
+	Entreprise entreprise;
+
+	public Entreprise getEntreprise() {
+		return entreprise;
+	}
+
+	public void setEntreprise(Entreprise entreprise) {
+		this.entreprise = entreprise;
+	}
 
 	public int getId() {
 		return id;
@@ -61,19 +73,19 @@ public class InternshipCataloge implements Serializable{
 	}
 
 	public Set<JobOffer> getJobOffers() {
-		return JobOffers;
+		return joboffers;
 	}
 
 	public void setJobOffers(Set<JobOffer> jobOffers) {
-		JobOffers = jobOffers;
+		this.joboffers = jobOffers;
 	}
 
 	public Set<InternshipOffer> getInternshipOffers() {
-		return InternshipOffers;
+		return internshipoffers;
 	}
 
 	public void setInternshipOffers(Set<InternshipOffer> internshipOffers) {
-		InternshipOffers = internshipOffers;
+		this.internshipoffers = internshipOffers;
 	}
 
 	public InternshipCataloge(int id, String catalogName, String description) {

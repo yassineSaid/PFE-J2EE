@@ -29,7 +29,7 @@ public class JobOffer implements Serializable{
 	
 	
 	@ManyToOne
-	Entreprise Entreprise ;
+	Entreprise entreprise ;
 	
 	@Column
 	private String Profilrecherche;
@@ -47,7 +47,7 @@ public class JobOffer implements Serializable{
 	private Date datePublier;
 	
 	@ManyToOne
-	InternshipCataloge InternshipCataloge ;
+	InternshipCataloge internshipCataloge ;
 
 	public int getId() {
 		return id;
@@ -74,11 +74,11 @@ public class JobOffer implements Serializable{
 	}
 
 	public Entreprise getEntreprise() {
-		return Entreprise;
+		return entreprise;
 	}
 
 	public void setEntreprise(Entreprise entreprise) {
-		Entreprise = entreprise;
+		entreprise = entreprise;
 	}
 
 	public String getProfilrecherche() {
@@ -114,11 +114,11 @@ public class JobOffer implements Serializable{
 	}
 
 	public InternshipCataloge getInternshipCataloge() {
-		return InternshipCataloge;
+		return internshipCataloge;
 	}
 
 	public void setInternshipCataloge(InternshipCataloge internshipCataloge) {
-		InternshipCataloge = internshipCataloge;
+		internshipCataloge = internshipCataloge;
 	}
 	
 

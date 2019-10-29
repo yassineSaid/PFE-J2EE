@@ -22,9 +22,11 @@ public class EntrepriseStudent implements Serializable {
 	private int idStudent;
 	
 	@ManyToOne
-	Entreprise Entreprise ;
+	Entreprise entreprise ;
+	
 	@ManyToOne
-	EntrepriseSupervisor EntrepriseSupervisor ;
+	EntrepriseSupervisor entrepriseSupervisor ;
+	
 	public int getId() {
 		return id;
 	}
@@ -38,16 +40,16 @@ public class EntrepriseStudent implements Serializable {
 		this.idStudent = idStudent;
 	}
 	public Entreprise getEntreprise() {
-		return Entreprise;
+		return entreprise;
 	}
 	public void setEntreprise(Entreprise entreprise) {
-		Entreprise = entreprise;
+		entreprise = entreprise;
 	}
 	public EntrepriseSupervisor getEntrepriseSupervisor() {
-		return EntrepriseSupervisor;
+		return entrepriseSupervisor;
 	}
 	public void setEntrepriseSupervisor(EntrepriseSupervisor entrepriseSupervisor) {
-		EntrepriseSupervisor = entrepriseSupervisor;
+		entrepriseSupervisor = entrepriseSupervisor;
 	}
 	public EntrepriseStudent(int id, int idStudent) {
 		super();

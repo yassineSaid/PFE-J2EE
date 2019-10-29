@@ -4,6 +4,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.EntrepriseStudent;
 import tn.esprit.pfe.entities.EntrepriseSupervisor;
@@ -17,11 +19,23 @@ import tn.esprit.pfe.interfaces.EntrepriseServiceRemote;
 public class EntrepriseServices implements EntrepriseServiceRemote {
 	@PersistenceContext(unitName = "4twin3-osp-pfe-ejb")
 	EntityManager em;
+	
+	public Long ValidateMail(String Email) {
+		TypedQuery<Long> query = em.createQuery("select count(*) from Entreprise e where e.EmailEntreprise=:emailEnt", Long.class);
+		query.setParameter("emailEnt",Email);
+		Long nbr=query.getSingleResult();
+		return nbr;
+
+	}
+	
 	@Override
 	public int addEntreprise(Entreprise ent) {
 		// TODO Auto-generated method stub
+		if(ValidateMail(ent.getEmailEntreprise())==0) {
 			em.persist(ent);
 			return ent.getId();
+		}
+		return 0;	
 			
 	}
 

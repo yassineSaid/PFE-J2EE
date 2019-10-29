@@ -63,26 +63,26 @@ public class Entreprise implements Serializable {
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<InternshipOffer > InternshipOffers ;
+	private Set<InternshipOffer> internshipoffers ;
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<EntrepriseSupervisor > EntrepriseSupervisors ;
+	private Set<EntrepriseSupervisor> entreprisesupervisors ;
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<InternshipCataloge > InternshipCataloges;
+	private Set<InternshipCataloge> internshipcataloges;
 
 	@ManyToOne
 	Packs Packs;
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<JobOffer > JobOffers;
+	private Set<JobOffer> joboffers;
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<EntrepriseStudent > EntrepriseStudents;
+	private Set<EntrepriseStudent> entreprisestudents;
 
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
@@ -94,50 +94,13 @@ public class Entreprise implements Serializable {
 	private List<SheetPFE> sheetPFEs = new ArrayList<>();
 
 
-	public Entreprise() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public Entreprise(int id, String nameEntreprise, String adresse, String siteweb, String pays,
-			String emailEntreprise, String telEntreprise, String emailResponsable, String nomPrenomResponsable,
-			String telResponsable, String password) {
-		super();
-		this.id = id;
-		NameEntreprise = nameEntreprise;
-		Adresse = adresse;
-		Siteweb = siteweb;
-		Pays = pays;
-		EmailEntreprise = emailEntreprise;
-		TelEntreprise = telEntreprise;
-		EmailResponsable = emailResponsable;
-		NomPrenomResponsable = nomPrenomResponsable;
-		TelResponsable = telResponsable;
-		Password = password;
-
-	}
-
-
-
-	public Entreprise(String nameEntreprise, String adresse, String siteweb, String pays, String emailEntreprise,
-			String telEntreprise, String emailResponsable, String nomPrenomResponsable, String telResponsable,
-			String password) {
-		super();
-		NameEntreprise = nameEntreprise;
-		Adresse = adresse;
-		Siteweb = siteweb;
-		Pays = pays;
-		EmailEntreprise = emailEntreprise;
-		TelEntreprise = telEntreprise;
-		EmailResponsable = emailResponsable;
-		NomPrenomResponsable = nomPrenomResponsable;
-		TelResponsable = telResponsable;
-		Password = password;
-
-	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getNameEntreprise() {
@@ -192,8 +155,8 @@ public class Entreprise implements Serializable {
 		return EmailResponsable;
 	}
 
-	public void setEmailResponsable(String emiailResponsable) {
-		EmailResponsable = emiailResponsable;
+	public void setEmailResponsable(String emailResponsable) {
+		EmailResponsable = emailResponsable;
 	}
 
 	public String getNomPrenomResponsable() {
@@ -212,6 +175,70 @@ public class Entreprise implements Serializable {
 		TelResponsable = telResponsable;
 	}
 
+	public String getPassword() {
+		return Password;
+	}
+
+	public void setPassword(String password) {
+		Password = password;
+	}
+
+	public int getXp() {
+		return xp;
+	}
+
+	public void setXp(int xp) {
+		this.xp = xp;
+	}
+
+	public Set<InternshipOffer> getInternshipOffers() {
+		return internshipoffers;
+	}
+
+	public void setInternshipOffers(Set<InternshipOffer> internshipOffers) {
+		this.internshipoffers = internshipOffers;
+	}
+
+	public Set<EntrepriseSupervisor> getEntrepriseSupervisors() {
+		return entreprisesupervisors;
+	}
+
+	public void setEntrepriseSupervisors(Set<EntrepriseSupervisor> entreprisesupervisors) {
+		this.entreprisesupervisors = entreprisesupervisors;
+	}
+
+	public Set<InternshipCataloge> getInternshipcataloges() {
+		return internshipcataloges;
+	}
+
+	public void setInternshipcataloges(Set<InternshipCataloge> internshipcataloges) {
+		this.internshipcataloges = internshipcataloges;
+	}
+
+	public Packs getPacks() {
+		return Packs;
+	}
+
+	public void setPacks(Packs packs) {
+		Packs = packs;
+	}
+
+	public Set<JobOffer> getJobOffers() {
+		return joboffers;
+	}
+
+	public void setJobOffers(Set<JobOffer> joboffers) {
+		this.joboffers = joboffers;
+	}
+
+	public Set<EntrepriseStudent> getEntreprisestudents() {
+		return entreprisestudents;
+	}
+
+	public void setEntreprisestudents(Set<EntrepriseStudent> entreprisestudents) {
+		this.entreprisestudents = entreprisestudents;
+	}
+
 	public List<InternshipAgreemen> getInternshipAgreemens() {
 		return internshipAgreemens;
 	}
@@ -228,11 +255,7 @@ public class Entreprise implements Serializable {
 		this.sheetPFEs = sheetPFEs;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
-
+	
 
 
 }

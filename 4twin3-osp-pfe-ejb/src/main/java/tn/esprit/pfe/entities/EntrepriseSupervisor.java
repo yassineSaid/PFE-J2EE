@@ -39,11 +39,11 @@ public class EntrepriseSupervisor implements Serializable {
 	private String SpecialiteOptionnel;
 	
 	@ManyToOne
-	Entreprise Entreprise;
+	Entreprise entreprise;
 
-	@OneToMany(mappedBy="entrepriseSupervisor ", cascade = 	{CascadeType.ALL}, 
+	@OneToMany(mappedBy="entrepriseSupervisor", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<EntrepriseStudent > EntrepriseStudents;
+	private Set<EntrepriseStudent > entreprisestudents;
 
 	public int getId() {
 		return id;
@@ -94,19 +94,19 @@ public class EntrepriseSupervisor implements Serializable {
 	}
 
 	public Entreprise getEntreprise() {
-		return Entreprise;
+		return entreprise;
 	}
 
 	public void setEntreprise(Entreprise entreprise) {
-		Entreprise = entreprise;
+		entreprise = entreprise;
 	}
 
 	public Set<EntrepriseStudent> getEntrepriseStudents() {
-		return EntrepriseStudents;
+		return entreprisestudents;
 	}
 
-	public void setEntrepriseStudents(Set<EntrepriseStudent> entrepriseStudents) {
-		EntrepriseStudents = entrepriseStudents;
+	public void setEntrepriseStudents(Set<EntrepriseStudent> entreprisestudents) {
+		this.entreprisestudents = entreprisestudents;
 	}
 
 	public EntrepriseSupervisor(int id, String nomPrenom, String tel, String email, String specialite,
