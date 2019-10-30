@@ -22,15 +22,17 @@ import javax.ws.rs.core.Response.Status;
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
 import tn.esprit.pfe.entities.Ecole;
+import tn.esprit.pfe.entities.Site;
 import tn.esprit.pfe.services.EcoleService;
+import tn.esprit.pfe.services.SiteService;
 import utilities.ValidationError;
 
-@Path("ecole")
+@Path("site")
 @RequestScoped
-public class EcoleWebServices {
+public class SiteWebServices {
 
 	@EJB
-	EcoleService es;
+	SiteService ss;
 	
 	@Context
 	private HttpHeaders headers;
@@ -39,10 +41,10 @@ public class EcoleWebServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
-	public Response addEcole(Ecole e) {
+	public Response addSite(Site s) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.addEcole(e, af.getIdUser(headers));
+		Set<ValidationError> violations=ss.addSite(s, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
 		}
@@ -54,10 +56,10 @@ public class EcoleWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response modifierEcole(Ecole e, @PathParam(value="id") int idEcole) {
+	public Response modifierSite(Site s, @PathParam(value="id") int idSite) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.modifierEcole(e, af.getIdUser(headers), idEcole);
+		Set<ValidationError> violations=ss.modifierSite(s, af.getIdUser(headers), idSite);
 		if (violations==null) {
 			return Response.status(Status.OK).entity("modify successful").build();
 		}
@@ -69,10 +71,10 @@ public class EcoleWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response supprimerEcole(@PathParam(value="id") int idEcole) {
+	public Response supprimerSite(@PathParam(value="id") int idSite) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.supprimerEcole(idEcole, af.getIdUser(headers));
+		Set<ValidationError> violations=ss.supprimerSite(idSite, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.OK).entity("delete successful").build();
 		}
@@ -84,22 +86,23 @@ public class EcoleWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response getMyEcole(@PathParam(value="id") int idEcole) {
+	public Response getSite(@PathParam(value="id") int idSite) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Ecole ecole=es.getEcole(idEcole, af.getIdUser(headers));
-		if (ecole!=null) {
-			return Response.status(Status.OK).entity(ecole).build();
+		Site site=ss.getSite(idSite);
+		if (site!=null) {
+			return Response.status(Status.OK).entity(site).build();
 		}
-		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Cette ecole n'existe pas ou vous n'etes pas autorisé à la consulter").build();
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Ce site n'existe pas ou vous n'etes pas autorisé à le consulter").build();
 	}
 	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin","SuperAdmin"})
+	@Secure(role={"Admin"})
 	@GET
-	public Response getListEcole() {
-		List<Ecole> liste = es.getListEcole();
+	@Path ("/list/{id}")
+	public Response getListSite(@PathParam(value="id") int idEcole) {
+		Set<Site> liste = ss.getListSite(idEcole);
 		return Response.status(Status.OK).entity(liste).build();
 	}
 	
