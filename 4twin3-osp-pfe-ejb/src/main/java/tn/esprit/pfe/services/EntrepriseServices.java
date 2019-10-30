@@ -1,5 +1,7 @@
 package tn.esprit.pfe.services;
 
+import java.util.Date;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,6 +34,7 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	public int addEntreprise(Entreprise ent) {
 		// TODO Auto-generated method stub
 		if(ValidateMail(ent.getEmailEntreprise())==0) {
+			ent.setXp(0);
 			em.persist(ent);
 			return ent.getId();
 		}
@@ -43,14 +46,15 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	public void updateEntreprise(Entreprise ent) {
 		// TODO Auto-generated method stub
 		Entreprise en = em.find(Entreprise.class, ent.getId());
-		en.setNameEntreprise(ent.getNameEntreprise());
 		en.setAdresse(ent.getAdresse());
-		en.setSiteweb(ent.getSiteweb());
-		en.setPays(ent.getPays());
 		en.setEmailEntreprise(ent.getEmailEntreprise());
-		en.setTelEntreprise(ent.getTelEntreprise());
 		en.setEmailResponsable(ent.getEmailResponsable());
+		en.setNameEntreprise(ent.getNameEntreprise());
 		en.setNomPrenomResponsable(ent.getNomPrenomResponsable());
+		en.setPassword(ent.getPassword());
+		en.setPays(ent.getPays());
+		en.setSiteweb(ent.getSiteweb());	
+		en.setTelEntreprise(ent.getTelEntreprise());		
 		en.setTelResponsable(ent.getTelResponsable());
 		
 		
@@ -64,20 +68,53 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	}
 
 	@Override
+	public Entreprise getEntrepriseDetails(int idEnt) {
+		// TODO Auto-generated method stub
+		return em.find(Entreprise.class, idEnt);
+	
+	}
+
+	@Override
 	public void LoginEntreprise(String email, String Password) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addInternshipOffer(int idEnt, InternshipOffer inoff) {
+	public int addInternshipOffer(InternshipOffer inoff) {
 		// TODO Auto-generated method stub
+		Date date = new Date();
+		inoff.setDatePublier(date);
+		em.persist(inoff);
+		
+		return inoff.getId();
 		
 	}
+	
+	@Override
+	public void addInternshipOffertoEntreprise(int idEnt, int idIoffer) {
+		// TODO Auto-generated method stub
+		Entreprise ide = em.find(Entreprise.class, idEnt);
+		
+		InternshipOffer ioffer = em.find(InternshipOffer.class, idIoffer);
+		ioffer.setEntreprise(ide);
+	}
+
 
 	@Override
-	public void updateInternshipOffer(int idEnt, InternshipOffer inoff) {
+	public void updateInternshipOffer(InternshipOffer inoff) {
 		// TODO Auto-generated method stub
+		InternshipOffer io = em.find(InternshipOffer.class, inoff.getId());
+		io.setOffreName(inoff.getOffreName());
+		io.setCompétencesetConnaissances(inoff.getCompétencesetConnaissances());
+		io.setDescription(inoff.getDescription());
+		io.setMission(inoff.getMission());
+		io.setObjectifdustage(inoff.getObjectifdustage());
+		io.setProfilrecherche(inoff.getProfilrecherche());
+		io.setReference(inoff.getReference());
+		io.setSujet(inoff.getSujet());
+		io.setDateDebut(inoff.getDateDebut());
+		io.setDateFin(inoff.getDateFin());
 		
 	}
 
@@ -140,5 +177,8 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
+	
 
 }

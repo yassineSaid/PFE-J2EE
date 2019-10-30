@@ -28,9 +28,9 @@ public class Packs implements Serializable {
 	@Column
 	private String Description;
 	
-	/*@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+	@OneToMany(mappedBy="Packs", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private Set<Entreprise> Entreprises;*/
+	private Set<Entreprise> entreprise;
 
 	public int getId() {
 		return id;
@@ -56,13 +56,14 @@ public class Packs implements Serializable {
 		Description = description;
 	}
 
-	/*public Set<Entreprise> getEntreprises() {
-		return Entreprises;
+	
+	public Set<Entreprise> getEntreprise() {
+		return entreprise;
 	}
 
-	public void setEntreprises(Set<Entreprise> entreprises) {
-		Entreprises = entreprises;
-	}*/
+	public void setEntreprise(Set<Entreprise> entreprise) {
+		this.entreprise = entreprise;
+	}
 
 	public Packs(int id, String nom, String description) {
 		super();

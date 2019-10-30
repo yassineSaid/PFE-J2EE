@@ -86,12 +86,12 @@ public class Entreprise implements Serializable {
 
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
-			fetch=FetchType.LAZY)
-	private List<InternshipAgreemen> internshipAgreemens = new ArrayList<>();
+			fetch=FetchType.EAGER)
+	private Set<InternshipAgreemen> internshipAgreemens;
 
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private List<SheetPFE> sheetPFEs = new ArrayList<>();
+	private Set<SheetPFE> sheetPFEs;
 
 
 
@@ -215,6 +215,7 @@ public class Entreprise implements Serializable {
 		this.internshipcataloges = internshipcataloges;
 	}
 
+
 	public Packs getPacks() {
 		return Packs;
 	}
@@ -239,19 +240,19 @@ public class Entreprise implements Serializable {
 		this.entreprisestudents = entreprisestudents;
 	}
 
-	public List<InternshipAgreemen> getInternshipAgreemens() {
+	public Set<InternshipAgreemen> getInternshipAgreemens() {
 		return internshipAgreemens;
 	}
 
-	public void setInternshipAgreemens(List<InternshipAgreemen> internshipAgreemens) {
+	public void setInternshipAgreemens(Set<InternshipAgreemen> internshipAgreemens) {
 		this.internshipAgreemens = internshipAgreemens;
 	}
 
-	public List<SheetPFE> getSheetPFEs() {
+	public Set<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
 
-	public void setSheetPFEs(List<SheetPFE> sheetPFEs) {
+	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
 	}
 

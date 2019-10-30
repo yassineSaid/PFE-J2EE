@@ -15,9 +15,11 @@ public interface EntrepriseServiceRemote {
 	public int addEntreprise(Entreprise ent);
 	public void updateEntreprise(Entreprise ent);
 	public void deleteEntreprise(int id);
+	public Entreprise getEntrepriseDetails(int idEnt);
 	public void LoginEntreprise(String email, String Password);
-	public void addInternshipOffer(int idEnt,InternshipOffer inoff);
-	public void updateInternshipOffer(int idEnt,InternshipOffer inoff);
+	public void addInternshipOffertoEntreprise(int idEnt, int idIoffer);
+	public int addInternshipOffer(InternshipOffer inoff);
+	public void updateInternshipOffer(InternshipOffer inoff);
 	public void deleteInternshipOffer(int idEnt,InternshipOffer inoff);
 	public void addSupervisor(int idEnt,EntrepriseSupervisor es);
 	public void updateSupervisor(int idEnt,EntrepriseSupervisor es);
