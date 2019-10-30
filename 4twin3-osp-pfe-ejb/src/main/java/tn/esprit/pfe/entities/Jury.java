@@ -1,15 +1,22 @@
 package tn.esprit.pfe.entities;
 
-import javax.persistence.Column;
+import java.io.Serializable;
 
-public class Jury  extends Enseignant{
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+@Entity
+@Table(name = "Jury")
+public class Jury   extends Enseignant implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	public Jury() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+ @ManyToOne
+ private Soutenance soutenance;
 	public Jury(String lastname, String firstname, String email, String password) {
 		super(lastname, firstname, email, password);
 		// TODO Auto-generated constructor stub

@@ -17,6 +17,9 @@ public class Etudiant extends User {
 
 	private static final long serialVersionUID = 1L;
 	
+	@OneToOne
+	private Soutenance S;
+	
 	@OneToOne(mappedBy="etudiant")
 	private Reclamation Reclamation;
 	

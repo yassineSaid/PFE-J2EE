@@ -1,6 +1,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,9 +20,20 @@ import javax.persistence.TemporalType;
 @Table(name = "Soutenance")
 public class Soutenance implements Serializable {
 	
+	
+	
+	
+	
+	@OneToOne(mappedBy="S")
+	private Etudiant E;
 
-	public Soutenance(List<Jury> jury) {
-		super();
+	
+
+	public List<Jury> getJury() {
+		return jury;
+	}
+
+	public void setJury(List<Jury> jury) {
 		this.jury = jury;
 	}
 
@@ -27,16 +41,18 @@ public class Soutenance implements Serializable {
 	 * 
 	 */
 	
-	
+	@OneToMany(mappedBy="soutenance")
+	private List<Jury> jury = new ArrayList<Jury>();
 	private static final long serialVersionUID = 1L;
 
-	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,int noteSoutenance) {
+	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,int noteSoutenance,List<Jury> jury) {
 		Titre = titre;
 		Description = description;
 		this.dateSoutenance = dateSoutenance;
 		Salle = salle;
 		HeureSoutenance = heureSoutenance;
 		NoteSoutenance = noteSoutenance;
+		
 	}
 
 	public Soutenance() {
@@ -64,8 +80,6 @@ public class Soutenance implements Serializable {
 	private Date HeureSoutenance;
 	@Column
 	private int NoteSoutenance;
-	@Column
-	private List<Jury> jury;
 	
 	public int getId() {
 		return id;
@@ -123,12 +137,6 @@ public class Soutenance implements Serializable {
 		NoteSoutenance = noteSoutenance;
 	}
 
-	public List<Jury> getJury() {
-		return jury;
-	}
 
-	public void setJury(List<Jury> jury) {
-		this.jury = jury;
-	}
 
 }

@@ -1,13 +1,19 @@
 package tn.esprit.pfe.entities;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 
 
 @Entity
-@Table
+@Table(name = "Enseignant")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+
 public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;
