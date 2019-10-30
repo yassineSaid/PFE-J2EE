@@ -8,4 +8,5 @@ public interface QuestionServiceRemote {
 	public void addQuestion(ForumQuestion Q);
 	public void MetreajourQuestion(boolean Question_resolu,int id_Question);
 	public void deleteQuestion(int id_Question);
+	public ForumQuestion getQuestionid(int id);
 }
