@@ -1,6 +1,9 @@
 package tn.esprit.pfe.services;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,8 +18,28 @@ public class QuestionServices implements QuestionServiceRemote{
 	EntityManager em;
 	@Override
 	
-	public void addQuestion(ForumQuestion Q) {
+	public String addQuestion(ForumQuestion Q) {
 		em.persist(Q);
+		 TypedQuery<String> query = em.createQuery("select m.word from Motindesirable m",String.class);
+		 List<String>ls=new ArrayList<>();
+		
+		 ls=query.getResultList();
+		 System.out.println(ls);
+				 String c=Q.getConetnu_Question();
+		 String[] splited = c.split("\\s+");
+		 Boolean b =false;
+		 for (int x=0; x<splited.length; x++){
+             for (int i=0;i<ls.size();i++){
+                 if (ls.get(i).equals(splited[x])){
+                 b=true;
+                 break;
+                 }}}
+		 if (b==false){
+			 em.persist(Q);
+			 return "ajout avec sucées";}
+		 else {
+			 return"il y a des mots indesirable";}
+		
 		
 	}
 
@@ -24,6 +47,7 @@ public class QuestionServices implements QuestionServiceRemote{
 	public void MetreajourQuestion(boolean question_resolu, int id_Question) {
 		ForumQuestion q = em.find(ForumQuestion.class, id_Question);
 		q.setQuestion_resolu(question_resolu);
+		
 		
 	}
 
@@ -45,6 +69,14 @@ public class QuestionServices implements QuestionServiceRemote{
 		try { question = query.getSingleResult(); }
 		catch (Exception e) { System.out.println("Erreur : " + e); }
 		return question;
+	}
+	
+	@Override
+	public List<ForumQuestion> getAllquestion() {
+
+		System.out.println("In findAllquestion : ");
+		List<ForumQuestion> c=em.createQuery("from ForumQuestion", ForumQuestion.class).getResultList();
+		return c;
 	}
 
 	

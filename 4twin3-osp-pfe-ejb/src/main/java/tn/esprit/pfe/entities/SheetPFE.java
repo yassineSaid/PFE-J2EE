@@ -2,6 +2,7 @@ package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -29,7 +30,8 @@ public class SheetPFE implements Serializable {
 	private String problematic;
 	private String features;
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Categorie> categories;
+	private Set<Categorie> categories;
+	
 	private String qrcode;
 	@Enumerated(EnumType.STRING)
 	private EtatSheetPFE etat;
@@ -42,23 +44,21 @@ public class SheetPFE implements Serializable {
 	public SheetPFE() {
 	}
 
-	public SheetPFE(String title, String description, String problematic, String features, List<Categorie> categories) {
+	public SheetPFE(String title, String description, String problematic, String features) {
 
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
-		this.categories = categories;
+		
 	}
-
-	public SheetPFE(int id, String title, String description, String problematic, String features,
-			List<Categorie> categories) {
+	public SheetPFE(int id, String title, String description, String problematic, String features) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
-		this.categories = categories;
+		
 	}
 
 	
@@ -102,11 +102,11 @@ public class SheetPFE implements Serializable {
 		this.features = features;
 	}
 
-	public List<Categorie> getCategories() {
+	public Set<Categorie> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<Categorie> categories) {
+	public void setCategories(Set<Categorie> categories) {
 		this.categories = categories;
 	}
 

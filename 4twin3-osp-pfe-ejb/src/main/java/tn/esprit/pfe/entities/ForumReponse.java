@@ -16,6 +16,7 @@ public class ForumReponse implements Serializable{
 	private static final long serialVersionUID = 1;
 	
 	
+	
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
@@ -52,12 +53,12 @@ public class ForumReponse implements Serializable{
 	public void setForumquestion(ForumQuestion forumquestion) {
 		this.forumquestion = forumquestion;
 	}
-	/*public Etudiant getEtudiant() {
+	public Etudiant getEtudiant() {
 		return etudiant;
 	}
 	public void setEtudiant(Etudiant etudiant) {
 		this.etudiant = etudiant;
-	} */
+	} 
 	
 	
 	

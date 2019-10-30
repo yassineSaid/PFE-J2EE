@@ -19,18 +19,19 @@ public class CategorieServices implements CategorieServiceRemote{
 	EntityManager em;
 
 	@Override
-	public void addCategorie(Categorie c) {
+	public int addCategorie(Categorie c) {
 		em.persist(c);
-		
+		return c.getId();
+
 	}
-	
+
 	@Override
 	public void deleteCategorie(int id) {
 		Categorie c = em.find(Categorie.class, id);
-			em.remove(c);
-		
+		em.remove(c);
+
 	}
-	
+
 	@Override
 	public List<Categorie> getAllcategorie() {
 
@@ -40,25 +41,30 @@ public class CategorieServices implements CategorieServiceRemote{
 	}
 
 	@Override
-	public List<String> getCategorielesplusdemandées() {
-		List<Categorie> cats = em.createQuery("select count(c) from Categorie c,Enseignant e where c.id=:e.id", Categorie.class).getResultList();
-		List<String> categorieNames = new ArrayList<>();
-		for(Categorie categorie : cats){
+	public List<Categorie> getCategorielesplusdemandées(int idens) {
+		List<Categorie> cat = em.createQuery("select c from Categorie c,Enseignant e where c.e.id:=idens ", Categorie.class).getResultList();
+		return cat;
+		/*List<String> categorieNames = new ArrayList<>();
+		for(Categorie categorie : cat){
 			categorieNames.add(categorie.getName());
-		}
+		}*/
 
-		return categorieNames;
+		//return ls;
+		//return categorieNames;
 	}
 
-
 	@Override
-	public void addCategoriecommemodule(Categorie c,String name) {
-		int max=0;
-		TypedQuery<Long> query = em.createQuery("select count(c) from Categorie c where c.name=name", Long.class);
-		if (query.getSingleResult()>max) {
-			Categorie cat = em.find(Categorie.class, c.getId());
-			cat.setExixtecommemodule(true);
-		}			
+	public void addCategoriecommemodule(String name) {
+		int var=1;
+		TypedQuery<Categorie> query  =em.createQuery("select c from Categorie c where c.name=name",Categorie.class);
+		List<Categorie>ls=new ArrayList<>();
+		ls=query.getResultList();
+		if (ls.size() >var) {
+			List<Categorie> cats = em.createQuery("select c from Categorie c ", Categorie.class).getResultList();
+			for(Categorie categorie : cats){
+				categorie.setExixtecommemodule(true);
+			}
+		}	else {System.out.println("la categorie n'est plus utliseé pour etre module");		}
 	}
 
 

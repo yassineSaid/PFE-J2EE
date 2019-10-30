@@ -46,11 +46,9 @@ public class ForumQuestion implements Serializable{
 	public ForumQuestion() {
 		super();
 	}
-	public ForumQuestion(int id_Question, String conetnu_Question, boolean question_resolu) {
-		super();
-		this.id_Question = id_Question;
-		Conetnu_Question = conetnu_Question;
-		Question_resolu = question_resolu;
+	public ForumQuestion(String conetnu_Question, boolean question_resolu) {
+		this.Conetnu_Question = conetnu_Question;
+		this.Question_resolu = question_resolu;
 	}
 	public int getId_Question() {
 		return id_Question;
@@ -64,7 +62,7 @@ public class ForumQuestion implements Serializable{
 	public void setConetnu_Question(String conetnu_Question) {
 		Conetnu_Question = conetnu_Question;
 	}
-	public boolean isQuestion_resolu() {
+	public boolean getQuestion_resolu() {
 		return Question_resolu;
 	}
 	public void setQuestion_resolu(boolean question_resolu) {
@@ -82,15 +80,5 @@ public class ForumQuestion implements Serializable{
 	public void setEtudiant(Etudiant etudiant) {
 		this.etudiant = etudiant;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
+		
 	}

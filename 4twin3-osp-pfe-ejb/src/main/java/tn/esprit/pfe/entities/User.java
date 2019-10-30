@@ -138,5 +138,10 @@ public class User implements Serializable {
 		return newPass;
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+
 }
 

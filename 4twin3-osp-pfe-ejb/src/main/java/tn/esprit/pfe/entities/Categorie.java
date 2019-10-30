@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,10 +24,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Categorie implements Serializable{
 	private static final long serialVersionUID = 1L;
-	
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	@Column
 	private int id; 
 	@Column
 	private String name; 
@@ -40,18 +39,19 @@ public class Categorie implements Serializable{
 	@JsonIgnore
 	@ManyToMany(mappedBy="categories")
 	private List<SheetPFE> sheetPFEs;
+	
 
-	@OneToMany(cascade = CascadeType.ALL)
-	private Set<Enseignant> enseignant;
+	@JsonIgnore
+    @ManyToOne
+	Enseignant enseignant; 
+	
 	
 	
 	public Categorie() {
 		super();
 	}
 
-	public Categorie(int id, String name, String image, boolean exixtecommemodule) {
-		super();
-		this.id = id;
+	public Categorie( String name, String image, boolean exixtecommemodule) {
 		this.name = name;
 		this.image = image;
 		this.exixtecommemodule = exixtecommemodule;
@@ -89,6 +89,14 @@ public class Categorie implements Serializable{
 		this.exixtecommemodule = exixtecommemodule;
 	}
 
+	public Enseignant getEnseignant() {
+		return enseignant;
+	}
+
+	public void setEnseignant(Enseignant enseignant) {
+		this.enseignant = enseignant;
+	}
+
 	public List<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
@@ -96,6 +104,8 @@ public class Categorie implements Serializable{
 	public void setSheetPFEs(List<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
 	}
+	
+	
 	
 	
 	

@@ -1,8 +1,7 @@
 package tn.esprit.pfe.entities;
 
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +34,7 @@ public class Etudiant extends User {
 	
 	 @OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
 		fetch=FetchType.EAGER)
-	//private List<ForumQuestion> fq=new ArrayList<>();
+      Set<ForumQuestion> fq;
 	
 	
 	@OneToOne
@@ -84,17 +83,11 @@ public class Etudiant extends User {
 		this.sheetPFE = sheetPFE;
 	}
 
-	/*
-	 * public List<ForumQuestion> getFq() { return fq; }
-	 * 
-	 * public void setFq(List<ForumQuestion> fq) { this.fq = fq; }
-	 * 
-	 */
+	public Set<ForumQuestion> getFq() {
+		return fq;
+	}
 
-  
-	
-	
-	
-
-	
+	public void setFq(Set<ForumQuestion> fq) {
+		this.fq = fq;
+	}	
 }
