@@ -75,12 +75,6 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	}
 
 	@Override
-	public void LoginEntreprise(String email, String Password) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public int addInternshipOffer(InternshipOffer inoff) {
 		// TODO Auto-generated method stub
 		Date date = new Date();
@@ -100,7 +94,6 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		ioffer.setEntreprise(ide);
 	}
 
-
 	@Override
 	public void updateInternshipOffer(InternshipOffer inoff) {
 		// TODO Auto-generated method stub
@@ -119,66 +112,91 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	}
 
 	@Override
-	public void deleteInternshipOffer(int idEnt, InternshipOffer inoff) {
+	public int addJobOffre(JobOffer jo) {
+		// TODO Auto-generated method stub
+		Date date = new Date();
+		jo.setDatePublier(date);
+		em.persist(jo);		
+		return jo.getId();
+		
+	}
+
+	@Override
+	public void addEntreprisetoResponsable(int idR, int idEnt) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addSupervisor(int idEnt, EntrepriseSupervisor es) {
+	public void deleteInternshipOffer(InternshipOffer inoff) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateSupervisor(int idEnt, EntrepriseSupervisor es) {
+	public int addSupervisor(EntrepriseSupervisor es) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void addSupervisortoEntreprise(int idEnt, int idSuper) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteSupervisor(int idEnt, EntrepriseSupervisor es) {
+	public void updateSupervisor(EntrepriseSupervisor es) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addJobOffre(int idEnt, JobOffer jo) {
+	public void deleteSupervisor(EntrepriseSupervisor es) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateJobOffre(int idEnt, JobOffer jo) {
+	public void addJobOffretoEntreprise(int idEnt, int idJo) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteJobOffre(int idEnt, JobOffer jo) {
+	public void updateJobOffre(JobOffer jo) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addInternshipCatalog(int idEnt, InternshipCataloge ic) {
+	public void deleteJobOffre(JobOffer jo) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateInternshipCatalog(int idEnt, InternshipCataloge ic) {
+	public void addInternshipCatalog(InternshipCataloge ic) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void affectStudent(int idEnt, EntrepriseStudent es) {
+	public void addInternshipCatalogtoEntreprise(int idEnt, int ic) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	
-	
+	@Override
+	public void updateInternshipCatalog(InternshipCataloge ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void affectStudenttoEntreprise(int idEnt, int ids) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
