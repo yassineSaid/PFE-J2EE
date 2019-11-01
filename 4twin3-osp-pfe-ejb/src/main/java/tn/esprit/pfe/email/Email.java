@@ -23,6 +23,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import tn.esprit.pfe.entities.EtatSheetPFE;
+import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.InternshipAgreemen;
 import tn.esprit.pfe.entities.SheetPFE;
 
@@ -222,6 +223,33 @@ public class Email {
 			
 		}
 		
+		messageBodyPart.setContent(content, "text/html");
+
+		multipart.addBodyPart(messageBodyPart);
+
+		// Send the complete message parts
+		message.setContent(multipart);
+
+		Transport.send(message);
+	}
+	
+	public void reminderStudent(Etudiant etudiant) throws NamingException, MessagingException {
+		
+		InitialContext ic = new InitialContext();
+		session = (Session) ic.lookup("java:jboss/mail/Default");
+		Message message = new MimeMessage(session);
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(etudiant.getEmail()));
+
+		message.setSubject("Reminder to create sheet PFE");
+
+		Multipart multipart = new MimeMultipart();
+
+		BodyPart messageBodyPart = new MimeBodyPart();
+
+		String content = "<h3>Hello,</h3>" + etudiant.getPrenom() + " " + etudiant.getNom()
+				+ "<br><br>" + "<p>\r\n"
+				+ "Your must create a sheet PFE</p>";
+
 		messageBodyPart.setContent(content, "text/html");
 
 		multipart.addBodyPart(messageBodyPart);

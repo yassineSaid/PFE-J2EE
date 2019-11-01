@@ -8,5 +8,6 @@ public enum EtatSheetPFE {
 	CANCEL,
 	PRE_VALIDATE,
 	VALIDATE,
+	ALL
 	
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,6 +40,9 @@ private static final long serialVersionUID = 1L;
 	private Date created;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Categorie> categories = new HashSet<Categorie>();
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Enseignant> enseignant = new HashSet<Enseignant>();
 	
 	
 	public SheetPFEModification() {
@@ -123,6 +127,22 @@ private static final long serialVersionUID = 1L;
 	}
 
 
+	public Set<Enseignant> getEnseignant() {
+		return enseignant;
+	}
+
+
+	public void setEnseignant(Set<Enseignant> enseignant) {
+		this.enseignant = enseignant;
+	}
+
+
+	public void setCategories(Set<Categorie> categories) {
+		this.categories = categories;
+	}
+
+
+	
 	
 	
 	

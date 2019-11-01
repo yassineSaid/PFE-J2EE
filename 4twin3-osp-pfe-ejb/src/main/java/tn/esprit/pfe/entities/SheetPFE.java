@@ -18,7 +18,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name = "SheetPFE")
 public class SheetPFE implements Serializable {
@@ -35,15 +37,18 @@ public class SheetPFE implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Categorie> categories = new HashSet<Categorie>();
 	private String qrcode;
-	private String fromYear;
-	private String toYear;
 	@Enumerated(EnumType.STRING)
 	private EtatSheetPFE etat;
 	private String note;
+	
+	@JsonManagedReference
 	@ManyToOne
 	private Entreprise entreprise;
+	
 	@OneToOne
 	private Etudiant etudiant;
+	
+	@JsonManagedReference
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Enseignant> enseignant = new HashSet<Enseignant>();
 	
@@ -117,22 +122,6 @@ public class SheetPFE implements Serializable {
 
 	public void setQrcode(String qrcode) {
 		this.qrcode = qrcode;
-	}
-
-	public String getFromYear() {
-		return fromYear;
-	}
-
-	public void setFromYear(String fromYear) {
-		this.fromYear = fromYear;
-	}
-
-	public String getToYear() {
-		return toYear;
-	}
-
-	public void setToYear(String toYear) {
-		this.toYear = toYear;
 	}
 
 	public EtatSheetPFE getEtat() {

@@ -11,7 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 
@@ -27,11 +29,11 @@ public class Enseignant extends User {
 	@OneToOne(mappedBy="directeurDesStages")
 	private Site directeurDesStages;
 	
-	@JsonIgnore
+	@JsonManagedReference
 	@ManyToMany(fetch= FetchType.EAGER)
 	private Set<Categorie> categories = new HashSet<Categorie>();
 	
-	@JsonIgnore
+	@JsonBackReference
 	@ManyToMany(mappedBy="enseignant",fetch = FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs = new HashSet<SheetPFE>();
 

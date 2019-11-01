@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table( name = "Categorie")
@@ -42,6 +43,7 @@ public class Categorie implements Serializable{
 	@ManyToMany(mappedBy="categories", cascade = CascadeType.ALL)
 	private Set<SheetPFE> sheetPFEs;
 
+	@JsonBackReference
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private Set<Enseignant> enseignant;
 	

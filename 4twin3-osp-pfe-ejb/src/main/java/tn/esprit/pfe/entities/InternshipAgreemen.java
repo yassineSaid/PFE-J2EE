@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="InternshipAgreemen")
 public class InternshipAgreemen implements Serializable {
@@ -27,6 +28,8 @@ public class InternshipAgreemen implements Serializable {
 	@Temporal (TemporalType.DATE)
 	private Date endDate;
 	private String pdf;
+	
+	@JsonManagedReference
 	@ManyToOne
 	private Entreprise entreprise;
 	@OneToOne

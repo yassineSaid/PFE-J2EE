@@ -16,8 +16,10 @@ public interface SheetPFERemote {
 
 	public int addSheetPFE(SheetPFE sheetPFE);
 	public List<Etudiant> getAllStudentNoSheet();
-	public List<Etudiant> getAllStudentNoSheetWithYear(String startyear, String endyear);
-	public List<SheetPFE> getAllSheetPFE();
+	public List<Etudiant> getAllStudentNoSheetWithYear(int year);
+	public void reminderStudentNoSheet(List<Etudiant> students);
+	public List<SheetPFE> getAllSheetPFEFilter(EtatSheetPFE etat, int year, String pays, int id_categorie);
+	public List<SheetPFE> getAllSheetPFEDefault();
 	public List<SheetPFE> getAllSheetPFEAccepted();
 	public SheetPFE getSheetPFEById(int id);
 	public SheetPFE getSheetPFEByEtudiant();
@@ -28,7 +30,9 @@ public interface SheetPFERemote {
 	public RequestCancelInternship getResquest(int id);
 	public boolean updateRequest(int request_id, EtatSheetPFE etat, String note);
 	public List<Integer> statEtatSheetPFE();
-	
+	public List<SheetPFE> getAllSheetWaitEncadreur();
+	public List<SheetPFE> getAllSheetWaitRapporter();
+	public List<SheetPFE> getAllSheetValidate();
 	public List<Enseignant> getAllValidateur();
 	public boolean affectValidateurToSheetPFE(int sheet_id);
 	

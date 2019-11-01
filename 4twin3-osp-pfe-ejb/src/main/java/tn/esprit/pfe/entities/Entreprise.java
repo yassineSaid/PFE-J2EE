@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -85,12 +86,12 @@ public class Entreprise implements Serializable {
 	private Set<EntrepriseStudent> entreprisestudents;
 
 
-	@JsonIgnore
+	@JsonBackReference
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<InternshipAgreemen> internshipAgreemens;
 
-	@JsonIgnore
+	@JsonBackReference
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs;

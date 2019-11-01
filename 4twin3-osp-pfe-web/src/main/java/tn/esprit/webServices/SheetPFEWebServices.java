@@ -1,6 +1,7 @@
 package tn.esprit.webServices;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -39,27 +40,11 @@ public class SheetPFEWebServices {
 	}
 	
 	@GET
-	@Path("/accepted")
+	@Path("/nostudent/{year}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllSheetPFEAccepted() {
+	public Response getAllStudentNoSheetWithYear(@PathParam(value="year") int year) {
 
-		List<SheetPFE> listsheet = IsheetPFE.getAllSheetPFEAccepted();
-
-		if (listsheet.size() != 0) {
-
-			return Response.status(Status.ACCEPTED).entity(listsheet).build();
-		}
-
-		return Response.status(Status.NO_CONTENT).build();
-
-	}
-	
-	@GET
-	@Path("/nostudent/{startyear}/{endyear}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllStudentNoSheetWithYear(@PathParam(value="startyear") String start , @PathParam(value="endyear") String end ) {
-
-		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheetWithYear(start,end);
+		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheetWithYear(year);
 
 		if (listetudiant.size() != 0) {
 
@@ -86,11 +71,24 @@ public class SheetPFEWebServices {
 
 	}
 	
-	@GET
+	@POST
+	@Path("/reminder")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllSheetPFE() {
+	public Response reminderStudentNoSheet(List<Etudiant> students) {
 
-		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetPFE();
+		IsheetPFE.reminderStudentNoSheet(students);
+		return Response.status(Status.ACCEPTED).build();
+
+	}
+	
+	@GET
+	@Path("/{etat}/{year}/{pays}/{id_categorie}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEFilter(@PathParam(value="etat") EtatSheetPFE etat,@PathParam(value="year") int year,
+			@PathParam(value="pays") String pays,@PathParam(value="id_categorie") int id_categorie) {
+
+		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetPFEFilter(etat, year, pays, id_categorie);
 
 		if (listSheetPFE.size() != 0) {
 
@@ -100,6 +98,89 @@ public class SheetPFEWebServices {
 		return Response.status(Status.NO_CONTENT).build();
 
 	}
+	
+	@GET
+	@Path("/default")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEDefault() {
+
+		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetPFEDefault();
+
+		if (listSheetPFE.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listSheetPFE).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/accepted")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEAccepted() {
+
+		List<SheetPFE> listsheet = IsheetPFE.getAllSheetPFEAccepted();
+
+		if (listsheet.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listsheet).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/validate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEValidate() {
+
+		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetValidate();
+
+		if (listSheetPFE.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listSheetPFE).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	
+	@GET
+	@Path("/waitEncadreur")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetWaitEncadreur() {
+
+		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetWaitEncadreur();
+
+		if (listSheetPFE.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listSheetPFE).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/waitRapporter")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetWaitRapporter() {
+
+		List<SheetPFE> listSheetPFE = IsheetPFE.getAllSheetWaitRapporter();
+
+		if (listSheetPFE.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listSheetPFE).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	
 	
 	@GET
 	@Path("/{id}")
