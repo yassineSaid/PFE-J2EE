@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,10 +39,10 @@ public class Categorie implements Serializable{
 	private boolean exixtecommemodule;
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy="categories")
-	private List<SheetPFE> sheetPFEs;
+	@ManyToMany(mappedBy="categories", cascade = CascadeType.ALL)
+	private Set<SheetPFE> sheetPFEs;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private Set<Enseignant> enseignant;
 	
 	
@@ -89,13 +90,23 @@ public class Categorie implements Serializable{
 		this.exixtecommemodule = exixtecommemodule;
 	}
 
-	public List<SheetPFE> getSheetPFEs() {
+	public Set<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
 
-	public void setSheetPFEs(List<SheetPFE> sheetPFEs) {
+	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
 	}
+
+	public Set<Enseignant> getEnseignant() {
+		return enseignant;
+	}
+
+	public void setEnseignant(Set<Enseignant> enseignant) {
+		this.enseignant = enseignant;
+	}
+
+	
 	
 	
 	

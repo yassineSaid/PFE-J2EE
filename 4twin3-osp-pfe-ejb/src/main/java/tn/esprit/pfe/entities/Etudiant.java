@@ -23,18 +23,19 @@ public class Etudiant extends User {
 	@Column
 	private String identifiant;
 
-	@OneToOne(mappedBy = "etudiant")
 	@JsonIgnore
+	@OneToOne(mappedBy="etudiant")
 	private InternshipAgreemen internshipAgreemen;
+	
+	@JsonIgnore
+ 	@OneToOne(mappedBy="etudiant")
+	private SheetPFE sheetPFE;
 
 	//@OneToMany(mappedBy = "etudiant", cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	// private List<ForumQuestion> fq=new ArrayList<>();
 
 	@ManyToOne
 	private Classe classe;
-
-	@OneToOne
-	private SheetPFE sheetPFE;
 
 	public Etudiant() {
 		super();

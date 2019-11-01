@@ -5,5 +5,8 @@ public enum EtatSheetPFE {
 	VERIFICATION,
 	ACCEPTED,
 	REFUSE,
-	CANCEL
+	CANCEL,
+	PRE_VALIDATE,
+	VALIDATE,
+	
 }
