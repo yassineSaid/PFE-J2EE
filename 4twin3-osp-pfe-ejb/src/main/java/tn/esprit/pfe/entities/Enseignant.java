@@ -6,6 +6,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity
@@ -18,12 +20,19 @@ public class Enseignant extends User {
 	private boolean enabled;
 	
 	@OneToOne(mappedBy="directeurDesStages")
+	@JsonIgnore
 	private Site directeurDesStages;
+	
+	@OneToOne(mappedBy="chefDeDepartement")
+	@JsonIgnore
+	private Departement chefDeDepartement;
 
 	@ManyToOne
+	@JsonIgnore
 	private Site site;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Ecole ecole;
 
 	public Enseignant() {
@@ -64,6 +73,20 @@ public class Enseignant extends User {
 			this.setRole("DirecteurDesStages");
 		}
 		this.directeurDesStages = directeurDesStages;
+	}
+
+	public Departement getChefDeDepartement() {
+		return chefDeDepartement;
+	}
+
+	public void setChefDeDepartement(Departement chefDeDepartement) {
+		if (chefDeDepartement==null) {
+			this.setRole("Enseignant");
+		}
+		else {
+			this.setRole("ChefDeDepartement");
+		}
+		this.chefDeDepartement = chefDeDepartement;
 	}
 
 	public Site getSite() {
