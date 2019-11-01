@@ -19,16 +19,16 @@ import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.Enseignant;
-import tn.esprit.pfe.services.EnseignantService;
+import tn.esprit.pfe.entities.Classe;
+import tn.esprit.pfe.services.ClasseService;
 import utilities.ValidationError;
 
-@Path("enseignant")
+@Path("classe")
 @RequestScoped
-public class EnseignantWebServices {
+public class ClasseWebServices {
 
 	@EJB
-	EnseignantService es;
+	ClasseService cs;
 	
 	@Context
 	private HttpHeaders headers;
@@ -37,62 +37,54 @@ public class EnseignantWebServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
-	public Response addEnseignant(Enseignant e) {
+	@Path ("{id}")
+	public Response addSpecialite(@PathParam(value="id") int idSpecialite) {
+		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.addEnseignant(e, af.getIdUser(headers));
+		Set<ValidationError> violations=cs.addClasse(idSpecialite, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
-	
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin"})
-	@GET
-	public Response getListEnseignant() {
-		AuthenticationFilter af=new AuthenticationFilter();
-		Set<Enseignant> liste = es.getListEnseignant(af.getIdUser(headers));
-		return Response.status(Status.OK).entity(liste).build();
-	}
-	
+
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response supprimerEnseignant(@PathParam(value="id") int idEnseignant) {
+	public Response supprimerClasse(@PathParam(value="id") int idClasse) {
+		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.supprimerEnseignant(idEnseignant, af.getIdUser(headers));
+		Set<ValidationError> violations=cs.supprimerClasse(idClasse, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.OK).entity("delete successful").build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
-	
-	/*@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	public void updateReclamation(Reclamation rec) {	
-		rst.updateReclamation(rec);
 
-	}
-	
-	
-	
-	@DELETE
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("deleteRec/{idReclamation}")
-	public void deleteClient(@QueryParam("idReclamation") int idRec) {
-	 rst.deleteReclamation(idRec);
-	}
-	
 	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getReclamationByEtudiant")
-	public List<Reclamation> getReclamation(@QueryParam("etudiant_id") int ide){
-		return rst.getReclamationByEtudiant(ide);
-	}*/
+	@Secure(role={"Admin"})
+	@Path ("{id}")
+	public Response getClasse(@PathParam(value="id") int idClasse) {
+		Classe classe=cs.getClasse(idClasse);
+		if (classe!=null) {
+			return Response.status(Status.OK).entity(classe).build();
+		}
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Cette classe n'existe pas ou vous n'etes pas autorisé à le consulter").build();
+	}
+	
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role={"Admin"})
+	@GET
+	@Path ("/list/{id}")
+	public Response getListSpecialite(@PathParam(value="id") int idSpecialite) {
+		Set<Classe> liste = cs.getListClasse(idSpecialite);
+		return Response.status(Status.OK).entity(liste).build();
+	}
 	
 
 }

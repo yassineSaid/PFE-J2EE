@@ -20,16 +20,16 @@ import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.Site;
-import tn.esprit.pfe.services.SiteService;
+import tn.esprit.pfe.entities.Departement;
+import tn.esprit.pfe.services.DepartementService;
 import utilities.ValidationError;
 
-@Path("site")
+@Path("departement")
 @RequestScoped
-public class SiteWebServices {
+public class DepartementWebServices {
 
 	@EJB
-	SiteService ss;
+	DepartementService ds;
 	
 	@Context
 	private HttpHeaders headers;
@@ -38,10 +38,11 @@ public class SiteWebServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
-	public Response addSite(Site s) {
+	@Path ("{id}")
+	public Response addDepartement(Departement d,@PathParam(value="id") int idSite) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=ss.addSite(s, af.getIdUser(headers));
+		Set<ValidationError> violations=ds.addDepartement(d, idSite, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
 		}
@@ -53,10 +54,10 @@ public class SiteWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response modifierSite(Site s, @PathParam(value="id") int idSite) {
+	public Response modifierDepartement(Departement d, @PathParam(value="id") int idDepartement) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=ss.modifierSite(s, af.getIdUser(headers), idSite);
+		Set<ValidationError> violations=ds.modifierDepartement(d, idDepartement, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.OK).entity("modify successful").build();
 		}
@@ -68,10 +69,10 @@ public class SiteWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response supprimerSite(@PathParam(value="id") int idSite) {
+	public Response supprimerDepartement(@PathParam(value="id") int idDepartement) {
 		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=ss.supprimerSite(idSite, af.getIdUser(headers));
+		Set<ValidationError> violations=ds.supprimerDepartement(idDepartement, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.OK).entity("delete successful").build();
 		}
@@ -83,12 +84,12 @@ public class SiteWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
-	public Response getSite(@PathParam(value="id") int idSite) {
-		Site site=ss.getSite(idSite);
-		if (site!=null) {
-			return Response.status(Status.OK).entity(site).build();
+	public Response getDepartement(@PathParam(value="id") int idDepartement) {
+		Departement departement=ds.getDepartement(idDepartement);
+		if (departement!=null) {
+			return Response.status(Status.OK).entity(departement).build();
 		}
-		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Ce site n'existe pas ou vous n'etes pas autorisé à le consulter").build();
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Ce département n'existe pas ou vous n'etes pas autorisé à le consulter").build();
 	}
 	
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -96,8 +97,8 @@ public class SiteWebServices {
 	@Secure(role={"Admin"})
 	@GET
 	@Path ("/list/{id}")
-	public Response getListSite(@PathParam(value="id") int idEcole) {
-		Set<Site> liste = ss.getListSite(idEcole);
+	public Response getListDepartement(@PathParam(value="id") int idSite) {
+		Set<Departement> liste = ds.getListDepartement(idSite);
 		return Response.status(Status.OK).entity(liste).build();
 	}
 	

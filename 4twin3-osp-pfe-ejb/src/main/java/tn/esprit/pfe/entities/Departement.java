@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -22,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table
-public class Site implements Serializable {
+public class Departement implements Serializable {
 
 	/**
 	 * 
@@ -35,33 +34,26 @@ public class Site implements Serializable {
 	private int id;
 	
 	@Column
-	@NotNull
 	@NotBlank
 	private String nom;
 
-	@Column
-	@NotNull
-	@NotBlank
-	private String adresse;
-
 	@OneToOne
-	private Enseignant directeurDesStages;
+	private Enseignant chefDepartement;
 	
 	@ManyToOne
 	@JsonIgnore
-	private Ecole ecole;
+	private Site site;
 	
-	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="site")
-	private Set<Departement> departements;
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="departement")
+	private Set<Specialite> specialites;
 
-	public Site() {
+	public Departement() {
 		super();
 	}
 
-	public Site(String nom, String adresse) {
+	public Departement(String nom) {
 		super();
 		this.nom = nom;
-		this.adresse = adresse;
 	}
 
 	public int getId() {
@@ -80,36 +72,28 @@ public class Site implements Serializable {
 		this.nom = nom;
 	}
 
-	public String getAdresse() {
-		return adresse;
+	public Enseignant getChefDepartement() {
+		return chefDepartement;
 	}
 
-	public void setAdresse(String adresse) {
-		this.adresse = adresse;
+	public void setChefDepartement(Enseignant chefDepartement) {
+		this.chefDepartement = chefDepartement;
 	}
 
-	public Enseignant getDirecteurDesStages() {
-		return directeurDesStages;
+	public Site getSite() {
+		return site;
 	}
 
-	public void setDirecteurDesStages(Enseignant directeurDesStages) {
-		this.directeurDesStages = directeurDesStages;
+	public void setSite(Site site) {
+		this.site = site;
 	}
 
-	public Ecole getEcole() {
-		return ecole;
+	public Set<Specialite> getSpecialites() {
+		return specialites;
 	}
 
-	public void setEcole(Ecole ecole) {
-		this.ecole = ecole;
-	}
-
-	public Set<Departement> getDepartements() {
-		return departements;
-	}
-
-	public void setDepartements(Set<Departement> departements) {
-		this.departements = departements;
+	public void setSpecialites(Set<Specialite> specialites) {
+		this.specialites = specialites;
 	}
 	
 	
