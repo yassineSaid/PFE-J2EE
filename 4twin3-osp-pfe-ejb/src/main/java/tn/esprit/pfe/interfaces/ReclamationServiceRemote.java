@@ -25,9 +25,9 @@ public interface ReclamationServiceRemote {
      public  List<Object[]> nombreDeReclamationParMois();
 	//afficher les soutenances non noté (done ) + notifier l'enseignant affecte
 	//afficher les soutenances qui attend un rapporteur
-	//notifier l'etudiant lors de l'ajout d'une note
-     //stat note (moyenne note , nbrsoutenance note et non note , nb etudiant qui ont eu une mension tres bien ) 
-      //trello entre enseignant et etudiant
+	//notifier l'etudiant lors de l'ajout d'une note //table notifiacation 
+     //stat note (moyenne note , nbrsoutenance note et non note ,  etudiant qui ont eu une mension tres bien ) 
+  
 	
 	
 }

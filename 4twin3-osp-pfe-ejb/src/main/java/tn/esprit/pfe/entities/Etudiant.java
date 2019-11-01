@@ -20,6 +20,8 @@ public class Etudiant extends User {
 	@OneToOne(mappedBy="etudiant")
 	private Reclamation Reclamation;
 	
+
+	
 	@Column
 	private String identifiant;
 	

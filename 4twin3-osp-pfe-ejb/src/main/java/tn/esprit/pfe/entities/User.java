@@ -2,6 +2,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -13,6 +14,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -22,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+
 
 import utilities.BCrypt;
 
@@ -65,7 +69,12 @@ public class User implements Serializable {
 
 	@Column
 	private String role;
+	
 
+	@OneToMany(mappedBy="user")
+	private List<Notifications> nootifications;
+	
+	
 	public User() {
 		super();
 	}
