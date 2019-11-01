@@ -5,6 +5,8 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -17,8 +19,18 @@ import javax.persistence.UniqueConstraint;
 public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;
+	
 	@Column(nullable=false)
 	private boolean enabled;
+	
+	@OneToOne(mappedBy="directeurDesStages")
+	private Site directeurDesStages;
+
+	@ManyToOne
+	private Site site;
+	
+	@ManyToOne
+	private Ecole ecole;
 
 	public Enseignant() {
 		super();
@@ -38,6 +50,37 @@ public class Enseignant extends User {
 		this.enabled = enabled;
 	}
 
+	public Ecole getEcole() {
+		return ecole;
+	}
+
+	public void setEcole(Ecole ecole) {
+		this.ecole = ecole;
+	}
+
+	public Site getDirecteurDesStages() {
+		return directeurDesStages;
+	}
+
+	public void setDirecteurDesStages(Site directeurDesStages) {
+		if (directeurDesStages==null) {
+			this.setRole("Enseignant");
+		}
+		else {
+			this.setRole("DirecteurDesStages");
+		}
+		this.directeurDesStages = directeurDesStages;
+	}
+
+	public Site getSite() {
+		return site;
+	}
+
+	public void setSite(Site site) {
+		this.site = site;
+	}
+
+	
 	
 	
 }

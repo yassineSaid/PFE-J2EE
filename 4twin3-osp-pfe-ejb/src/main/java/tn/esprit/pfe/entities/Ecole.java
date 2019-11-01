@@ -1,8 +1,11 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,12 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -29,7 +32,7 @@ public class Ecole implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id;
 
@@ -50,6 +53,25 @@ public class Ecole implements Serializable {
 	@OneToOne(mappedBy="ecole")
 	@JsonIgnore
 	private Admin admin;
+	
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="ecole")
+	@JsonIgnore
+	private Set<Enseignant> enseignants;
+	
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="ecole")
+	@JsonIgnore
+	private Set<Site> sites;
+
+	public Ecole() {
+		super();
+	}
+
+	public Ecole(String nom, String adresse, Admin admin) {
+		super();
+		this.nom = nom;
+		this.adresse = adresse;
+		this.admin = admin;
+	}
 
 	public String getNom() {
 		return nom;
@@ -86,6 +108,23 @@ public class Ecole implements Serializable {
 	public int getId() {
 		return id;
 	}
+
+	public Set<Enseignant> getEnseignants() {
+		return enseignants;
+	}
+
+	public void setEnseignants(Set<Enseignant> enseignants) {
+		this.enseignants = enseignants;
+	}
+
+	public Set<Site> getSites() {
+		return sites;
+	}
+
+	public void setSites(Set<Site> sites) {
+		this.sites = sites;
+	}
+	
 	
 	
 }

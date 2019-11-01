@@ -1,20 +1,27 @@
 package tn.esprit.webServices;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.User;
-import tn.esprit.pfe.services.UserService;
+import tn.esprit.pfe.entities.Enseignant;
+import tn.esprit.pfe.services.EnseignantService;
 import utilities.ValidationError;
 
 @Path("enseignant")
@@ -22,16 +29,44 @@ import utilities.ValidationError;
 public class EnseignantWebServices {
 
 	@EJB
-	UserService us;
+	EnseignantService es;
+	
+	@Context
+	private HttpHeaders headers;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Enseignant"})
-	public Response addEnseignant(User e) {
-		Set<ValidationError> violations=us.addUser(e);
+	@Secure(role={"Admin"})
+	public Response addEnseignant(Enseignant e) {
+		AuthenticationFilter af=new AuthenticationFilter();
+		Set<ValidationError> violations=es.addEnseignant(e, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
+		}
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
+	}
+	
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role={"Admin"})
+	@GET
+	public Response getListEnseignant() {
+		AuthenticationFilter af=new AuthenticationFilter();
+		List<Enseignant> liste = es.getListEnseignant(af.getIdUser(headers));
+		return Response.status(Status.OK).entity(liste).build();
+	}
+	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role={"Admin"})
+	@Path ("{id}")
+	public Response supprimerEnseignant(@PathParam(value="id") int idEnseignant) {
+		AuthenticationFilter af=new AuthenticationFilter();
+		Set<ValidationError> violations=es.supprimerEnseignant(idEnseignant, af.getIdUser(headers));
+		if (violations==null) {
+			return Response.status(Status.OK).entity("delete successful").build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}

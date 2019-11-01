@@ -58,7 +58,7 @@ public class ReclamationWebServices {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{idReclamation}")
-	public void deleteClient(@PathParam("idReclamation") int idReclamation) {
+	public void deleteReclamation(@PathParam("idReclamation") int idReclamation) {
 		try {
 			
 	 rst.deleteReclamation(idReclamation);}
@@ -78,8 +78,17 @@ public class ReclamationWebServices {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getById/{nom}/{prenom}")
-	public List<Reclamation> getClientById(@PathParam("nom") String nom , @PathParam("prenom") String prenom) {
+	public List<Reclamation> getReclamationByEtudiant(@PathParam("nom") String nom , @PathParam("prenom") String prenom) {
 		return rst.getReclamationByEtudiant(nom,prenom);
+
+	}
+	
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getBySoutenance/{id}")
+	public List<Reclamation> getReclamationBySoutenance(@PathParam("id") int id ) {
+		return rst.getReclamationBySoutenance(id);
 
 	}
 	

@@ -1,7 +1,13 @@
 package tn.esprit.pfe.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -30,6 +36,11 @@ public class Etudiant extends User {
 	@JsonIgnore
 	private InternshipAgreemen internshipAgreemen;
 	
+	 //@OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
+	//	fetch=FetchType.EAGER)
+	//private List<ForumQuestion> fq=new ArrayList<>();
+	
+	
 	@OneToOne
 	private SheetPFE sheetPFE;
 
@@ -43,6 +54,48 @@ public class Etudiant extends User {
 		this.identifiant=identifiant;
 		// TODO Auto-generated constructor stub
 	}
+
+	public Reclamation getReclamation() {
+		return Reclamation;
+	}
+
+	public void setReclamation(Reclamation reclamation) {
+		Reclamation = reclamation;
+	}
+
+	public String getIdentifiant() {
+		return identifiant;
+	}
+
+	public void setIdentifiant(String identifiant) {
+		this.identifiant = identifiant;
+	}
+
+	public InternshipAgreemen getInternshipAgreemen() {
+		return internshipAgreemen;
+	}
+
+	public void setInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
+		this.internshipAgreemen = internshipAgreemen;
+	}
+
+	public SheetPFE getSheetPFE() {
+		return sheetPFE;
+	}
+
+	public void setSheetPFE(SheetPFE sheetPFE) {
+		this.sheetPFE = sheetPFE;
+	}
+
+	/*
+	 * public List<ForumQuestion> getFq() { return fq; }
+	 * 
+	 * public void setFq(List<ForumQuestion> fq) { this.fq = fq; }
+	 * 
+	 */
+
+  
+	
 	
 	
 

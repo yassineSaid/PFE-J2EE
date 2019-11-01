@@ -34,20 +34,16 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
 	private int id;
 
 	@Column
-	@NotNull(message = "Donnez un nom de famille")
 	@NotBlank(message = "Donnez un nom de famille")
-	@NotEmpty(message = "Donnez un nom de famille")
 	private String nom;
 
 	@Column
-	@NotNull(message = "Donnez un prenom")
 	@NotBlank(message = "Donnez un prenom")
-	@NotEmpty(message = "Donnez un prenom")
 	private String prenom;
 
 	@Column(nullable = false, unique = true)
@@ -137,6 +133,14 @@ public class User implements Serializable {
 		newPass = BCrypt.hashpw(password, BCrypt.gensalt());
 		return newPass;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", password=" + password
+				+ ", plainPassword=" + plainPassword + ", role=" + role + "]";
+	}
+	
+	
 
 }
 

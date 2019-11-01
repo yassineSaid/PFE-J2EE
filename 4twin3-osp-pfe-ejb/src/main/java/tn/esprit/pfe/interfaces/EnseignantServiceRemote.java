@@ -1,12 +1,15 @@
 package tn.esprit.pfe.interfaces;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Remote;
 
 import tn.esprit.pfe.entities.Enseignant;
+import utilities.ValidationError;
 
 @Remote
 public interface EnseignantServiceRemote {
-	public void addEnseignant(Enseignant e);
-
+	public Set<ValidationError> addEnseignant(Enseignant e, int idAdmin);
+	public Set<Enseignant> getListEnseignant(int idUser);
+	public Set<ValidationError> supprimerEnseignant(int idEnseignant, int idAdmin);
 }
