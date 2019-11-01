@@ -47,27 +47,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-	<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
-	<dependency>
-		<groupId>javax.mail</groupId>
-		<artifactId>mail</artifactId>
-		<version>1.4</version>
-	</dependency>
-
-
-	<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-annotations</artifactId>
-		<version>3.5.6-Final</version>
-	</dependency>
-	<!-- Import the CDI API, we use provided scope as the API is included in 
-		JBoss WildFly -->
-	<dependency>
-		<groupId>javax.enterprise</groupId>
-		<artifactId>cdi-api</artifactId>
-		<scope>provided</scope>
-	</dependency>
+		<!-- Import the CDI API, we use provided scope as the API is included in 
+			JBoss WildFly -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Import the JPA API, we use provided scope as the API is included in 
 			JBoss WildFly -->
@@ -102,6 +88,14 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-annotations</artifactId>
+    <version>3.5.6-Final</version>
+</dependency>
+		
 
 		<dependency>
 			<groupId>org.jboss.arquillian.protocol</groupId>
@@ -113,6 +107,30 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.5.3</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.5.1</version>
 		</dependency>
 		
 	</dependencies>
@@ -187,3 +205,4 @@
 	</profiles>
 
 </project>
+

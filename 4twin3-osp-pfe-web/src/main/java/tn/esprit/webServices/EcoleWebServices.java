@@ -100,23 +100,8 @@ public class EcoleWebServices {
 	@GET
 	public Response getListEcole() {
 		List<Ecole> liste = es.getListEcole();
-		return Response.status(Status.ACCEPTED).entity(liste).build();
+		return Response.status(Status.OK).entity(liste).build();
 	}
-	
-	
-	/*@DELETE
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("deleteRec/{idReclamation}")
-	public void deleteClient(@QueryParam("idReclamation") int idRec) {
-	 rst.deleteReclamation(idRec);
-	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getReclamationByEtudiant")
-	public List<Reclamation> getReclamation(@QueryParam("etudiant_id") int ide){
-		return rst.getReclamationByEtudiant(ide);
-	}*/
 	
 
 }

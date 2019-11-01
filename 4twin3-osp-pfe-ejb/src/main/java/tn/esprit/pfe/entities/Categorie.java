@@ -2,7 +2,9 @@ package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table( name = "Categorie")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -20,7 +25,7 @@ public class Categorie implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id; 
 	@Column
@@ -32,9 +37,14 @@ public class Categorie implements Serializable{
 	@Column
 	private boolean exixtecommemodule;
 	
+	@JsonIgnore
 	@ManyToMany(mappedBy="categories")
 	private List<SheetPFE> sheetPFEs;
 
+	@OneToMany(cascade = CascadeType.ALL)
+	private Set<Enseignant> enseignant;
+	
+	
 	public Categorie() {
 		super();
 	}

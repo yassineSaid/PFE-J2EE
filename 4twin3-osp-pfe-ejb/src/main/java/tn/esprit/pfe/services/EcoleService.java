@@ -120,7 +120,7 @@ public class EcoleService implements EcoleServiceRemote {
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		}else if (e == null) {
+		} else if (e == null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Ecole");
 			error.setErrorMessage("Cette école n'éxiste pas");

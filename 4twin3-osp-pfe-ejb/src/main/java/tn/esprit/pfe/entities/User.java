@@ -1,4 +1,5 @@
 
+
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
@@ -12,10 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -24,8 +22,6 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-
 
 import utilities.BCrypt;
 
@@ -38,20 +34,16 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
 	private int id;
 
 	@Column
-	@NotNull(message = "Donnez un nom de famille")
 	@NotBlank(message = "Donnez un nom de famille")
-	@NotEmpty(message = "Donnez un nom de famille")
 	private String nom;
 
 	@Column
-	@NotNull(message = "Donnez un prenom")
 	@NotBlank(message = "Donnez un prenom")
-	@NotEmpty(message = "Donnez un prenom")
 	private String prenom;
 
 	@Column(nullable = false, unique = true)
@@ -73,8 +65,7 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy="user")
 	private List<Notifications> nootifications;
-	
-	
+
 	public User() {
 		super();
 	}
@@ -147,5 +138,14 @@ public class User implements Serializable {
 		return newPass;
 	}
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", password=" + password
+				+ ", plainPassword=" + plainPassword + ", role=" + role + "]";
+	}
+	
+	
+
 }
+
 
