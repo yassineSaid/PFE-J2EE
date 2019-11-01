@@ -34,11 +34,11 @@ public class SheetPFEModificationService implements SheetPFEModificationRemote{
 	}
 
 	@Override
-	public List<SheetPFEModification> getAllSheetPFEModifications() {
-		return em.createQuery("select s from SheetPFEModification s where s.etat=:etat ", SheetPFEModification.class)
-				.setParameter("etat", EtatSheetPFE.DEFAULT).getResultList();
+	public List<SheetPFEModification> getAllRefuseSheetPFEModifications() {
+		return em.createQuery("select sm from SheetPFEModification sm join sm.sheetPFE s where sm.etat='DEFAULT' and s.etat='REFUSE' ", SheetPFEModification.class).getResultList();
 	}
 
+	
 	@Override
 	public SheetPFEModification getSheetPFEModification(int id) {
 		return em.find(SheetPFEModification.class, id);

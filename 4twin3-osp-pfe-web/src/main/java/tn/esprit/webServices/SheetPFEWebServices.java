@@ -13,6 +13,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import tn.esprit.pfe.entities.Categorie;
+import tn.esprit.pfe.entities.Enseignant;
+import tn.esprit.pfe.entities.EtatSheetPFE;
+import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.RequestCancelInternship;
 import tn.esprit.pfe.entities.SheetPFE;
 import tn.esprit.pfe.interfaces.SheetPFERemote;
@@ -30,6 +35,54 @@ public class SheetPFEWebServices {
 
 		sheetPFE.setId(IsheetPFE.addSheetPFE(sheetPFE));
 		return Response.status(Status.CREATED).entity(sheetPFE).build();
+
+	}
+	
+	@GET
+	@Path("/accepted")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEAccepted() {
+
+		List<SheetPFE> listsheet = IsheetPFE.getAllSheetPFEAccepted();
+
+		if (listsheet.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listsheet).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/nostudent/{startyear}/{endyear}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllStudentNoSheetWithYear(@PathParam(value="startyear") String start , @PathParam(value="endyear") String end ) {
+
+		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheetWithYear(start,end);
+
+		if (listetudiant.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listetudiant).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/nostudent")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllStudentNoSheetPFE() {
+
+		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheet();
+
+		if (listetudiant.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(listetudiant).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
 
 	}
 	
@@ -85,26 +138,24 @@ public class SheetPFEWebServices {
 	}
 	
 	@PUT
-	@Path("/validate")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/verification/{sheet_id}/{etat}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response validateSheetPFE(SheetPFE sheetPFE) {	
+	public Response verificationByDirectorSheetPFE(@PathParam(value="sheet_id") int sheet_id,@PathParam(value="etat") EtatSheetPFE etat) {	
 		
-		if(IsheetPFE.validateSheetPFE(sheetPFE))
-	    	return Response.status(Status.ACCEPTED).entity(sheetPFE).build();
+		if(IsheetPFE.verificationByDirectorSheetPFE(sheet_id,etat))
+	    	return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(sheet_id)).build();
 		
     	return Response.status(Status.NOT_MODIFIED).build();
 
 	}
 	
 	@POST
-	@Path("/cancel")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/cancel/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response requestCancelInternship(SheetPFE sheetPFE) {
+	public Response requestCancelInternship(@PathParam(value="id") int id) {
 
-		IsheetPFE.requestCancelInternship(sheetPFE.getId());
-		return Response.status(Status.CREATED).entity(IsheetPFE.getResquest(sheetPFE.getId())).build();
+		IsheetPFE.requestCancelInternship(id);
+		return Response.status(Status.CREATED).entity(IsheetPFE.getResquest(id)).build();
 
 	}
 	@GET
@@ -136,17 +187,108 @@ public class SheetPFEWebServices {
 	
 	
 	@PUT
-	@Path("/cancel")
+	@Path("/cancel/{request_id}/{etat}/{note}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateInternshipAgreemen(RequestCancelInternship request) {	
+	public Response updateInternshipAgreemen(@PathParam(value="request_id") int request_id,
+			@PathParam(value="etat") EtatSheetPFE etat, @PathParam(value="note") String note ) {	
 		
-		if(IsheetPFE.updateRequest(request))
-	    	return Response.status(Status.ACCEPTED).entity(request).build();
+		if(IsheetPFE.updateRequest(request_id, etat, note))
+	    	return Response.status(Status.ACCEPTED).entity(IsheetPFE.getResquest(request_id)).build();
 		
     	return Response.status(Status.NOT_MODIFIED).build();
 
 	}
 	
+	@GET
+	@Path("/encadreur/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEncardeurByCategories(@PathParam(value="sheet_id") int id) {	
+		
+
+		if (IsheetPFE.getEncardeurByCategories(id) != null) {
+
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getEncardeurByCategories(id)).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@POST
+	@Path("/encadreur/affect/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response affectEncadreurToSheetPFEAuto(@PathParam(value="id") int id) {	
+		
+
+		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id)) {
+
+			return Response.status(Status.ACCEPTED).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@POST
+	@Path("/encadreur/affect/{idSheet}/{idEnseignant}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response affectEncadreurToSheetPFEManual(@PathParam(value="idSheet") int idSheet,@PathParam(value="idEnseignant") int idEnseignant) {	
+		
+
+		if (IsheetPFE.affectEncadreurToSheetPFEManual(idSheet, idEnseignant)) {
+
+			return Response.status(Status.ACCEPTED).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/dashboard")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response statEtatSheetPFE() {	
+		
+
+		if (IsheetPFE.statEtatSheetPFE() != null) {
+
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.statEtatSheetPFE()).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/validateur")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllRapporteur() {	
+		
+		List<Enseignant> list = IsheetPFE.getAllValidateur();
+
+		if (list.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@POST
+	@Path("/validateur/affect/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response affectValidateurToSheetPFEAuto(@PathParam(value="sheet_id") int id) {	
+		
+
+		if( IsheetPFE.affectValidateurToSheetPFE(id))
+			
+			return Response.status(Status.ACCEPTED).build();
+		
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
 	
 }

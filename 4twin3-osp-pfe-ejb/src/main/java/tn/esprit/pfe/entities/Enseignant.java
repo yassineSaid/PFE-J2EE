@@ -1,7 +1,12 @@
 package tn.esprit.pfe.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -26,6 +31,14 @@ public class Enseignant extends User {
 	@OneToOne(mappedBy="chefDeDepartement")
 	@JsonIgnore
 	private Departement chefDeDepartement;
+	
+	@JsonIgnore
+	@ManyToMany(fetch= FetchType.EAGER)
+	private Set<Categorie> categories = new HashSet<Categorie>();
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy="enseignant",fetch = FetchType.EAGER)
+	private Set<SheetPFE> sheetPFEs = new HashSet<SheetPFE>();
 
 	@ManyToOne
 	@JsonIgnore
@@ -97,6 +110,23 @@ public class Enseignant extends User {
 		this.site = site;
 	}
 
+	public Set<Categorie> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(Set<Categorie> categories) {
+		this.categories = categories;
+	}
+
+	public Set<SheetPFE> getSheetPFEs() {
+		return sheetPFEs;
+	}
+
+	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
+		this.sheetPFEs = sheetPFEs;
+	}
+
+	
 	
 	
 	

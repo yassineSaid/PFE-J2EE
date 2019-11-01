@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name= "Entreprise")
@@ -83,14 +85,15 @@ public class Entreprise implements Serializable {
 	private Set<EntrepriseStudent> entreprisestudents;
 
 
+	@JsonIgnore
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<InternshipAgreemen> internshipAgreemens;
 
+	@JsonIgnore
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs;
-
 
 
 	public int getId() {
