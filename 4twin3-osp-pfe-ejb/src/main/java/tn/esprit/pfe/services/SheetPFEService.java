@@ -55,7 +55,7 @@ public class SheetPFEService implements SheetPFERemote {
 		return sheetPFE.getId();
 
 	}
-	
+
 	@Override
 	public List<Etudiant> getAllStudentNoSheet() {
 		return em.createQuery(
@@ -85,11 +85,153 @@ public class SheetPFEService implements SheetPFERemote {
 	@Override
 	public List<SheetPFE> getAllSheetPFEFilter(EtatSheetPFE etat, int year, String pays, int id_categorie) {
 
-			return em.createQuery(
-					"select s from SheetPFE s join s.etudiant e join s.entreprise p join s.categories c where s.etat = :etat and e.classe.anneeDeDebut = :year and p.Pays= :pays and c.id= :idcategorie",
-					SheetPFE.class).setParameter("etat", etat).setParameter("year", year).setParameter("pays", pays)
-					.setParameter("idcategorie", id_categorie).getResultList();
-		
+		if (etat.equals(EtatSheetPFE.ALL)) {
+
+			if (year == 0) {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s", SheetPFE.class).getResultList();
+
+					} else {
+
+						return em.createQuery("select s from SheetPFE s join s.categories c where c.id= :idcategorie",
+								SheetPFE.class).setParameter("idcategorie", id_categorie).getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s join s.entreprise p where p.Pays= :pays",
+								SheetPFE.class).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.entreprise p join s.categories c where p.Pays= :pays and c.id= :idcategorie",
+								SheetPFE.class).setParameter("pays", pays).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				}
+
+			} else {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e where e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.categories c where c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p where p.Pays= :pays and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p join s.categories c where p.Pays= :pays and  c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).setParameter("idcategorie", id_categorie)
+								.setParameter("pays", pays).getResultList();
+
+					}
+
+				}
+
+			}
+
+		} else {
+			
+			if (year == 0) {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s where s.etat = :etat ", SheetPFE.class)
+								.setParameter("etat", etat).getResultList();
+
+					} else {
+
+						return em.createQuery("select s from SheetPFE s join s.categories c where s.etat = :etat and  c.id= :idcategorie",
+								SheetPFE.class).setParameter("etat", etat).setParameter("idcategorie", id_categorie).getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s join s.entreprise p where s.etat = :etat and  p.Pays= :pays",
+								SheetPFE.class).setParameter("etat", etat).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.entreprise p join s.categories c where s.etat = :etat and  p.Pays= :pays and c.id= :idcategorie",
+								SheetPFE.class).setParameter("etat", etat).setParameter("pays", pays).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				}
+
+			} else {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e where s.etat = :etat and  e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.categories c where s.etat = :etat and  c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p where s.etat = :etat and  p.Pays= :pays and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p join s.categories c where s.etat = :etat and  p.Pays= :pays and  c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year).setParameter("idcategorie", id_categorie)
+								.setParameter("pays", pays).getResultList();
+
+					}
+
+				}
+
+			}
+			
+		}
+
 	}
 
 	@Override
@@ -110,7 +252,7 @@ public class SheetPFEService implements SheetPFERemote {
 				"select s from SheetPFE s join s.etudiant e where s.etat ='DEFAULT' and e.classe.anneeDeDebut = :year order by(s.id)",
 				SheetPFE.class).setParameter("year", year).getResultList();
 	}
-	
+
 	@Override
 	public boolean verificationByDirectorSheetPFE(int sheet_id, EtatSheetPFE etat) {
 
@@ -129,7 +271,7 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 
 	}
-	
+
 	@Override
 	public int requestCancelInternship(int sheet_id) {
 		SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
@@ -178,13 +320,13 @@ public class SheetPFEService implements SheetPFERemote {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public List<SheetPFE> getAllSheetValidate() {
 		return em.createQuery("select s from SheetPFE s where s.etat = 'VALIDATE' ", SheetPFE.class).getResultList();
-	
+
 	}
-	
+
 	@Override
 	public List<SheetPFE> getAllSheetPFEAccepted() {
 		return em.createQuery("select s from SheetPFE s where s.etat = 'ACCEPTED' ", SheetPFE.class).getResultList();
@@ -206,13 +348,13 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
-	
 	@Override
 	public List<SheetPFE> getAllSheetWaitEncadreur() {
-		return em.createQuery("select s from SheetPFE s where s.id not in (select s1.id from SheetPFE s1 join s1.enseignant e1 where e1.role = 'ENCADREUR') ", SheetPFE.class).getResultList();
+		return em.createQuery(
+				"select s from SheetPFE s where s.id not in (select s1.id from SheetPFE s1 join s1.enseignant e1 where e1.role = 'ENCADREUR') ",
+				SheetPFE.class).getResultList();
 	}
-	
-	
+
 	@Override
 	public List<Enseignant> getAllEncadreur() {
 		return em.createQuery("select e from Enseignant e where e.role='ENCADREUR'", Enseignant.class).getResultList();
@@ -256,31 +398,21 @@ public class SheetPFEService implements SheetPFERemote {
 
 		}
 	}
+
 	
 	@Override
 	public List<SheetPFE> getAllSheetWaitRapporter() {
-		return em.createQuery("select s from SheetPFE s where s.id not in (select s1.id from SheetPFE s1 join s1.enseignant e1 where e1.role = 'RAPPORTER') ", SheetPFE.class).getResultList();
+		return em.createQuery(
+				"select s from SheetPFE s where s.id not in (select s1.id from SheetPFE s1 join s1.enseignant e1 where e1.role = 'RAPPORTER') ",
+				SheetPFE.class).getResultList();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public List<Enseignant> getAllValidateur() {
 		return em.createQuery("select e from Enseignant e where e.role='VALIDATEUR'", Enseignant.class).getResultList();
 
 	}
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public SheetPFE getSheetPFEById(int id) {
 		SheetPFE sheetPFE = em.find(SheetPFE.class, id);
@@ -306,8 +438,6 @@ public class SheetPFEService implements SheetPFERemote {
 		return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
 				.setParameter("etudiantId", etudiant.getId()).getSingleResult();
 	}
-
-	
 
 	@Override
 	public boolean updateSheetPFE(SheetPFE sheetPFE) {
@@ -340,16 +470,6 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
-	
-
-	
-
-	
-
-	
-
-	
-
 	private String generateRandomCode() {
 
 		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -368,7 +488,5 @@ public class SheetPFEService implements SheetPFERemote {
 		return em.createQuery("select count(s) as nb from SheetPFE s  group by(s.etat) order by(nb) desc")
 				.getResultList();
 	}
-
-	
 
 }
