@@ -12,7 +12,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import tn.esprit.pfe.entities.Admin;
-import tn.esprit.pfe.entities.Classe;
 import tn.esprit.pfe.entities.Departement;
 import tn.esprit.pfe.entities.Specialite;
 import tn.esprit.pfe.interfaces.SpecialiteServiceRemote;
