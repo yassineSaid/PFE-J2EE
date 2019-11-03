@@ -3,6 +3,7 @@ package tn.esprit.pfe.interfaces;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.management.Notification;
 
 import tn.esprit.pfe.entities.Categorie;
 import tn.esprit.pfe.entities.Enseignant;
@@ -26,7 +27,7 @@ public interface SheetPFERemote {
 	public List<SheetPFE> getAllSheetPFEAccepted();
 	public SheetPFE getSheetPFEById(int id);
 	public SheetPFE getSheetPFEByEtudiant();
-	public PFENotification updateSheetPFE(SheetPFE sheetPFE);
+	public boolean updateSheetPFE(SheetPFE sheetPFE);
 	public boolean verificationByDirectorSheetPFE(int sheet_id,EtatSheetPFE etat);
 	public int requestCancelInternship(int sheet_id);
 	public List<RequestCancelInternship> getAllRequest();
@@ -38,13 +39,13 @@ public interface SheetPFERemote {
 	public List<Enseignant> getAllValidateur();
 	public boolean affectValidateurToSheetPFE(int sheet_id);
 	public boolean validateSheetPFE(int sheet_id,EtatSheetPFE etat,String note);
-	public List<Integer> getAllEnseignantOrderByEncadrement();
+	public List<Enseignant> getAllEnseignantOrderByEncadrement();
 	public List<Enseignant> getEncardeurByCategories(int sheet_id);
-	public boolean affectEncadreurToSheetPFEAuto(int sheet_id);
+	public String affectEncadreurToSheetPFEAuto(int sheet_id);
 	public boolean affectEncadreurToSheetPFEManual(int sheet_id,int enseignant_id);
 	public boolean updateEncadreurSheetPFE(int sheetPFE_id,int enseignant_id);
 	public List<Enseignant> getRapporteurByCategories(int sheet_id);
-	public boolean affectRapporteurToSheetPFEAuto(int sheet_id);
+	public String affectRapporteurToSheetPFEAuto(int sheet_id);
 	public boolean affectRapporteurToSheetPFEManual(int sheet_id,int enseignant_id);
 	public boolean updateRapporteurSheetPFE(int sheetPFE_id,int enseignant_id);
 	public List<SheetPFE> getAllSheetPFEWaitNote();
@@ -58,6 +59,8 @@ public interface SheetPFERemote {
 	public boolean accepteSheetModify(int sheet_id,EtatSheetPFE etat,String note);
 	public List<SheetPFEModification> getALLSheetModifyDefault();
 	public SheetPFEModification getSheetModify(int sheet_id);
+	public List<PFENotification> getAllNotificationByEnseignant(int enseignant_id);
+	public List<PFENotification> getAllNotificationByEtudiant(int etudiant_id);
 	
 
 }

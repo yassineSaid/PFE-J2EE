@@ -20,8 +20,10 @@ import tn.esprit.pfe.entities.Enseignant;
 import tn.esprit.pfe.entities.EnseignantSheetPFE;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.entities.PFENotification;
 import tn.esprit.pfe.entities.RequestCancelInternship;
 import tn.esprit.pfe.entities.SheetPFE;
+import tn.esprit.pfe.entities.SheetPFEModification;
 import tn.esprit.pfe.interfaces.SheetPFERemote;
 
 @Path("sheet")
@@ -212,8 +214,8 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateInternshipAgreemen(SheetPFE sheetPFE) {	
 		
-		if(IsheetPFE.updateSheetPFE(sheetPFE) != null)
-	    	return Response.status(Status.ACCEPTED).entity(IsheetPFE.updateSheetPFE(sheetPFE)).build();
+		if(IsheetPFE.updateSheetPFE(sheetPFE))
+	    	return Response.status(Status.ACCEPTED).entity(sheetPFE).build();
 		
     	return Response.status(Status.NOT_MODIFIED).build();
 
@@ -302,12 +304,19 @@ public class SheetPFEWebServices {
 	public Response affectEncadreurToSheetPFEAuto(@PathParam(value="id") int id) {	
 		
 
-		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id)) {
+		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id).equals("SUCCESS")) {
 
-			return Response.status(Status.ACCEPTED).build();
+			return Response.status(Status.ACCEPTED).entity("SUCCESS").build();
+		}
+		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id).equals("NO_CONTENT")) {
+			
+			return Response.status(Status.NO_CONTENT).entity("NO_CONTENT").build();
+			
+		}else {
+			return Response.status(Status.NOT_MODIFIED).build();
 		}
 
-		return Response.status(Status.NO_CONTENT).build();
+		
 
 	}
 	
@@ -347,12 +356,19 @@ public class SheetPFEWebServices {
 	public Response affectRapporteurToSheetPFEAuto(@PathParam(value="id") int id) {	
 		
 
-		if (IsheetPFE.affectRapporteurToSheetPFEAuto(id)) {
+		if (IsheetPFE.affectRapporteurToSheetPFEAuto(id).equals("SUCCESS")) {
+			
+			return Response.status(Status.ACCEPTED).entity("SUCCESS").build();
+			
+		}else if(IsheetPFE.affectRapporteurToSheetPFEAuto(id).equals("NO_CONTENT")) {
+			
+			return Response.status(Status.NO_CONTENT).entity("NO_CONTENT").build();
+			
+		}else {
+			
+			return Response.status(Status.NOT_MODIFIED).build();
 
-			return Response.status(Status.ACCEPTED).build();
 		}
-
-		return Response.status(Status.NO_CONTENT).build();
 
 	}
 	
@@ -371,12 +387,25 @@ public class SheetPFEWebServices {
 
 	}
 	
+	@PUT
+	@Path("/rapporteur/{sheetPFE_id}/{enseignant_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateRapporteurSheetPFE(@PathParam(value="sheetPFE_id") int sheetPFE_id, @PathParam(value="enseignant_id") int enseignant_id) {	
+		
+
+		if(IsheetPFE.updateRapporteurSheetPFE(sheetPFE_id,enseignant_id)) 
+			return Response.status(Status.ACCEPTED).build();
+		
+		return Response.status(Status.NOT_MODIFIED).build();
+	
+	}
+	
 	@GET
 	@Path("/enseignantorderbyencadrement")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllEnseignantOrderByEncadrement() {
 		
-		List<Integer> list = IsheetPFE.getAllEnseignantOrderByEncadrement();
+		List<Enseignant> list = IsheetPFE.getAllEnseignantOrderByEncadrement();
 		
 		if(list.size() > 0)
 			  return Response.status(Status.ACCEPTED).entity(list).build();
@@ -479,6 +508,7 @@ public class SheetPFEWebServices {
 
 	}
 	
+	
 	@POST
 	@Path("/validateur/affect/{sheet_id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -490,7 +520,7 @@ public class SheetPFEWebServices {
 			return Response.status(Status.ACCEPTED).build();
 		
 
-		return Response.status(Status.NO_CONTENT).build();
+		return Response.status(Status.NOT_MODIFIED).build();
 
 	}
 	
@@ -504,6 +534,70 @@ public class SheetPFEWebServices {
 	    	return Response.status(Status.ACCEPTED).build();
 		
     	return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+	
+	@GET
+	@Path("/modifiy")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getALLSheetModifyDefault() {	
+		
+		List<SheetPFEModification> list = IsheetPFE.getALLSheetModifyDefault();
+
+		if (list.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/modifiy/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getALLSheetModifyDefault(@PathParam(value="sheet_id") int sheet_id) {	
+		
+
+		if (IsheetPFE.getSheetModify(sheet_id) != null) {
+
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetModify(sheet_id)).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/notificationenseignant/{enseignant_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllNotificationByEnseignant(@PathParam(value="enseignant_id") int enseignant_id) {	
+		
+
+		List<PFENotification> list = IsheetPFE.getAllNotificationByEnseignant(enseignant_id);
+
+		if (list.size()>0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/notificationetudiant/{etudiant_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllNotificationByEtudiant(@PathParam(value="etudiant_id") int etudiant_id) {	
+		
+		List<PFENotification> list = IsheetPFE.getAllNotificationByEtudiant(etudiant_id);
+		
+		if (list.size()>0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
 
 	}
 	
