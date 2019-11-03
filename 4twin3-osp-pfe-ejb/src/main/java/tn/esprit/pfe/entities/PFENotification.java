@@ -24,7 +24,7 @@ public class PFENotification implements Serializable {
 	@Temporal (TemporalType.DATE)
 	private Date created;
 	private int vu;
-	private String by;
+	private String sendby;
 	@ManyToOne
 	private Enseignant enseignant;
 	@ManyToOne
@@ -62,12 +62,12 @@ public class PFENotification implements Serializable {
 		this.vu = vu;
 	}
 
-	public String getBy() {
-		return by;
+	public String getSendBy() {
+		return sendby;
 	}
 
-	public void setBy(String by) {
-		this.by = by;
+	public void setSendBy(String sendby) {
+		this.sendby = sendby;
 	}
 
 	public Enseignant getEnseignant() {

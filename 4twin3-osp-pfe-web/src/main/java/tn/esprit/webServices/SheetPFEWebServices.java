@@ -212,8 +212,8 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateInternshipAgreemen(SheetPFE sheetPFE) {	
 		
-		if(IsheetPFE.updateSheetPFE(sheetPFE))
-	    	return Response.status(Status.ACCEPTED).entity(sheetPFE).build();
+		if(IsheetPFE.updateSheetPFE(sheetPFE) != null)
+	    	return Response.status(Status.ACCEPTED).entity(IsheetPFE.updateSheetPFE(sheetPFE)).build();
 		
     	return Response.status(Status.NOT_MODIFIED).build();
 

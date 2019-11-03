@@ -23,6 +23,7 @@ import tn.esprit.pfe.entities.Enseignant;
 import tn.esprit.pfe.entities.EnseignantSheetPFE;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.entities.PFENotification;
 import tn.esprit.pfe.entities.RequestCancelInternship;
 import tn.esprit.pfe.entities.SheetPFE;
 import tn.esprit.pfe.entities.SheetPFEModification;
@@ -687,34 +688,62 @@ public class SheetPFEService implements SheetPFERemote {
 	}
 
 	@Override
-	public boolean updateSheetPFE(SheetPFE sheetPFE) {
-		SheetPFE oldsheet = em.find(SheetPFE.class, sheetPFE.getId());
-		try {
-
-			if (oldsheet.getEtat().equals(EtatSheetPFE.DEFAULT) || oldsheet.getEtat().equals(EtatSheetPFE.REFUSE)) {
-				em.merge(sheetPFE);
-			} else {
-
-				SheetPFEModification sheetPFEModification = new SheetPFEModification();
-				sheetPFEModification.setTitle(sheetPFE.getTitle());
-				sheetPFEModification.setDescription(sheetPFE.getDescription());
-				sheetPFEModification.setFeatures(sheetPFE.getFeatures());
-				sheetPFEModification.setProblematic(sheetPFE.getProblematic());
-				sheetPFEModification.setCreated(new Date());
-				sheetPFEModification.setSheetPFE(sheetPFE);
-				sheetPFEModification.setEtat(EtatSheetPFE.DEFAULT);
-				sheetPFEModification.getCategories().addAll(sheetPFE.getCategories());
-				sheetPFEModification.setEntreprise(sheetPFE.getEntreprise());
-
-				em.persist(sheetPFEModification);
-
-			}
-
-			return true;
-
-		} catch (Exception e) {
-			return false;
-		}
+	public PFENotification updateSheetPFE(SheetPFE sheetPFE) {
+		
+		System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+sheetPFE.getEtudiant().getId());
+		PFENotification notifyby =  em.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'", PFENotification.class)
+				.setParameter("id", 1).getSingleResult();
+		
+//		SheetPFE oldsheet = em.find(SheetPFE.class, sheetPFE.getId());
+//		try {
+//
+//			if (oldsheet.getEtat().equals(EtatSheetPFE.DEFAULT)) {
+//				em.merge(sheetPFE);
+//			}else if (oldsheet.getEtat().equals(EtatSheetPFE.REFUSE)) {
+//				
+//				SheetPFEModification sheetPFEModification = new SheetPFEModification();
+//				sheetPFEModification.setTitle(oldsheet.getTitle());
+//				sheetPFEModification.setDescription(oldsheet.getDescription());
+//				sheetPFEModification.setFeatures(oldsheet.getFeatures());
+//				sheetPFEModification.setProblematic(oldsheet.getProblematic());
+//				sheetPFEModification.setCreated(new Date());
+//				sheetPFEModification.setSheetPFE(oldsheet);
+//				sheetPFEModification.setEtat(EtatSheetPFE.ACCEPTED);
+//				sheetPFEModification.getCategories().addAll(oldsheet.getCategories());
+//				sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
+//				
+//				PFENotification notifyby =  em.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'", PFENotification.class)
+//						.setParameter("id", sheetPFE.getEtudiant().getId()).getSingleResult();
+//
+//				
+//				em.merge(sheetPFE);
+//				
+//				
+//				
+//			} else {
+//
+//				SheetPFEModification sheetPFEModification = new SheetPFEModification();
+//				sheetPFEModification.setTitle(sheetPFE.getTitle());
+//				sheetPFEModification.setDescription(sheetPFE.getDescription());
+//				sheetPFEModification.setFeatures(sheetPFE.getFeatures());
+//				sheetPFEModification.setProblematic(sheetPFE.getProblematic());
+//				sheetPFEModification.setCreated(new Date());
+//				sheetPFEModification.setSheetPFE(sheetPFE);
+//				sheetPFEModification.setEtat(EtatSheetPFE.DEFAULT);
+//				sheetPFEModification.getCategories().addAll(sheetPFE.getCategories());
+//				sheetPFEModification.setEntreprise(sheetPFE.getEntreprise());
+//
+//				em.persist(sheetPFEModification);
+//
+//			}
+//
+//			return true;
+//
+//		} catch (Exception e) {
+//			return false;
+//		}
+		
+		return notifyby;
 	}
 
 	private String generateRandomCode() {

@@ -9,6 +9,7 @@ import tn.esprit.pfe.entities.Enseignant;
 import tn.esprit.pfe.entities.EnseignantSheetPFE;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.entities.PFENotification;
 import tn.esprit.pfe.entities.RequestCancelInternship;
 import tn.esprit.pfe.entities.SheetPFE;
 import tn.esprit.pfe.entities.SheetPFEModification;
@@ -25,7 +26,7 @@ public interface SheetPFERemote {
 	public List<SheetPFE> getAllSheetPFEAccepted();
 	public SheetPFE getSheetPFEById(int id);
 	public SheetPFE getSheetPFEByEtudiant();
-	public boolean updateSheetPFE(SheetPFE sheetPFE);
+	public PFENotification updateSheetPFE(SheetPFE sheetPFE);
 	public boolean verificationByDirectorSheetPFE(int sheet_id,EtatSheetPFE etat);
 	public int requestCancelInternship(int sheet_id);
 	public List<RequestCancelInternship> getAllRequest();
