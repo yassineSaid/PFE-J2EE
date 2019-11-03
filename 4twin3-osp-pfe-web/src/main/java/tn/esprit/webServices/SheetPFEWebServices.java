@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 
 import tn.esprit.pfe.entities.Categorie;
 import tn.esprit.pfe.entities.Enseignant;
+import tn.esprit.pfe.entities.EnseignantSheetPFE;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.RequestCancelInternship;
@@ -40,11 +41,11 @@ public class SheetPFEWebServices {
 	}
 	
 	@GET
-	@Path("/nostudent/{year}")
+	@Path("/nostudent/{startyear}/{toyear}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllStudentNoSheetWithYear(@PathParam(value="year") int year) {
+	public Response getAllStudentNoSheetWithYear(@PathParam(value="startyear") int startyear,@PathParam(value="toyear") int toyear) {
 
-		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheetWithYear(year);
+		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheetWithYear(startyear,toyear);
 
 		if (listetudiant.size() != 0) {
 
@@ -269,7 +270,6 @@ public class SheetPFEWebServices {
 	
 	@PUT
 	@Path("/cancel/{request_id}/{etat}/{note}")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateInternshipAgreemen(@PathParam(value="request_id") int request_id,
 			@PathParam(value="etat") EtatSheetPFE etat, @PathParam(value="note") String note ) {	
@@ -327,19 +327,141 @@ public class SheetPFEWebServices {
 	}
 	
 	@GET
-	@Path("/dashboard")
+	@Path("/rapporteur/{sheet_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response statEtatSheetPFE() {	
+	public Response getRapporteurByCategories(@PathParam(value="sheet_id") int id) {	
 		
 
-		if (IsheetPFE.statEtatSheetPFE() != null) {
+		if (IsheetPFE.getRapporteurByCategories(id) != null) {
 
-			return Response.status(Status.ACCEPTED).entity(IsheetPFE.statEtatSheetPFE()).build();
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getEncardeurByCategories(id)).build();
 		}
 
 		return Response.status(Status.NO_CONTENT).build();
 
 	}
+	
+	@POST
+	@Path("/rapporteur/affect/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response affectRapporteurToSheetPFEAuto(@PathParam(value="id") int id) {	
+		
+
+		if (IsheetPFE.affectRapporteurToSheetPFEAuto(id)) {
+
+			return Response.status(Status.ACCEPTED).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@POST
+	@Path("/rapporteur/affect/{idSheet}/{idEnseignant}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response affectRapporteurToSheetPFEManual(@PathParam(value="idSheet") int idSheet,@PathParam(value="idEnseignant") int idEnseignant) {	
+		
+
+		if (IsheetPFE.affectRapporteurToSheetPFEManual(idSheet, idEnseignant)) {
+
+			return Response.status(Status.ACCEPTED).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/enseignantorderbyencadrement")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllEnseignantOrderByEncadrement() {
+		
+		List<Integer> list = IsheetPFE.getAllEnseignantOrderByEncadrement();
+		
+		if(list.size() > 0)
+			  return Response.status(Status.ACCEPTED).entity(list).build();
+		
+		return  Response.status(Status.NOT_FOUND).entity("efe").build();
+	}
+	
+	@GET
+	@Path("/enseignant/{startyear}/{toyear}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetByEnseignant(@PathParam(value="startyear") int startyear,@PathParam(value="toyear") int toyear) {	
+		
+		List<SheetPFE> list = IsheetPFE.getAllSheetByEnseignant(startyear, toyear);
+
+		if (list.size() > 0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/encadreur")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetByEncadreur() {	
+		
+		List<SheetPFE> list = IsheetPFE.getAllSheetByEncadreur();
+
+		if (list.size() > 0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/rapporteur")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetByRapporteur() {	
+		
+		List<SheetPFE> list = IsheetPFE.getAllSheetByRapporteur();
+
+		if (list.size() > 0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/sheetvalidateur")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetByValidateur() {	
+		
+		List<SheetPFE> list = IsheetPFE.getAllSheetByValidateur();
+
+		if (list.size() != 0) {
+
+			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@PUT
+	@Path("/encadreur/{sheetPFE_id}/{enseignant_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateEncadreurSheetPFE(@PathParam(value="sheetPFE_id") int sheetPFE_id, @PathParam(value="enseignant_id") int enseignant_id) {	
+		
+
+		if(IsheetPFE.updateEncadreurSheetPFE(sheetPFE_id,enseignant_id)) 
+			return Response.status(Status.ACCEPTED).build();
+		
+		return Response.status(Status.NOT_MODIFIED).build();
+	
+	}
+	
+
 	
 	@GET
 	@Path("/validateur")
@@ -371,5 +493,19 @@ public class SheetPFEWebServices {
 		return Response.status(Status.NO_CONTENT).build();
 
 	}
+	
+	
+	@PUT
+	@Path("/accptedsheetmodifiy/{sheet_id}/{etat}/{note}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response accepteSheetModify(@PathParam(value="sheet_id") int sheet_id,@PathParam(value="etat") EtatSheetPFE etat,@PathParam(value="note") String note) {	
+		
+		if(IsheetPFE.accepteSheetModify(sheet_id,etat,note))
+	    	return Response.status(Status.ACCEPTED).build();
+		
+    	return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+	
 	
 }

@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -29,7 +30,7 @@ public class InternshipAgreemen implements Serializable {
 	private Date endDate;
 	private String pdf;
 	
-	@JsonManagedReference
+	@JsonBackReference(value="entreprise-internship")
 	@ManyToOne
 	private Entreprise entreprise;
 	@OneToOne

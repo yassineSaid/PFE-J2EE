@@ -150,11 +150,11 @@ public class Email {
 					+ "<br><br>" + "<p>\r\n"
 					+ "Sorry, your sheet PFE <span style=\"color:red\">REFUSE</span>.</p><p>Problem of refusing <br>"
 					+ sheetPFE.getNote() + "</p>";
-		} else {
+		} else if (sheetPFE.getEtat().equals(EtatSheetPFE.ACCEPTED)) {
 			content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
 					+ "<br><br>" + "<p>\r\n" + "Sorry, your sheet PFE ACCEPTED.</p>";
 
-		}
+		} 
 
 		messageBodyPart.setContent(content, "text/html");
 
@@ -259,5 +259,46 @@ public class Email {
 
 		Transport.send(message);
 	}
+	
+	public void validateSheetPFE(SheetPFE sheetPFE,EtatSheetPFE etat, String note) throws NamingException, AddressException, MessagingException {
+		
+		InitialContext ic = new InitialContext();
+		session = (Session) ic.lookup("java:jboss/mail/Default");
+		Message message = new MimeMessage(session);
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sheetPFE.getEtudiant().getEmail()));
+
+		if(etat.equals(EtatSheetPFE.VALIDATE)) {
+			   message.setSubject("Validated Sheet PFE");
+		}else {
+			
+			   message.setSubject("Refused subject PFE");
+		}
+
+		Multipart multipart = new MimeMultipart();
+
+		BodyPart messageBodyPart = new MimeBodyPart();
+
+		String content = "";
+		if(etat.equals(EtatSheetPFE.VALIDATE)) {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+					+ "<br><br>" + "<p>\r\n" + "Your subject of PFE has been accepted.</p>";
+		}else {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+					+ "<br><br>" + "<p>\r\n" + "Your subject of PFE has been refused</p><p><br>"+note+"</p>";
+
+		}
+		
+		messageBodyPart.setContent(content, "text/html");
+
+		multipart.addBodyPart(messageBodyPart);
+
+		// Send the complete message parts
+		message.setContent(multipart);
+
+		Transport.send(message);
+		
+	}
+	
+	
 
 }

@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -86,12 +87,12 @@ public class Entreprise implements Serializable {
 	private Set<EntrepriseStudent> entreprisestudents;
 
 
-	@JsonBackReference
+	@JsonManagedReference(value="entreprise-internship")
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<InternshipAgreemen> internshipAgreemens;
 
-	@JsonBackReference
+	@JsonManagedReference(value="entreprise-sheet")
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs;

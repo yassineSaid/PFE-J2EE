@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -40,17 +41,21 @@ public class SheetPFE implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private EtatSheetPFE etat;
 	private String note;
+	private float noteEncadreur;
+	private float noteRapporteur;
 	
-	@JsonManagedReference
+	@JsonBackReference(value="entreprise-sheet")
 	@ManyToOne
 	private Entreprise entreprise;
 	
 	@OneToOne
 	private Etudiant etudiant;
 	
-	@JsonManagedReference
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<Enseignant> enseignant = new HashSet<Enseignant>();
+	@OneToMany(mappedBy="sheetPFE",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<EnseignantSheetPFE> enseignantsheet = new HashSet<EnseignantSheetPFE>();
+	
+	@OneToMany(mappedBy="sheetPFE",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<SheetPFEModification> sheetPFEModifications = new HashSet<SheetPFEModification>();
 	
 	@JsonIgnore
 	@OneToOne(mappedBy="sheetPFE")
@@ -160,17 +165,18 @@ public class SheetPFE implements Serializable {
 		return categories;
 	}
 
-	public void setCategories(HashSet<Categorie> categories) {
-		this.categories = categories;
+	public void setCategories(Set<Categorie> set) {
+		this.categories = set;
 	}
 
-	public Set<Enseignant> getEnseignant() {
-		return enseignant;
+	public Set<EnseignantSheetPFE> getEnseignantsheet() {
+		return enseignantsheet;
 	}
 
-	public void setEnseignant(Set<Enseignant> enseignant) {
-		this.enseignant = enseignant;
+	public void setEnseignantsheet(Set<EnseignantSheetPFE> enseignantsheet) {
+		this.enseignantsheet = enseignantsheet;
 	}
+
 
 	public RequestCancelInternship getRequest() {
 		return request;
@@ -180,6 +186,32 @@ public class SheetPFE implements Serializable {
 		this.request = request;
 	}
 
+	public Set<SheetPFEModification> getSheetPFEModifications() {
+		return sheetPFEModifications;
+	}
+
+	public void setSheetPFEModifications(Set<SheetPFEModification> sheetPFEModifications) {
+		this.sheetPFEModifications = sheetPFEModifications;
+	}
+
+	public float getNoteEncadreur() {
+		return noteEncadreur;
+	}
+
+	public void setNoteEncadreur(float noteEncadreur) {
+		this.noteEncadreur = noteEncadreur;
+	}
+
+	public float getNoteRapporteur() {
+		return noteRapporteur;
+	}
+
+	public void setNoteRapporteur(float noteRapporteur) {
+		this.noteRapporteur = noteRapporteur;
+	}
+
+	
+	
 	
 	
 

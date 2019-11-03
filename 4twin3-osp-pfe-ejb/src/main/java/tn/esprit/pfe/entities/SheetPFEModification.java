@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="SheetPFEModification")
 public class SheetPFEModification implements Serializable  {
 private static final long serialVersionUID = 1L;
@@ -25,11 +27,13 @@ private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)	
 	private int id;
+	@JsonIgnore
 	@ManyToOne
 	private SheetPFE sheetPFE;
 	private String title;
 	private String description;
 	private String problematic;
+	@JsonIgnore
 	@ManyToOne
 	private Entreprise entreprise;
 	private String features;
@@ -40,9 +44,6 @@ private static final long serialVersionUID = 1L;
 	private Date created;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Categorie> categories = new HashSet<Categorie>();
-	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<Enseignant> enseignant = new HashSet<Enseignant>();
 	
 	
 	public SheetPFEModification() {
@@ -124,16 +125,6 @@ private static final long serialVersionUID = 1L;
 
 	public Set<Categorie> getCategories() {
 		return categories;
-	}
-
-
-	public Set<Enseignant> getEnseignant() {
-		return enseignant;
-	}
-
-
-	public void setEnseignant(Set<Enseignant> enseignant) {
-		this.enseignant = enseignant;
 	}
 
 

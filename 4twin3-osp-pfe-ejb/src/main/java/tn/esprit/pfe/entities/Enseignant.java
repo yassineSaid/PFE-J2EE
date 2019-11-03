@@ -3,11 +3,13 @@ package tn.esprit.pfe.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -38,9 +40,9 @@ public class Enseignant extends User {
 	@ManyToMany(fetch= FetchType.EAGER)
 	private Set<Categorie> categories = new HashSet<Categorie>();
 	
-	@JsonBackReference
-	@ManyToMany(mappedBy="enseignant",fetch = FetchType.EAGER)
-	private Set<SheetPFE> sheetPFEs = new HashSet<SheetPFE>();
+	@JsonIgnore
+	@OneToMany(mappedBy="enseignant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<EnseignantSheetPFE> enseignantsheet = new HashSet<EnseignantSheetPFE>();
 
 	@ManyToOne
 	@JsonIgnore
@@ -120,14 +122,15 @@ public class Enseignant extends User {
 		this.categories = categories;
 	}
 
-	public Set<SheetPFE> getSheetPFEs() {
-		return sheetPFEs;
+	public Set<EnseignantSheetPFE> getEnseignantsheet() {
+		return enseignantsheet;
 	}
 
-	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
-		this.sheetPFEs = sheetPFEs;
+	public void setEnseignantsheet(Set<EnseignantSheetPFE> enseignantsheet) {
+		this.enseignantsheet = enseignantsheet;
 	}
 
+	
 	
 	
 	

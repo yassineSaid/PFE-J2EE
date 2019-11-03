@@ -49,8 +49,9 @@ public class Classe implements Serializable {
 	@JsonIgnore
 	private Specialite specialite;
 	
-	@JsonBackReference
+	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="classe")
+	@JsonManagedReference
 	private Set<Etudiant> etudiants;
 
 	public Classe() {
