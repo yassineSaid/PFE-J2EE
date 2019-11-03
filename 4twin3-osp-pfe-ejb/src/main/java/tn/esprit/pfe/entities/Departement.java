@@ -36,9 +36,6 @@ public class Departement implements Serializable {
 	@Column
 	@NotBlank
 	private String nom;
-
-	@OneToOne
-	private Enseignant chefDepartement;
 	
 	@ManyToOne
 	@JsonIgnore
@@ -73,14 +70,6 @@ public class Departement implements Serializable {
 
 	public void setNom(String nom) {
 		this.nom = nom;
-	}
-
-	public Enseignant getChefDepartement() {
-		return chefDepartement;
-	}
-
-	public void setChefDepartement(Enseignant chefDepartement) {
-		this.chefDepartement = chefDepartement;
 	}
 
 	public Site getSite() {
