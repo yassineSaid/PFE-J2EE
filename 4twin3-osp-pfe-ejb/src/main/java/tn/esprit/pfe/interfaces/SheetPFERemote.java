@@ -19,6 +19,7 @@ import tn.esprit.pfe.entities.SheetPFEModification;
 public interface SheetPFERemote {
 
 	public int addSheetPFE(SheetPFE sheetPFE);
+	public boolean exportSheetPFE(int sheet_id);
 	public List<Etudiant> getAllStudentNoSheet();
 	public List<Etudiant> getAllStudentNoSheetWithYear(int startyear,int toyear);
 	public void reminderStudentNoSheet(List<Etudiant> students);
@@ -37,7 +38,7 @@ public interface SheetPFERemote {
 	public List<SheetPFE> getAllSheetWaitRapporter();
 	public List<SheetPFE> getAllSheetValidate();
 	public List<Enseignant> getAllValidateur();
-	public boolean affectValidateurToSheetPFE(int sheet_id);
+	public String affectValidateurToSheetPFE(int sheet_id);
 	public boolean validateSheetPFE(int sheet_id,EtatSheetPFE etat,String note);
 	public List<Enseignant> getAllEnseignantOrderByEncadrement();
 	public List<Enseignant> getEncardeurByCategories(int sheet_id);

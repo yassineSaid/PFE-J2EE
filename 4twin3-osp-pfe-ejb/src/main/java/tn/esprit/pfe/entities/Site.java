@@ -1,6 +1,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.inject.Default;
@@ -73,6 +74,7 @@ public class Site implements Serializable {
 
 	@OneToOne
 	private Enseignant directeurDesStages;
+
 	
 	@ManyToOne
 	@JsonIgnore

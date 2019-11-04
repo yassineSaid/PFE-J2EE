@@ -78,10 +78,10 @@ public class SheetPFEWebServices {
 	@Path("/reminder")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response reminderStudentNoSheet(List<Etudiant> students) {
+	public Response reminderStudentNoSheet(List<Etudiant> icn) {
 
-		IsheetPFE.reminderStudentNoSheet(students);
-		return Response.status(Status.ACCEPTED).build();
+		IsheetPFE.reminderStudentNoSheet(icn);
+		return Response.status(Status.ACCEPTED).entity(icn).build();
 
 	}
 	
@@ -306,11 +306,11 @@ public class SheetPFEWebServices {
 
 		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id).equals("SUCCESS")) {
 
-			return Response.status(Status.ACCEPTED).entity("SUCCESS").build();
+			return Response.status(Status.ACCEPTED).build();
 		}
 		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id).equals("NO_CONTENT")) {
 			
-			return Response.status(Status.NO_CONTENT).entity("NO_CONTENT").build();
+			return Response.status(Status.NO_CONTENT).build();
 			
 		}else {
 			return Response.status(Status.NOT_MODIFIED).build();
@@ -358,11 +358,11 @@ public class SheetPFEWebServices {
 
 		if (IsheetPFE.affectRapporteurToSheetPFEAuto(id).equals("SUCCESS")) {
 			
-			return Response.status(Status.ACCEPTED).entity("SUCCESS").build();
+			return Response.status(Status.ACCEPTED).build();
 			
 		}else if(IsheetPFE.affectRapporteurToSheetPFEAuto(id).equals("NO_CONTENT")) {
 			
-			return Response.status(Status.NO_CONTENT).entity("NO_CONTENT").build();
+			return Response.status(Status.NO_CONTENT).build();
 			
 		}else {
 			
@@ -514,13 +514,18 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response affectValidateurToSheetPFEAuto(@PathParam(value="sheet_id") int id) {	
 		
-
-		if( IsheetPFE.affectValidateurToSheetPFE(id))
-			
-			return Response.status(Status.ACCEPTED).build();
 		
+		if (IsheetPFE.affectValidateurToSheetPFE(id).equals("SUCCESS")) {
 
-		return Response.status(Status.NOT_MODIFIED).build();
+			return Response.status(Status.ACCEPTED).build();
+		}
+		if (IsheetPFE.affectValidateurToSheetPFE(id).equals("NO_CONTENT")) {
+			
+			return Response.status(Status.NO_CONTENT).build();
+			
+		}else {
+			return Response.status(Status.NOT_MODIFIED).build();
+		}
 
 	}
 	
@@ -595,6 +600,21 @@ public class SheetPFEWebServices {
 		if (list.size()>0) {
 
 			return Response.status(Status.ACCEPTED).entity(list).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
+	
+	@GET
+	@Path("/export/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response exportSheetPFE(@PathParam(value="sheet_id") int sheet_id) {	
+		
+		
+		if (IsheetPFE.exportSheetPFE(sheet_id)) {
+
+			return Response.status(Status.ACCEPTED).build();
 		}
 
 		return Response.status(Status.NO_CONTENT).build();
