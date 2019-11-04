@@ -1,7 +1,10 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,8 +16,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "SheetPFE")
 public class SheetPFE implements Serializable {
@@ -29,8 +33,10 @@ public class SheetPFE implements Serializable {
 	private String problematic;
 	private String features;
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Categorie> categories;
+	private Set<Categorie> categories = new HashSet<Categorie>();
 	private String qrcode;
+	private String fromYear;
+	private String toYear;
 	@Enumerated(EnumType.STRING)
 	private EtatSheetPFE etat;
 	private String note;
@@ -38,27 +44,30 @@ public class SheetPFE implements Serializable {
 	private Entreprise entreprise;
 	@OneToOne
 	private Etudiant etudiant;
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Enseignant> enseignant = new HashSet<Enseignant>();
+	
+	@JsonIgnore
+	@OneToOne(mappedBy="sheetPFE")
+	private RequestCancelInternship request;
 
 	public SheetPFE() {
 	}
 
-	public SheetPFE(String title, String description, String problematic, String features, List<Categorie> categories) {
+	public SheetPFE(String title, String description, String problematic, String features) {
 
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
-		this.categories = categories;
 	}
 
-	public SheetPFE(int id, String title, String description, String problematic, String features,
-			List<Categorie> categories) {
+	public SheetPFE(int id, String title, String description, String problematic, String features) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
-		this.categories = categories;
 	}
 
 	
@@ -102,20 +111,28 @@ public class SheetPFE implements Serializable {
 		this.features = features;
 	}
 
-	public List<Categorie> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(List<Categorie> categories) {
-		this.categories = categories;
-	}
-
 	public String getQrcode() {
 		return qrcode;
 	}
 
 	public void setQrcode(String qrcode) {
 		this.qrcode = qrcode;
+	}
+
+	public String getFromYear() {
+		return fromYear;
+	}
+
+	public void setFromYear(String fromYear) {
+		this.fromYear = fromYear;
+	}
+
+	public String getToYear() {
+		return toYear;
+	}
+
+	public void setToYear(String toYear) {
+		this.toYear = toYear;
 	}
 
 	public EtatSheetPFE getEtat() {
@@ -150,4 +167,33 @@ public class SheetPFE implements Serializable {
 		this.etudiant = etudiant;
 	}
 
+	public Set<Categorie> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(HashSet<Categorie> categories) {
+		this.categories = categories;
+	}
+
+	public Set<Enseignant> getEnseignant() {
+		return enseignant;
+	}
+
+	public void setEnseignant(Set<Enseignant> enseignant) {
+		this.enseignant = enseignant;
+	}
+
+	public RequestCancelInternship getRequest() {
+		return request;
+	}
+
+	public void setRequest(RequestCancelInternship request) {
+		this.request = request;
+	}
+
+	
+	
+
+	
+	
 }

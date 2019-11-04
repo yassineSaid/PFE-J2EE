@@ -11,7 +11,7 @@ import tn.esprit.pfe.entities.SheetPFEModification;
 public interface SheetPFEModificationRemote {
 
 	public boolean removeSheetPFEModification(int id);
-	public List<SheetPFEModification> getAllSheetPFEModifications();
+	public List<SheetPFEModification> getAllRefuseSheetPFEModifications();
 	public SheetPFEModification getSheetPFEModification(int id);
 	public boolean validateSheetPFEModification(SheetPFEModification sheetPFEModification);
 	

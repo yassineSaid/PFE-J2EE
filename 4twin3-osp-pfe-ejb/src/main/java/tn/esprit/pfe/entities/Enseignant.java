@@ -1,14 +1,24 @@
 package tn.esprit.pfe.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+<<<<<<< HEAD
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+=======
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+>>>>>>> branch 'master' of https://gitlab.com/yassine.said/4twin3-osp-pfe.git
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
@@ -24,12 +34,27 @@ public class Enseignant extends User {
 	private boolean enabled;
 	
 	@OneToOne(mappedBy="directeurDesStages")
+	@JsonIgnore
 	private Site directeurDesStages;
+	
+	@OneToOne(mappedBy="chefDeDepartement")
+	@JsonIgnore
+	private Departement chefDeDepartement;
+	
+	@JsonIgnore
+	@ManyToMany(fetch= FetchType.EAGER)
+	private Set<Categorie> categories = new HashSet<Categorie>();
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy="enseignant",fetch = FetchType.EAGER)
+	private Set<SheetPFE> sheetPFEs = new HashSet<SheetPFE>();
 
 	@ManyToOne
+	@JsonIgnore
 	private Site site;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Ecole ecole;
 
 	public Enseignant() {
@@ -72,6 +97,20 @@ public class Enseignant extends User {
 		this.directeurDesStages = directeurDesStages;
 	}
 
+	public Departement getChefDeDepartement() {
+		return chefDeDepartement;
+	}
+
+	public void setChefDeDepartement(Departement chefDeDepartement) {
+		if (chefDeDepartement==null) {
+			this.setRole("Enseignant");
+		}
+		else {
+			this.setRole("ChefDeDepartement");
+		}
+		this.chefDeDepartement = chefDeDepartement;
+	}
+
 	public Site getSite() {
 		return site;
 	}
@@ -80,6 +119,23 @@ public class Enseignant extends User {
 		this.site = site;
 	}
 
+	public Set<Categorie> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(Set<Categorie> categories) {
+		this.categories = categories;
+	}
+
+	public Set<SheetPFE> getSheetPFEs() {
+		return sheetPFEs;
+	}
+
+	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
+		this.sheetPFEs = sheetPFEs;
+	}
+
+	
 	
 	
 	

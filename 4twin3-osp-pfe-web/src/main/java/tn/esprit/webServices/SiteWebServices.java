@@ -1,6 +1,5 @@
 package tn.esprit.webServices;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -21,9 +20,7 @@ import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.Ecole;
 import tn.esprit.pfe.entities.Site;
-import tn.esprit.pfe.services.EcoleService;
 import tn.esprit.pfe.services.SiteService;
 import utilities.ValidationError;
 
@@ -87,8 +84,6 @@ public class SiteWebServices {
 	@Secure(role={"Admin"})
 	@Path ("{id}")
 	public Response getSite(@PathParam(value="id") int idSite) {
-		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
-		AuthenticationFilter af=new AuthenticationFilter();
 		Site site=ss.getSite(idSite);
 		if (site!=null) {
 			return Response.status(Status.OK).entity(site).build();

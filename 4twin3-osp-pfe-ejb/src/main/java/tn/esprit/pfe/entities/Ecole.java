@@ -1,7 +1,6 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -55,11 +54,9 @@ public class Ecole implements Serializable {
 	private Admin admin;
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="ecole")
-	@JsonIgnore
 	private Set<Enseignant> enseignants;
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="ecole")
-	@JsonIgnore
 	private Set<Site> sites;
 
 	public Ecole() {

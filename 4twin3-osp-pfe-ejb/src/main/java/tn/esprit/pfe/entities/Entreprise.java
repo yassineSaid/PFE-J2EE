@@ -1,8 +1,6 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -85,14 +85,15 @@ public class Entreprise implements Serializable {
 	private Set<EntrepriseStudent> entreprisestudents;
 
 
+	@JsonIgnore
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<InternshipAgreemen> internshipAgreemens;
 
+	@JsonIgnore
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs;
-
 
 
 	public int getId() {

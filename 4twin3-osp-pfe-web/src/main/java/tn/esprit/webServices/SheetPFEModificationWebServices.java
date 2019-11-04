@@ -28,7 +28,7 @@ public class SheetPFEModificationWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllSheetPFEModifications() {
 
-		List<SheetPFEModification> listSheetPFE = IsheetPFEModify.getAllSheetPFEModifications();
+		List<SheetPFEModification> listSheetPFE = IsheetPFEModify.getAllRefuseSheetPFEModifications();
 
 		if (listSheetPFE.size() != 0) {
 
