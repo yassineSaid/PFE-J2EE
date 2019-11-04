@@ -36,13 +36,13 @@ public class Departement implements Serializable {
 	@Column
 	@NotBlank
 	private String nom;
-
-	@OneToOne
-	private Enseignant chefDepartement;
 	
 	@ManyToOne
 	@JsonIgnore
 	private Site site;
+
+	@OneToOne
+	private Enseignant chefDeDepartement;
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="departement")
 	private Set<Specialite> specialites;
@@ -72,14 +72,6 @@ public class Departement implements Serializable {
 		this.nom = nom;
 	}
 
-	public Enseignant getChefDepartement() {
-		return chefDepartement;
-	}
-
-	public void setChefDepartement(Enseignant chefDepartement) {
-		this.chefDepartement = chefDepartement;
-	}
-
 	public Site getSite() {
 		return site;
 	}
@@ -94,6 +86,14 @@ public class Departement implements Serializable {
 
 	public void setSpecialites(Set<Specialite> specialites) {
 		this.specialites = specialites;
+	}
+
+	public Enseignant getChefDeDepartement() {
+		return chefDeDepartement;
+	}
+
+	public void setChefDeDepartement(Enseignant chefDeDepartement) {
+		this.chefDeDepartement = chefDeDepartement;
 	}
 	
 	

@@ -1,21 +1,27 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table( name = "Categorie")
@@ -38,10 +44,11 @@ public class Categorie implements Serializable{
 	private boolean exixtecommemodule;
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy="categories")
-	private List<SheetPFE> sheetPFEs;
+	@ManyToMany(mappedBy="categories", cascade = CascadeType.ALL)
+	private Set<SheetPFE> sheetPFEs;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@JsonBackReference
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private Set<Enseignant> enseignant;
 	
 	
@@ -89,13 +96,23 @@ public class Categorie implements Serializable{
 		this.exixtecommemodule = exixtecommemodule;
 	}
 
-	public List<SheetPFE> getSheetPFEs() {
+	public Set<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
 
-	public void setSheetPFEs(List<SheetPFE> sheetPFEs) {
+	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
 	}
+
+	public Set<Enseignant> getEnseignant() {
+		return enseignant;
+	}
+
+	public void setEnseignant(Set<Enseignant> enseignant) {
+		this.enseignant = enseignant;
+	}
+
+	
 	
 	
 	

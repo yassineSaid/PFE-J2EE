@@ -209,11 +209,13 @@ public class ClasseService implements ClasseServiceRemote {
 	@Override
 	public Set<Classe> getListClasseAnnee(int idSpecialite,int annee) {
 		Specialite specialite = em.find(Specialite.class, idSpecialite);
-		List<Classe> liste = em.createQuery("select c from Classe c where c.specialite=:specialite AND c.anneeDeDebut=:annee")
+		List<?> liste = em.createQuery("select c from Classe c where c.specialite=:specialite AND c.anneeDeDebut=:annee")
 		.setParameter("specialite", specialite)
 		.setParameter("annee", annee).getResultList();
 		Set<Classe> classes = new HashSet<>();
-		classes.addAll(liste);
+		for (Object o : liste) {
+			classes.add((Classe) o);
+		}
 		return classes;
 	}
 

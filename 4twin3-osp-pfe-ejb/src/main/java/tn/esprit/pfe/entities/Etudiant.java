@@ -1,14 +1,22 @@
 package tn.esprit.pfe.entities;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table
@@ -21,18 +29,26 @@ public class Etudiant extends User {
 	@Column
 	private String identifiant;
 
-	@OneToOne(mappedBy = "etudiant")
 	@JsonIgnore
+	@OneToOne(mappedBy="etudiant")
 	private InternshipAgreemen internshipAgreemen;
+	
+	@JsonIgnore
+ 	@OneToOne(mappedBy="etudiant")
+	private SheetPFE sheetPFE;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy="etudiant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<PFENotification> pfeNotifications = new HashSet<PFENotification>();
+	
 
 	//@OneToMany(mappedBy = "etudiant", cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	// private List<ForumQuestion> fq=new ArrayList<>();
 
+	
 	@ManyToOne
+	@JsonBackReference
 	private Classe classe;
-
-	@OneToOne
-	private SheetPFE sheetPFE;
 
 	public Etudiant() {
 		super();
@@ -78,6 +94,16 @@ public class Etudiant extends User {
 	public void setClasse(Classe classe) {
 		this.classe = classe;
 	}
+
+	public Set<PFENotification> getPfeNotifications() {
+		return pfeNotifications;
+	}
+
+	public void setPfeNotifications(Set<PFENotification> pfeNotifications) {
+		this.pfeNotifications = pfeNotifications;
+	}
+	
+	
 	
 	
 
