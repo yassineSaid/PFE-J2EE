@@ -24,9 +24,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Etudiant extends User {
 
 	private static final long serialVersionUID = 1L;
+	
+	@OneToOne
+	private Soutenance S;
+	
 
-	@OneToOne(mappedBy = "etudiant")
-	private Reclamation Reclamation;
 
 	@Column
 	private String identifiant;
@@ -35,8 +37,12 @@ public class Etudiant extends User {
 	@OneToOne(mappedBy="etudiant")
 	private InternshipAgreemen internshipAgreemen;
 	
-	@JsonIgnore
- 	@OneToOne(mappedBy="etudiant")
+
+	 //@OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
+	//	fetch=FetchType.EAGER)
+	//private List<ForumQuestion> fq=new ArrayList<>();
+	
+
 	private SheetPFE sheetPFE;
 	
 	@JsonIgnore
@@ -63,13 +69,7 @@ public class Etudiant extends User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Reclamation getReclamation() {
-		return Reclamation;
-	}
 
-	public void setReclamation(Reclamation reclamation) {
-		Reclamation = reclamation;
-	}
 
 	public String getIdentifiant() {
 		return identifiant;

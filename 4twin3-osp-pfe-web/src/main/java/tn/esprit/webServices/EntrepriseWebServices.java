@@ -3,6 +3,7 @@ package tn.esprit.webServices;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -24,6 +25,8 @@ public class EntrepriseWebServices {
 	@Inject
 	EntrepriseServices es;
 
+	/* Entreprise */
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response RegistreEntreprise(Entreprise ent) {
@@ -51,6 +54,16 @@ public class EntrepriseWebServices {
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseDetails(id)).build();
 	}
 	
+	@DELETE
+	@Path("Deleted")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response RemoveEntreprise(@QueryParam("id") int id)
+	{	
+		es.deleteEntreprise(id);
+	    return Response.status(Status.ACCEPTED).entity("Entreprise Deleted").build();
+	}
+	
+	/* Internship */
 	@POST
 	@Path("addInternshipOffer")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +75,14 @@ public class EntrepriseWebServices {
 			return Response.status(Status.CREATED).entity("Internship added Successful").build();
 		}
 		return Response.status(Status.NOT_ACCEPTABLE).entity("Internship added Failed ").build();
+	}
+	
+	@GET
+	@Path("internshipOfferDetail")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getInternshipOffer(@QueryParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getInternshipOfferDetails(id)).build();
 	}
 
 }

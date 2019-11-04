@@ -29,11 +29,11 @@ public class PDF {
 		Map<String, Object> params = new HashMap<>();
 		JRDataSource jrDataSource = new JREmptyDataSource();
 		params.put("nameEntreprise", internshipAgreemen.getEntreprise().getNameEntreprise());
-		params.put("nameResponsable", internshipAgreemen.getEntreprise().getNomPrenomResponsable());
+		//params.put("nameResponsable", internshipAgreemen.getEntreprise().getNomPrenomResponsable());
 		params.put("tel", internshipAgreemen.getEntreprise().getTelResponsable());
 		params.put("fax", internshipAgreemen.getEntreprise().getTelEntreprise());
 		params.put("emailEntreprise", internshipAgreemen.getEntreprise().getEmailEntreprise());
-		params.put("emailResponsable", internshipAgreemen.getEntreprise().getEmailResponsable());
+		//params.put("emailResponsable", internshipAgreemen.getEntreprise().getEmailResponsable());
 		params.put("siteweb", internshipAgreemen.getEntreprise().getSiteweb());
 		params.put("pays", internshipAgreemen.getEntreprise().getPays());
 		params.put("adresse", internshipAgreemen.getEntreprise().getAdresse());
