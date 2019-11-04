@@ -17,7 +17,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table
@@ -29,7 +31,7 @@ public class Classe implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id;
 	
@@ -47,7 +49,9 @@ public class Classe implements Serializable {
 	@JsonIgnore
 	private Specialite specialite;
 	
+	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="classe")
+	@JsonManagedReference
 	private Set<Etudiant> etudiants;
 
 	public Classe() {

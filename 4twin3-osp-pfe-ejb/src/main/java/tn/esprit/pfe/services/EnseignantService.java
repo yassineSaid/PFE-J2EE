@@ -102,6 +102,10 @@ public class EnseignantService implements EnseignantServiceRemote {
 				enseignant.getDirecteurDesStages().setDirecteurDesStages(null);
 				em.flush();
 			}
+			if (enseignant.getChefDeDepartement()!=null) {
+				enseignant.getChefDeDepartement().setChefDeDepartement(null);
+				em.flush();
+			}
 			em.createQuery("delete from User u where u.id=:id").setParameter("id", idEnseignant).executeUpdate();
 			em.flush();
 		}

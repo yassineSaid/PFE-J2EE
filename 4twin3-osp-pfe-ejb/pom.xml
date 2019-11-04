@@ -88,6 +88,14 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-annotations</artifactId>
+    <version>3.5.6-Final</version>
+</dependency>
+		
 
 		<dependency>
 			<groupId>org.jboss.arquillian.protocol</groupId>
@@ -197,3 +205,4 @@
 	</profiles>
 
 </project>
+

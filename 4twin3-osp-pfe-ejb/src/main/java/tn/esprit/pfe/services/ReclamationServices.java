@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.entities.Notifications;
 import tn.esprit.pfe.entities.Reclamation;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.ReclamationServiceRemote;
@@ -28,6 +29,14 @@ public class ReclamationServices implements ReclamationServiceRemote {
 	
 	
 		em.persist(rec);
+		
+		Notifications n = new Notifications();
+		
+			String text = "l'etudiant "+rec.getEtudiant().getId()+" a ajotuer une reclamation a propos de la note de soutenance :"+rec.getSoutenance().getId();
+			n.setText(text);	
+		Etudiant u =	em.find(Etudiant.class, 1);
+		    n.setUser(u);
+		    em.persist(n);
 		return rec.getIdReclamation();
 
 		

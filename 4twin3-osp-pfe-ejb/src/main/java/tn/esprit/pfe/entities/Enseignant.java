@@ -3,6 +3,7 @@ package tn.esprit.pfe.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -14,11 +15,14 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 >>>>>>> branch 'master' of https://gitlab.com/yassine.said/4twin3-osp-pfe.git
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 
@@ -46,8 +50,8 @@ public class Enseignant extends User {
 	private Set<Categorie> categories = new HashSet<Categorie>();
 	
 	@JsonIgnore
-	@ManyToMany(mappedBy="enseignant",fetch = FetchType.EAGER)
-	private Set<SheetPFE> sheetPFEs = new HashSet<SheetPFE>();
+	@OneToMany(mappedBy="enseignant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<EnseignantSheetPFE> enseignantsheet = new HashSet<EnseignantSheetPFE>();
 
 	@ManyToOne
 	@JsonIgnore
@@ -127,14 +131,15 @@ public class Enseignant extends User {
 		this.categories = categories;
 	}
 
-	public Set<SheetPFE> getSheetPFEs() {
-		return sheetPFEs;
+	public Set<EnseignantSheetPFE> getEnseignantsheet() {
+		return enseignantsheet;
 	}
 
-	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
-		this.sheetPFEs = sheetPFEs;
+	public void setEnseignantsheet(Set<EnseignantSheetPFE> enseignantsheet) {
+		this.enseignantsheet = enseignantsheet;
 	}
 
+	
 	
 	
 	

@@ -55,6 +55,24 @@ public class Soutenance implements Serializable {
 		
 	}
 
+<<<<<<< HEAD
+=======
+	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance) {
+		Titre = titre;
+		Description = description;
+		this.dateSoutenance = dateSoutenance;
+		Salle = salle;
+		HeureSoutenance = heureSoutenance;
+	
+	}
+	
+	public Soutenance(int id, float noteSoutenance) {
+		super();
+		this.id = id;
+		NoteSoutenance = noteSoutenance;
+	}
+
+>>>>>>> branch 'master' of https://gitlab.com/yassine.said/4twin3-osp-pfe.git
 	public Soutenance() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -81,6 +99,10 @@ public class Soutenance implements Serializable {
 	@Column
 	private int NoteSoutenance;
 	
+	
+
+
+
 	public int getId() {
 		return id;
 	}

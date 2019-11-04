@@ -2,7 +2,9 @@ package tn.esprit.pfe.services;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
+import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.Jury;
 import tn.esprit.pfe.interfaces.JuryServiceRemote;
 
@@ -10,6 +12,7 @@ import tn.esprit.pfe.interfaces.JuryServiceRemote;
 @Stateless
 @LocalBean
 public class JuryService  implements JuryServiceRemote {
+	EntityManager em;
 
 	@Override
 	public int addJury(Jury jury) {
@@ -26,6 +29,9 @@ public class JuryService  implements JuryServiceRemote {
 	@Override
 	public void deleteJury(int id) {
 		// TODO Auto-generated method stub
+		
+		Jury jury = em.find(Jury.class, id);	
+		em.remove(jury);
 		
 	}
 	

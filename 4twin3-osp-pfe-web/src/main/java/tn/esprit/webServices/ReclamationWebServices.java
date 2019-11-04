@@ -2,8 +2,9 @@ package tn.esprit.webServices;
 
 import java.util.List;
 
-import javax.annotation.ManagedBean;
+
 import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -20,8 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import tn.esprit.pfe.entities.Notifications;
 import tn.esprit.pfe.entities.Reclamation;
 import tn.esprit.pfe.entities.User;
+import tn.esprit.pfe.interfaces.NotificationsServiceRemote;
 import tn.esprit.pfe.interfaces.ReclamationServiceRemote;
 
 @Path("/reclamation")
@@ -31,16 +34,18 @@ public class ReclamationWebServices {
 	
 
 	
-	@EJB(beanName="ReclamationServices")
+	 @EJB(beanName="ReclamationServices")
 	ReclamationServiceRemote rst;
 	
-	@POST
+ 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addReclamation(Reclamation rec) {
 		rst.addReclamation(rec);	
 		return Response.status(Status.CREATED).entity(rec).build();
-	}
+	} 
+	
+
 	
 	
 	

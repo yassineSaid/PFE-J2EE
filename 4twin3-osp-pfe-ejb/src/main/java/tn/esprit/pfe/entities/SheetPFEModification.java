@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="SheetPFEModification")
 public class SheetPFEModification implements Serializable  {
 private static final long serialVersionUID = 1L;
@@ -24,11 +27,13 @@ private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)	
 	private int id;
+	@JsonIgnore
 	@ManyToOne
 	private SheetPFE sheetPFE;
 	private String title;
 	private String description;
 	private String problematic;
+	@JsonIgnore
 	@ManyToOne
 	private Entreprise entreprise;
 	private String features;
@@ -123,6 +128,12 @@ private static final long serialVersionUID = 1L;
 	}
 
 
+	public void setCategories(Set<Categorie> categories) {
+		this.categories = categories;
+	}
+
+
+	
 	
 	
 	

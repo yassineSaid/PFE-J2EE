@@ -10,7 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import tn.esprit.pfe.interfaces.SoutenanceServiceRemote;
+import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.entities.Message;
+import tn.esprit.pfe.entities.Notifications;
 import tn.esprit.pfe.entities.Soutenance;
+import tn.esprit.pfe.entities.User;
 
 @Stateless
 @LocalBean
@@ -43,19 +47,35 @@ public class SoutenanceServices implements SoutenanceServiceRemote {
 		em.remove(s);
 	}
 
-	@Override
-	public void ajouterNote(Soutenance so) {
-		try
-		{
-			int query = em.createQuery("update Soutenance so set so.NoteSoutenance =  :note  where so.id = :id").
-					setParameter("note",so.getNoteSoutenance()).setParameter("id",so.getId())
-					.executeUpdate();
-		}
-		catch (Exception e )
-		{
-			System.out.println(e);
-		}
 	
+	
+	
+	
+	@Override
+	public void testNote(int ids , float notee , float note)
+	{
+		Soutenance s = em.find(Soutenance.class, ids);
+		float not = (notee+note)/2;
+		
+		
+		System.out.println(not);
+		if ( (notee - note) <= 3)
+		{
+			
+			s.setId(ids);
+			s.setNoteSoutenance(not);
+			em.persist(s);
+		}
+		if ((notee-note) > 3 )
+		{
+			Notifications n = new Notifications();
+		String titre = 	s.getTitre();
+			String text = "il ya un conflit dans la note de la soutenance :"+titre;
+			n.setText(text);	
+		Etudiant u =	em.find(Etudiant.class, 1);
+		    n.setUser(u);
+		    em.persist(n);
+		}
 		
 	}
 
@@ -64,6 +84,13 @@ public class SoutenanceServices implements SoutenanceServiceRemote {
 		Query query = em.createQuery("select   s.Titre 	, s.Description , s.dateSoutenance , s.Salle from Soutenance s where s.NoteSoutenance IS NULL ORDER BY s.dateSoutenance desc");
 		return query.getResultList();
 	}
+	
+	@Override
+	public List<Soutenance> afficherSoutenanceSelonEtudiant(String titre) {
+		Query query = em.createQuery("select  s.NoteSoutenance from Soutenance s where s.Titre = :titre").setParameter("titre", titre);
+		return query.getResultList();
+	}
+
 
 	
 	
