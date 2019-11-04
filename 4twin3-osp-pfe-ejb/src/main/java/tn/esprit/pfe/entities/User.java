@@ -78,6 +78,17 @@ public class User implements Serializable {
 		this.plainPassword = plainPassword;
 		this.password = this.createPwd(plainPassword);
 	}
+	
+	
+
+	public User(String nom, String prenom, String email, String password, String role) {
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+	}
 
 	public int getId() {
 		return id;

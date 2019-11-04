@@ -41,6 +41,12 @@ public class Soutenance implements Serializable {
 	
 	}
 	
+	public Soutenance(int id, float noteSoutenance) {
+		super();
+		this.id = id;
+		NoteSoutenance = noteSoutenance;
+	}
+
 	public Soutenance() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -70,6 +76,10 @@ public class Soutenance implements Serializable {
 	@OneToOne(mappedBy="soutenance")
 	private Reclamation Reclamation;
 	
+	
+
+
+
 	public int getId() {
 		return id;
 	}
