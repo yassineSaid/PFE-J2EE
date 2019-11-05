@@ -33,16 +33,11 @@ public class SoutenanceWebService {
 		rst.addSoutenance(s);	
 	}
 	
-<<<<<<< HEAD
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void deleteSoutenance(@QueryParam(value="id")int id) {
 		rst.deleteSoutenance(id);
 	}
-=======
-
-	
->>>>>>> branch 'master' of https://gitlab.com/yassine.said/4twin3-osp-pfe.git
 	
 	@PUT
 	@Path("/test/{ids}/{notee}/{note}")

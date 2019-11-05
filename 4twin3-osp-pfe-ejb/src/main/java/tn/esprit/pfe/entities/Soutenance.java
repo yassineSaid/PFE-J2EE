@@ -54,9 +54,6 @@ public class Soutenance implements Serializable {
 		NoteSoutenance = noteSoutenance;
 		
 	}
-
-<<<<<<< HEAD
-=======
 	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance) {
 		Titre = titre;
 		Description = description;
@@ -72,7 +69,6 @@ public class Soutenance implements Serializable {
 		NoteSoutenance = noteSoutenance;
 	}
 
->>>>>>> branch 'master' of https://gitlab.com/yassine.said/4twin3-osp-pfe.git
 	public Soutenance() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -97,7 +93,7 @@ public class Soutenance implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date HeureSoutenance;
 	@Column
-	private int NoteSoutenance;
+	private float NoteSoutenance;
 	
 	
 
@@ -151,11 +147,11 @@ public class Soutenance implements Serializable {
 		HeureSoutenance = heureSoutenance;
 	}
 
-	public int getNoteSoutenance() {
+	public float getNoteSoutenance() {
 		return NoteSoutenance;
 	}
 
-	public void setNoteSoutenance(int noteSoutenance) {
+	public void setNoteSoutenance(float noteSoutenance) {
 		NoteSoutenance = noteSoutenance;
 	}
 
