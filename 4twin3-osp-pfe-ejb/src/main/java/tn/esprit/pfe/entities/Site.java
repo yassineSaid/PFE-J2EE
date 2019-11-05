@@ -3,7 +3,6 @@ package tn.esprit.pfe.entities;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.enterprise.inject.Default;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -73,8 +72,8 @@ public class Site implements Serializable {
 
 	@OneToOne
 	private Enseignant directeurDesStages;
-	
-	@ManyToOne
+
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
 	private Ecole ecole;
 	

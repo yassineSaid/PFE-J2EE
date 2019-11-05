@@ -36,8 +36,8 @@ public class Departement implements Serializable {
 	@Column
 	@NotBlank
 	private String nom;
-	
-	@ManyToOne
+
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
 	private Site site;
 

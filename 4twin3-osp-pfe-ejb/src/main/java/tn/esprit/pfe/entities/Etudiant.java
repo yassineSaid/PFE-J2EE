@@ -48,7 +48,7 @@ public class Etudiant extends User {
 	// private List<ForumQuestion> fq=new ArrayList<>();
 
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JsonBackReference
 	private Classe classe;
 

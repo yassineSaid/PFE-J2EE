@@ -29,7 +29,7 @@ public class Specialite implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.AUTO)
 	@Column
 	private int id;
 	
@@ -40,7 +40,7 @@ public class Specialite implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="specialite")
 	private Set<Classe> classes;
 	
-	@ManyToOne(targetEntity=Departement.class)
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
 	private Departement departement;
 

@@ -1,5 +1,6 @@
 package tn.esprit.pfe.services;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,14 @@ public class EcoleService implements EcoleServiceRemote {
 				errors.addAll(ValidationError.fromViolations(violations));
 				return errors;
 			}catch (PersistenceException ex) {
+				System.out.println(ex.getLocalizedMessage());
+				System.out.println(ex.getMessage());
+				System.out.println(ex.toString());
+				System.out.println(ex.getCause());
+				org.hibernate.exception.ConstraintViolationException ee = (org.hibernate.exception.ConstraintViolationException) ex.getCause();
+				System.out.println(ee.getLocalizedMessage());
+				System.out.println(ee.getSQL());
+				System.out.println(ee.getSQLException());
 				return errors;
 			}
 		}
@@ -159,6 +168,38 @@ public class EcoleService implements EcoleServiceRemote {
 	@Override
 	public List<Ecole> getListEcole() {
 		return em.createQuery("from Ecole",Ecole.class).getResultList();
+	}
+
+	@Override
+	public Set<ValidationError> addImage(String image, int idAdmin) {
+		Set<ValidationError> errors = new HashSet<>();
+		Admin admin = em.find(Admin.class, idAdmin);
+		if (admin == null) {
+			ValidationError error = new ValidationError();
+			error.setClassName("Admin");
+			error.setErrorMessage("Cet admin n'éxiste pas");
+			error.setPropertyPath("Admin");
+			errors.add(error);
+			return errors;
+		} else {
+			Ecole e=admin.getEcole();
+			if (e.getLogo()!=null) {
+				File file = new File(e.getLogo()); 
+				file.delete();
+			}
+			e.setLogo(image);
+			try {
+				em.merge(e);
+				return null;
+			}catch (ConstraintViolationException ex) {
+				Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+				errors.clear();
+				errors.addAll(ValidationError.fromViolations(violations));
+				return errors;
+			}catch (PersistenceException ex) {
+				return errors;
+			}
+		}
 	}
 
 }

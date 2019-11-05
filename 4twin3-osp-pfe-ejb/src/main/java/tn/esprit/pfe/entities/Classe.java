@@ -31,7 +31,7 @@ public class Classe implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.AUTO)
 	@Column
 	private int id;
 	
@@ -44,8 +44,8 @@ public class Classe implements Serializable {
 	@Min(value=2019)
 	@Max(value=2100)
 	private int anneeDeDebut;
-	
-	@ManyToOne
+
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
 	private Specialite specialite;
 	
