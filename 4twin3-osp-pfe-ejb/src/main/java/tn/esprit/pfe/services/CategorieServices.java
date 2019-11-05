@@ -42,7 +42,7 @@ public class CategorieServices implements CategorieServiceRemote{
 
 	@Override
 	public List<Categorie> getCategorielesplusdemandées(int idens) {
-		List<Categorie> cat = em.createQuery("select c from Categorie c,Enseignant e where c.e.id:=idens ", Categorie.class).getResultList();
+		List<Categorie> cat = em.createQuery("selectT c from Categorie c left join Enseignant e where c.e.id=idens ", Categorie.class).getResultList();
 		return cat;
 		/*List<String> categorieNames = new ArrayList<>();
 		for(Categorie categorie : cat){

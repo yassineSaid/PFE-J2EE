@@ -1,8 +1,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -18,99 +18,87 @@ import javax.persistence.Table;
 @Entity
 @Table(name= "Entreprise")
 public class Entreprise implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	@Column
 	private int id;
-	
+
 	@Column
 	private String NameEntreprise;
-	
+
 	@Column
 	private String Adresse;
-	
+
 	@Column
 	private String Siteweb;
-	
+
 	@Column
 	private String Pays;
-	
+
 	@Column
 	private String EmailEntreprise;
-	
+
 	@Column
 	private String TelEntreprise;
-	
+
 	@Column 
 	private String EmailResponsable;
-	
+
 	@Column
 	private String NomPrenomResponsable;
-	
+
 	@Column
 	private String TelResponsable;
-	
+
 	@Column
 	private String Password;
-	
-	
-	
-	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
-			fetch=FetchType.LAZY)
-	private List<InternshipAgreemen> internshipAgreemens = new ArrayList<>();
-	
+
+	@Column
+	private int xp;
+
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
-	private List<SheetPFE> sheetPFEs = new ArrayList<>();
+	private Set<InternshipOffer> internshipoffers ;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<EntrepriseSupervisor> entreprisesupervisors ;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<InternshipCataloge> internshipcataloges;
+
+	@ManyToOne
+	Packs Packs;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<JobOffer> joboffers;
+
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<EntrepriseStudent> entreprisestudents;
 
 
-	public Entreprise() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<InternshipAgreemen> internshipAgreemens;
 
-	public Entreprise(int id, String nameEntreprise, String adresse, String siteweb, String pays,
-			String emailEntreprise, String telEntreprise, String emailResponsable, String nomPrenomResponsable,
-			String telResponsable, String password) {
-		super();
-		this.id = id;
-		NameEntreprise = nameEntreprise;
-		Adresse = adresse;
-		Siteweb = siteweb;
-		Pays = pays;
-		EmailEntreprise = emailEntreprise;
-		TelEntreprise = telEntreprise;
-		EmailResponsable = emailResponsable;
-		NomPrenomResponsable = nomPrenomResponsable;
-		TelResponsable = telResponsable;
-		Password = password;
-	
-	}
+	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<SheetPFE> sheetPFEs;
 
 
-
-	public Entreprise(String nameEntreprise, String adresse, String siteweb, String pays, String emailEntreprise,
-			String telEntreprise, String emailResponsable, String nomPrenomResponsable, String telResponsable,
-			String password) {
-		super();
-		NameEntreprise = nameEntreprise;
-		Adresse = adresse;
-		Siteweb = siteweb;
-		Pays = pays;
-		EmailEntreprise = emailEntreprise;
-		TelEntreprise = telEntreprise;
-		EmailResponsable = emailResponsable;
-		NomPrenomResponsable = nomPrenomResponsable;
-		TelResponsable = telResponsable;
-		Password = password;
-		
-	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getNameEntreprise() {
@@ -165,8 +153,8 @@ public class Entreprise implements Serializable {
 		return EmailResponsable;
 	}
 
-	public void setEmailResponsable(String emiailResponsable) {
-		EmailResponsable = emiailResponsable;
+	public void setEmailResponsable(String emailResponsable) {
+		EmailResponsable = emailResponsable;
 	}
 
 	public String getNomPrenomResponsable() {
@@ -185,27 +173,88 @@ public class Entreprise implements Serializable {
 		TelResponsable = telResponsable;
 	}
 
-	public List<InternshipAgreemen> getInternshipAgreemens() {
+	public String getPassword() {
+		return Password;
+	}
+
+	public void setPassword(String password) {
+		Password = password;
+	}
+
+	public int getXp() {
+		return xp;
+	}
+
+	public void setXp(int xp) {
+		this.xp = xp;
+	}
+
+	public Set<InternshipOffer> getInternshipOffers() {
+		return internshipoffers;
+	}
+
+	public void setInternshipOffers(Set<InternshipOffer> internshipOffers) {
+		this.internshipoffers = internshipOffers;
+	}
+
+	public Set<EntrepriseSupervisor> getEntrepriseSupervisors() {
+		return entreprisesupervisors;
+	}
+
+	public void setEntrepriseSupervisors(Set<EntrepriseSupervisor> entreprisesupervisors) {
+		this.entreprisesupervisors = entreprisesupervisors;
+	}
+
+	public Set<InternshipCataloge> getInternshipcataloges() {
+		return internshipcataloges;
+	}
+
+	public void setInternshipcataloges(Set<InternshipCataloge> internshipcataloges) {
+		this.internshipcataloges = internshipcataloges;
+	}
+
+
+	public Packs getPacks() {
+		return Packs;
+	}
+
+	public void setPacks(Packs packs) {
+		Packs = packs;
+	}
+
+	public Set<JobOffer> getJobOffers() {
+		return joboffers;
+	}
+
+	public void setJobOffers(Set<JobOffer> joboffers) {
+		this.joboffers = joboffers;
+	}
+
+	public Set<EntrepriseStudent> getEntreprisestudents() {
+		return entreprisestudents;
+	}
+
+	public void setEntreprisestudents(Set<EntrepriseStudent> entreprisestudents) {
+		this.entreprisestudents = entreprisestudents;
+	}
+
+	public Set<InternshipAgreemen> getInternshipAgreemens() {
 		return internshipAgreemens;
 	}
 
-	public void setInternshipAgreemens(List<InternshipAgreemen> internshipAgreemens) {
+	public void setInternshipAgreemens(Set<InternshipAgreemen> internshipAgreemens) {
 		this.internshipAgreemens = internshipAgreemens;
 	}
 
-	public List<SheetPFE> getSheetPFEs() {
+	public Set<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
 
-	public void setSheetPFEs(List<SheetPFE> sheetPFEs) {
+	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
 	
-	
-	
-	
+
+
 }

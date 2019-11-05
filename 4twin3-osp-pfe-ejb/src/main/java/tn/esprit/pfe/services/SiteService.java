@@ -14,21 +14,22 @@ import javax.validation.ConstraintViolationException;
 
 import tn.esprit.pfe.entities.Admin;
 import tn.esprit.pfe.entities.Ecole;
+import tn.esprit.pfe.entities.Site;
 import tn.esprit.pfe.interfaces.EcoleServiceRemote;
+import tn.esprit.pfe.interfaces.SiteServiceRemote;
 import utilities.ValidationError;
 
 @Stateless
 @LocalBean
-public class EcoleService implements EcoleServiceRemote {
+public class SiteService implements SiteServiceRemote {
 
 	@PersistenceContext
 	EntityManager em;
 
 	@Override
-	public Set<ValidationError> addEcole(Ecole e, int idAdmin) {
+	public Set<ValidationError> addSite(Site s, int idAdmin) {
 		Set<ValidationError> errors = new HashSet<>();
 		Admin admin = em.find(Admin.class, idAdmin);
-
 		if (admin == null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Admin");
@@ -36,20 +37,20 @@ public class EcoleService implements EcoleServiceRemote {
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		} else if (admin.getEcole()!=null) {
+		} else if (admin.getEcole()==null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Admin");
-			error.setErrorMessage("Cet admin a déjà une école, modifiez l'école qui existe déjà ou supprimez la");
+			error.setErrorMessage("Cet admin n'a pas d'école, vous devez tout d'abord créer une école");
 			error.setPropertyPath("Ecole");
 			errors.add(error);
 			return errors;
 		}
 		else {
 			try {
-				e.setAdmin(admin);
-				em.persist(e);
+				s.setEcole(admin.getEcole());
+				em.persist(s);
 				em.flush();
-				admin.setEcole(e);
+				admin.getEcole().getSites().add(s);
 				return null;
 			}catch (ConstraintViolationException ex) {
 				Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
@@ -63,10 +64,10 @@ public class EcoleService implements EcoleServiceRemote {
 	}
 
 	@Override
-	public Set<ValidationError> modifierEcole(Ecole ecole, int idAdmin, int idEcole) {
+	public Set<ValidationError> modifierSite(Site s, int idAdmin, int idSite) {
 		Set<ValidationError> errors = new HashSet<>();
 		Admin admin = em.find(Admin.class, idAdmin);
-		Ecole e = em.find(Ecole.class, idEcole);
+		Site site = em.find(Site.class, idSite);
 		if (admin == null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Admin");
@@ -74,17 +75,17 @@ public class EcoleService implements EcoleServiceRemote {
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		}else if (e == null) {
+		}else if (site == null) {
 			ValidationError error = new ValidationError();
-			error.setClassName("Ecole");
-			error.setErrorMessage("Cette école n'éxiste pas");
-			error.setPropertyPath("Ecole");
+			error.setClassName("Site");
+			error.setErrorMessage("Ce site  n'éxiste pas");
+			error.setPropertyPath("Site");
 			errors.add(error);
 			return errors;
 		} else {
-			if (e.getAdmin()==admin) {
-				e.setAdresse(ecole.getAdresse());
-				e.setNom(ecole.getNom());
+			if (site.getEcole().getAdmin()==admin) {
+				site.setAdresse(s.getAdresse());
+				site.setNom(s.getNom());
 				try {
 					em.flush();
 					return null;
@@ -99,8 +100,8 @@ public class EcoleService implements EcoleServiceRemote {
 			}
 			else {
 				ValidationError error = new ValidationError();
-				error.setClassName("Ecole");
-				error.setErrorMessage("Cet admin n'a pas le droit de modifier cette école");
+				error.setClassName("Site");
+				error.setErrorMessage("Cet admin n'a pas le droit de modifier ce site");
 				error.setPropertyPath("Admin");
 				errors.add(error);
 				return errors;
@@ -109,10 +110,10 @@ public class EcoleService implements EcoleServiceRemote {
 	}
 
 	@Override
-	public Set<ValidationError> supprimerEcole(int idEcole, int idAdmin) {
+	public Set<ValidationError> supprimerSite(int idSite, int idAdmin) {
 		Set<ValidationError> errors = new HashSet<>();
 		Admin admin = em.find(Admin.class, idAdmin);
-		Ecole e = em.find(Ecole.class, idEcole);
+		Site site = em.find(Site.class, idSite);
 		if (admin == null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Admin");
@@ -120,22 +121,22 @@ public class EcoleService implements EcoleServiceRemote {
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		} else if (e == null) {
+		} else if (site == null) {
 			ValidationError error = new ValidationError();
-			error.setClassName("Ecole");
-			error.setErrorMessage("Cette école n'éxiste pas");
-			error.setPropertyPath("Ecole");
+			error.setClassName("Site");
+			error.setErrorMessage("Ce site n'éxiste pas");
+			error.setPropertyPath("Site");
 			errors.add(error);
 			return errors;
 		} else {
-			if (e.getAdmin()==admin) {
-				admin.setEcole(null);
-				em.remove(e);
+			if (site.getEcole().getAdmin()==admin) {
+				admin.getEcole().getSites().remove(site);
+				em.remove(site);
 			}
 			else {
 				ValidationError error = new ValidationError();
-				error.setClassName("Ecole");
-				error.setErrorMessage("Cet admin n'a pas le droit de supprimer cette école");
+				error.setClassName("Site");
+				error.setErrorMessage("Cet admin n'a pas le droit de supprimer ce site");
 				error.setPropertyPath("Admin");
 				errors.add(error);
 				return errors;
@@ -145,20 +146,22 @@ public class EcoleService implements EcoleServiceRemote {
 	}
 
 	@Override
-	public Ecole getEcole(int idEcole, int idAdmin) {
-		Admin admin = em.find(Admin.class, idAdmin);
-		if (admin == null) {
+	public Site getSite(int idSite) {
+		Site site = em.find(Site.class, idSite);
+		if (site == null) {
 			return null;
-		} else if (admin.getEcole().getId()==idEcole) {
-			return admin.getEcole();
 		} else {
-			return null;
+			return site;
 		}
 	}
 
 	@Override
-	public List<Ecole> getListEcole() {
-		return em.createQuery("from Ecole",Ecole.class).getResultList();
+	public Set<Site> getListSite(int idEcole) {
+		Ecole ecole=em.find(Ecole.class, idEcole);
+		if (ecole==null) {
+			return null;
+		}
+		return ecole.getSites();
 	}
 
 }

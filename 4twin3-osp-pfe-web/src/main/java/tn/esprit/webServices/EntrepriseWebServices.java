@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import tn.esprit.pfe.entities.Entreprise;
+import tn.esprit.pfe.entities.InternshipOffer;
 import tn.esprit.pfe.services.EntrepriseServices;
 
 @RequestScoped
@@ -41,4 +43,25 @@ public class EntrepriseWebServices {
 		es.updateEntreprise(ent);
 		return Response.status(Status.ACCEPTED).entity("Successful Update").build();
 	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEntrepriseDetails(@QueryParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseDetails(id)).build();
+	}
+	
+	@POST
+	@Path("addInternshipOffer")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response addInternshipOffer(@QueryParam("id") int idEnt,InternshipOffer inoff) {
+		int idioff = es.addInternshipOffer(inoff);
+		es.addInternshipOffertoEntreprise(idEnt, idioff);
+		if(idioff != 0)
+		{
+			return Response.status(Status.CREATED).entity("Internship added Successful").build();
+		}
+		return Response.status(Status.NOT_ACCEPTABLE).entity("Internship added Failed ").build();
+	}
+
 }

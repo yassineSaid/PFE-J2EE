@@ -1,12 +1,17 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,9 +28,32 @@ public class InternshipCataloge implements Serializable{
 	
 	@Column
 	private String Description;
+	
+	@OneToMany(mappedBy="internshipCataloge", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<JobOffer> joboffers;
+
+	@OneToMany(mappedBy="internshipCataloge", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<InternshipOffer> internshipoffers;
+	
+	@ManyToOne
+	Entreprise entreprise;
+
+	public Entreprise getEntreprise() {
+		return entreprise;
+	}
+
+	public void setEntreprise(Entreprise entreprise) {
+		this.entreprise = entreprise;
+	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCatalogName() {
@@ -44,6 +72,22 @@ public class InternshipCataloge implements Serializable{
 		Description = description;
 	}
 
+	public Set<JobOffer> getJobOffers() {
+		return joboffers;
+	}
+
+	public void setJobOffers(Set<JobOffer> jobOffers) {
+		this.joboffers = jobOffers;
+	}
+
+	public Set<InternshipOffer> getInternshipOffers() {
+		return internshipoffers;
+	}
+
+	public void setInternshipOffers(Set<InternshipOffer> internshipOffers) {
+		this.internshipoffers = internshipOffers;
+	}
+
 	public InternshipCataloge(int id, String catalogName, String description) {
 		super();
 		this.id = id;
@@ -60,6 +104,8 @@ public class InternshipCataloge implements Serializable{
 	public InternshipCataloge() {
 		super();
 	}
+
+	
 	
 	
 }

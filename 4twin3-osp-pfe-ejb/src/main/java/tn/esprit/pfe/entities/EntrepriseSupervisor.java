@@ -1,12 +1,17 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -32,11 +37,21 @@ public class EntrepriseSupervisor implements Serializable {
 	
 	@Column
 	private String SpecialiteOptionnel;
+	
+	@ManyToOne
+	Entreprise entreprise;
+
+	@OneToMany(mappedBy="entrepriseSupervisor", cascade = {CascadeType.ALL}, 
+			fetch=FetchType.EAGER)
+	private Set<EntrepriseStudent > entreprisestudents;
 
 	public int getId() {
 		return id;
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getNomPrenom() {
 		return NomPrenom;
@@ -78,6 +93,21 @@ public class EntrepriseSupervisor implements Serializable {
 		SpecialiteOptionnel = specialiteOptionnel;
 	}
 
+	public Entreprise getEntreprise() {
+		return entreprise;
+	}
+
+	public void setEntreprise(Entreprise entreprise) {
+		entreprise = entreprise;
+	}
+
+	public Set<EntrepriseStudent> getEntrepriseStudents() {
+		return entreprisestudents;
+	}
+
+	public void setEntrepriseStudents(Set<EntrepriseStudent> entreprisestudents) {
+		this.entreprisestudents = entreprisestudents;
+	}
 
 	public EntrepriseSupervisor(int id, String nomPrenom, String tel, String email, String specialite,
 			String specialiteOptionnel) {
@@ -90,7 +120,6 @@ public class EntrepriseSupervisor implements Serializable {
 		SpecialiteOptionnel = specialiteOptionnel;
 	}
 
-
 	public EntrepriseSupervisor(String nomPrenom, String tel, String email, String specialite,
 			String specialiteOptionnel) {
 		super();
@@ -100,7 +129,11 @@ public class EntrepriseSupervisor implements Serializable {
 		Specialite = specialite;
 		SpecialiteOptionnel = specialiteOptionnel;
 	}
+
+	public EntrepriseSupervisor() {
+		super();
+	}
+
 	
-	public EntrepriseSupervisor() {}
 	
 }

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,35 +33,40 @@ public class InternshipOffer implements Serializable {
 	
 	@Temporal (TemporalType.DATE)
 	private Date dateFin;
+	
+	@Temporal (TemporalType.DATE)
+	private Date datePublier;
+	
+	@ManyToOne
+	Entreprise entreprise;
+	
+	@ManyToOne
+	InternshipCataloge internshipCataloge;
+	
+	@Column
+	private String Sujet;
+	
+	@Column
+	private String Reference;
+	
+	@Column
+	private String Objectifdustage;
+	
+	@Column
+	private String Mission;
+	
+	@Column
+	private String Profilrecherche;
+	
+	@Column
+	private String CompétencesetConnaissances;
 
-	
-	//@Column
-	//private String Mot_cle;
-	
-	public InternshipOffer(String offreName, String description, Date dateDebut, Date dateFin) {
-		super();
-		OffreName = offreName;
-		Description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
+	public int getId() {
+		return id;
 	}
-	
-	
 
-	public InternshipOffer(int id, String offreName, String description, Date dateDebut, Date dateFin) {
-		super();
+	public void setId(int id) {
 		this.id = id;
-		OffreName = offreName;
-		Description = description;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-	}
-
-
-
-	public InternshipOffer() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getOffreName() {
@@ -95,5 +101,119 @@ public class InternshipOffer implements Serializable {
 		this.dateFin = dateFin;
 	}
 
+	public Entreprise getEntreprise() {
+		return entreprise;
+	}
+
+	public void setEntreprise(Entreprise entreprise) {
+		this.entreprise = entreprise;
+	}
+
+	public String getSujet() {
+		return Sujet;
+	}
+
+	public void setSujet(String sujet) {
+		Sujet = sujet;
+	}
+
+	public String getReference() {
+		return Reference;
+	}
+
+	public void setReference(String reference) {
+		Reference = reference;
+	}
+
+	public String getObjectifdustage() {
+		return Objectifdustage;
+	}
+
+	public void setObjectifdustage(String objectifdustage) {
+		Objectifdustage = objectifdustage;
+	}
+
+	public String getMission() {
+		return Mission;
+	}
+
+	public void setMission(String mission) {
+		Mission = mission;
+	}
+
+	public String getProfilrecherche() {
+		return Profilrecherche;
+	}
+
+	public void setProfilrecherche(String profilrecherche) {
+		Profilrecherche = profilrecherche;
+	}
+
+	public String getCompétencesetConnaissances() {
+		return CompétencesetConnaissances;
+	}
+
+	public void setCompétencesetConnaissances(String compétencesetConnaissances) {
+		CompétencesetConnaissances = compétencesetConnaissances;
+	}
+
+	public Date getDatePublier() {
+		return datePublier;
+	}
+
+	public void setDatePublier(Date datePublier) {
+		this.datePublier = datePublier;
+	}
+
+	
+
+	public InternshipCataloge getInternshipCataloge() {
+		return internshipCataloge;
+	}
+
+	public void setInternshipCataloge(InternshipCataloge internshipCataloge) {
+		this.internshipCataloge = internshipCataloge;
+	}
+
+	public InternshipOffer(String offreName, String description, Date dateDebut, Date dateFin, Date datePublier,
+			String sujet, String reference, String objectifdustage, String mission, String profilrecherche,
+			String compétencesetConnaissances) {
+		super();
+		OffreName = offreName;
+		Description = description;
+		this.dateDebut = dateDebut;
+		this.dateFin = dateFin;
+		this.datePublier = datePublier;
+		Sujet = sujet;
+		Reference = reference;
+		Objectifdustage = objectifdustage;
+		Mission = mission;
+		Profilrecherche = profilrecherche;
+		CompétencesetConnaissances = compétencesetConnaissances;
+	}
+
+	public InternshipOffer(int id, String offreName, String description, Date dateDebut, Date dateFin, Date datePublier,
+			String sujet, String reference, String objectifdustage, String mission, String profilrecherche,
+			String compétencesetConnaissances) {
+		super();
+		this.id = id;
+		OffreName = offreName;
+		Description = description;
+		this.dateDebut = dateDebut;
+		this.dateFin = dateFin;
+		this.datePublier = datePublier;
+		Sujet = sujet;
+		Reference = reference;
+		Objectifdustage = objectifdustage;
+		Mission = mission;
+		Profilrecherche = profilrecherche;
+		CompétencesetConnaissances = compétencesetConnaissances;
+	}
+
+	public InternshipOffer() {
+		super();
+	}
+	
+	
 	
 }

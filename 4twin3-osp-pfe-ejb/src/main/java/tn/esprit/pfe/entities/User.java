@@ -39,15 +39,11 @@ public class User implements Serializable {
 	private int id;
 
 	@Column
-	@NotNull(message = "Donnez un nom de famille")
 	@NotBlank(message = "Donnez un nom de famille")
-	@NotEmpty(message = "Donnez un nom de famille")
 	private String nom;
 
 	@Column
-	@NotNull(message = "Donnez un prenom")
 	@NotBlank(message = "Donnez un prenom")
-	@NotEmpty(message = "Donnez un prenom")
 	private String prenom;
 
 	@Column(nullable = false, unique = true)
@@ -138,9 +134,12 @@ public class User implements Serializable {
 		return newPass;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", password=" + password
+				+ ", plainPassword=" + plainPassword + ", role=" + role + "]";
 	}
+	
 	
 
 }
