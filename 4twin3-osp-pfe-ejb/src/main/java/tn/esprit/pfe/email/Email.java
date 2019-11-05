@@ -22,10 +22,12 @@ import javax.mail.internet.MimeMultipart;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import tn.esprit.pfe.entities.Enseignant;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.InternshipAgreemen;
 import tn.esprit.pfe.entities.SheetPFE;
+import tn.esprit.pfe.entities.SheetPFEModification;
 
 @Stateless
 public class Email {
@@ -121,51 +123,6 @@ public class Email {
 		Transport.send(message);
 	}
 
-	public void etatSheetPFE(SheetPFE sheetPFE) throws NamingException, AddressException, MessagingException {
-
-		InitialContext ic = new InitialContext();
-		session = (Session) ic.lookup("java:jboss/mail/Default");
-		Message message = new MimeMessage(session);
-		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sheetPFE.getEtudiant().getEmail()));
-
-		if (sheetPFE.getEtat().equals(EtatSheetPFE.CANCEL)) {
-			message.setSubject("Internship Cancel");
-		} else if (sheetPFE.getEtat().equals(EtatSheetPFE.REFUSE)) {
-			message.setSubject("Sheet PFE Refuse");
-		} else {
-			message.setSubject("Sheet PFE Accepted");
-		}
-
-		Multipart multipart = new MimeMultipart();
-
-		BodyPart messageBodyPart = new MimeBodyPart();
-
-		String content = "";
-
-		if (sheetPFE.getEtat().equals(EtatSheetPFE.CANCEL)) {
-			content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
-					+ "<br><br>" + "<p>\r\n" + "Internship CANCEL.</p>";
-		} else if (sheetPFE.getEtat().equals(EtatSheetPFE.REFUSE)) {
-			content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
-					+ "<br><br>" + "<p>\r\n"
-					+ "Sorry, your sheet PFE <span style=\"color:red\">REFUSE</span>.</p><p>Problem of refusing <br>"
-					+ sheetPFE.getNote() + "</p>";
-		} else if (sheetPFE.getEtat().equals(EtatSheetPFE.ACCEPTED)) {
-			content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
-					+ "<br><br>" + "<p>\r\n" + "Sorry, your sheet PFE ACCEPTED.</p>";
-
-		} 
-
-		messageBodyPart.setContent(content, "text/html");
-
-		multipart.addBodyPart(messageBodyPart);
-
-		// Send the complete message parts
-		message.setContent(multipart);
-
-		Transport.send(message);
-	}
-
 	public void entrepriseNotExist(SheetPFE sheetPFE) throws NamingException, AddressException, MessagingException {
 
 		InitialContext ic = new InitialContext();
@@ -194,7 +151,7 @@ public class Email {
 		Transport.send(message);
 	}
 
-	public void requestCancelInternship(SheetPFE sheetPFE) throws NamingException, AddressException, MessagingException {
+	public void requestCancelInternship(SheetPFE sheetPFE,String note) throws NamingException, AddressException, MessagingException {
 
 		InitialContext ic = new InitialContext();
 		session = (Session) ic.lookup("java:jboss/mail/Default");
@@ -215,10 +172,10 @@ public class Email {
 		String content = "";
 		if(sheetPFE.getRequest().getEtat().equals(EtatSheetPFE.ACCEPTED)) {
 			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
-					+ "<br><br>" + "<p>\r\n" + "Your request to cancel the internship accepted.</p>";
+					+ "<br><br>" + "<p>\r\n" +note +"</p>";
 		}else {
 			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
-					+ "<br><br>" + "<p>\r\n" + "Your request to cancel the internship has been refused.</p>";
+					+ "<br><br>" + "<p>\r\n" + "Your request to cancel the internship has been refused.</p><p> Problem of refusing <br>" + note + "</p>";
 
 			
 		}
@@ -297,6 +254,132 @@ public class Email {
 
 		Transport.send(message);
 		
+	}
+	
+	public void affectEnseignantToSheetPFE(SheetPFE sheetPFE,Enseignant enseignant,String type) throws MessagingException, NamingException {
+		
+
+		InitialContext ic = new InitialContext();
+		session = (Session) ic.lookup("java:jboss/mail/Default");
+		Message message = new MimeMessage(session);
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sheetPFE.getEtudiant().getEmail()));
+
+		if(type.equals("VALIDATEUR")) {
+			   message.setSubject("Affect validateur");
+		}else if(type.equals("RAPPORTEUR")) {
+			   message.setSubject("Affect rapporteur");
+		}else if(type.equals("ENCADREUR")) {
+				message.setSubject("Affect directeur");
+		}
+
+		Multipart multipart = new MimeMultipart();
+
+		BodyPart messageBodyPart = new MimeBodyPart();
+
+		String content = "";
+		
+		if(type.equals("VALIDATEUR")) {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + "Affect validateur '"+ enseignant.getPrenom() + " "+enseignant.getNom()+ "' to your sheet PFE.</p>"
+								+ "<p>CONTACT : "+enseignant.getEmail()+" </p>";
+		}else if(type.equals("RAPPORTEUR")) {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + "Affect rapporteur '"+ enseignant.getPrenom() + " "+enseignant.getNom()+ "' to your sheet PFE.</p>"
+								+ "<p>CONTACT : "+enseignant.getEmail()+" </p>";
+		}else if(type.equals("ENCADREUR")) {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + "Affect directeur '"+ enseignant.getPrenom() + " "+enseignant.getNom()+ "' to your sheet PFE.</p>"
+								+ "<p>CONTACT : "+enseignant.getEmail()+" </p>";
+		}
+		
+		messageBodyPart.setContent(content, "text/html");
+
+		multipart.addBodyPart(messageBodyPart);
+
+		// Send the complete message parts
+		message.setContent(multipart);
+
+		Transport.send(message);
+	}
+	
+	public void changeEnseignantToSheetPFE(SheetPFE sheetPFE,Enseignant enseignant,String type) throws MessagingException, NamingException {
+		
+
+		InitialContext ic = new InitialContext();
+		session = (Session) ic.lookup("java:jboss/mail/Default");
+		Message message = new MimeMessage(session);
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sheetPFE.getEtudiant().getEmail()));
+		
+		if(type.equals("RAPPORTEUR")) {
+			   message.setSubject("Modify rapporteur");
+		}else if(type.equals("ENCADREUR")) {
+				message.setSubject("Modify directeur");
+		}
+
+		Multipart multipart = new MimeMultipart();
+
+		BodyPart messageBodyPart = new MimeBodyPart();
+
+		String content = "";
+		
+	    if(type.equals("RAPPORTEUR")) {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + "Modify rapporteur '"+ enseignant.getPrenom() + " "+enseignant.getNom()+ "' to your sheet PFE.</p>"
+								+ "<p>CONTACT : "+enseignant.getEmail()+" </p>";
+		}else if(type.equals("ENCADREUR")) {
+			 content = "<h3>Hello,</h3>" + sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + "Modify directeur '"+ enseignant.getPrenom() + " "+enseignant.getNom()+ "' to your sheet PFE.</p>"
+								+ "<p>CONTACT : "+enseignant.getEmail()+" </p>";
+		}
+		
+		messageBodyPart.setContent(content, "text/html");
+
+		multipart.addBodyPart(messageBodyPart);
+
+		// Send the complete message parts
+		message.setContent(multipart);
+
+		Transport.send(message);
+	}
+	
+	
+public void accepteSheetPFE(SheetPFEModification sheetMod) throws MessagingException, NamingException {
+		
+
+		InitialContext ic = new InitialContext();
+		session = (Session) ic.lookup("java:jboss/mail/Default");
+		Message message = new MimeMessage(session);
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sheetMod.getSheetPFE().getEtudiant().getEmail()));
+		
+		if(sheetMod.getEtat().equals(EtatSheetPFE.ACCEPTED)) {
+		    message.setSubject("Modification accepted");
+		}else{
+			message.setSubject("Modification refused");
+		}
+
+		Multipart multipart = new MimeMultipart();
+
+		BodyPart messageBodyPart = new MimeBodyPart();
+
+		String content = "";
+		
+	    if(sheetMod.getEtat().equals(EtatSheetPFE.ACCEPTED)) {
+			 content = "<h3>Hello,</h3>" + sheetMod.getSheetPFE().getEtudiant().getPrenom() + " " + sheetMod.getSheetPFE().getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + " Your modification of sheet PFE accepted.</p>";
+		}else  {
+			 content = "<h3>Hello,</h3>" + sheetMod.getSheetPFE().getEtudiant().getPrenom() + " " +  sheetMod.getSheetPFE().getEtudiant().getNom()
+						+ "<br><br>" + "<p>\r\n" + "Your modification of sheet PFE refused.<p> Problem of refusing <br>" + sheetMod.getNote() + "</p>";
+						
+		}
+		
+		messageBodyPart.setContent(content, "text/html");
+
+		multipart.addBodyPart(messageBodyPart);
+
+		// Send the complete message parts
+		message.setContent(multipart);
+
+		Transport.send(message);
 	}
 	
 	

@@ -5,13 +5,20 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+<<<<<<< HEAD
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+=======
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+>>>>>>> branch 'master' of https://gitlab.com/yassine.said/4twin3-osp-pfe.git
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,7 +27,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
-@Table
+@Table(name = "Enseignant")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+
 public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;

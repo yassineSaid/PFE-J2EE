@@ -14,8 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
@@ -48,17 +46,10 @@ public class Entreprise implements Serializable {
 	@Column
 	private String TelEntreprise;
 
-	@Column 
-	private String EmailResponsable;
-
-	@Column
-	private String NomPrenomResponsable;
-
 	@Column
 	private String TelResponsable;
 
-	@Column
-	private String Password;
+	
 
 	@Column
 	private int xp;
@@ -154,21 +145,7 @@ public class Entreprise implements Serializable {
 		TelEntreprise = telEntreprise;
 	}
 
-	public String getEmailResponsable() {
-		return EmailResponsable;
-	}
 
-	public void setEmailResponsable(String emailResponsable) {
-		EmailResponsable = emailResponsable;
-	}
-
-	public String getNomPrenomResponsable() {
-		return NomPrenomResponsable;
-	}
-
-	public void setNomPrenomResponsable(String nomPrenomResponsable) {
-		NomPrenomResponsable = nomPrenomResponsable;
-	}
 
 	public String getTelResponsable() {
 		return TelResponsable;
@@ -178,13 +155,6 @@ public class Entreprise implements Serializable {
 		TelResponsable = telResponsable;
 	}
 
-	public String getPassword() {
-		return Password;
-	}
-
-	public void setPassword(String password) {
-		Password = password;
-	}
 
 	public int getXp() {
 		return xp;
@@ -257,6 +227,37 @@ public class Entreprise implements Serializable {
 
 	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
+	}
+
+	public Entreprise(int id, String nameEntreprise, String adresse, String siteweb, String pays,
+			String emailEntreprise, String telEntreprise, String telResponsable, int xp) {
+		super();
+		this.id = id;
+		NameEntreprise = nameEntreprise;
+		Adresse = adresse;
+		Siteweb = siteweb;
+		Pays = pays;
+		EmailEntreprise = emailEntreprise;
+		TelEntreprise = telEntreprise;
+		TelResponsable = telResponsable;
+		this.xp = xp;
+	}
+
+	public Entreprise(String nameEntreprise, String adresse, String siteweb, String pays, String emailEntreprise,
+			String telEntreprise, String telResponsable, int xp) {
+		super();
+		NameEntreprise = nameEntreprise;
+		Adresse = adresse;
+		Siteweb = siteweb;
+		Pays = pays;
+		EmailEntreprise = emailEntreprise;
+		TelEntreprise = telEntreprise;
+		TelResponsable = telResponsable;
+		this.xp = xp;
+	}
+
+	public Entreprise() {
+		super();
 	}
 
 	
