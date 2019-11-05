@@ -37,13 +37,14 @@ public class Etudiant extends User {
 	@OneToOne(mappedBy="etudiant")
 	private InternshipAgreemen internshipAgreemen;
 	
+	@JsonIgnore
+ 	@OneToOne(mappedBy="etudiant")
+	private SheetPFE sheetPFE;
 
 	 //@OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
 	//	fetch=FetchType.EAGER)
 	//private List<ForumQuestion> fq=new ArrayList<>();
 	
-
-	private SheetPFE sheetPFE;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="etudiant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -57,6 +58,8 @@ public class Etudiant extends User {
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JsonBackReference
 	private Classe classe;
+	
+	
 
 	public Etudiant() {
 		super();
