@@ -12,8 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
@@ -48,6 +50,10 @@ public class Entreprise implements Serializable {
 
 	@Column
 	private String TelResponsable;
+	
+	@OneToOne(mappedBy="entreprise")
+	@JsonIgnore
+	private ResponsableEntreprise responsableEntreprise;
 
 	
 
@@ -163,7 +169,7 @@ public class Entreprise implements Serializable {
 	public void setXp(int xp) {
 		this.xp = xp;
 	}
-
+	@JsonIgnore
 	public Set<InternshipOffer> getInternshipOffers() {
 		return internshipoffers;
 	}
@@ -171,7 +177,7 @@ public class Entreprise implements Serializable {
 	public void setInternshipOffers(Set<InternshipOffer> internshipOffers) {
 		this.internshipoffers = internshipOffers;
 	}
-
+	@JsonIgnore
 	public Set<EntrepriseSupervisor> getEntrepriseSupervisors() {
 		return entreprisesupervisors;
 	}
@@ -179,7 +185,7 @@ public class Entreprise implements Serializable {
 	public void setEntrepriseSupervisors(Set<EntrepriseSupervisor> entreprisesupervisors) {
 		this.entreprisesupervisors = entreprisesupervisors;
 	}
-
+	@JsonIgnore
 	public Set<InternshipCataloge> getInternshipcataloges() {
 		return internshipcataloges;
 	}
@@ -188,7 +194,7 @@ public class Entreprise implements Serializable {
 		this.internshipcataloges = internshipcataloges;
 	}
 
-
+	@JsonIgnore
 	public Packs getPacks() {
 		return Packs;
 	}
@@ -196,15 +202,15 @@ public class Entreprise implements Serializable {
 	public void setPacks(Packs packs) {
 		Packs = packs;
 	}
-
+	@JsonIgnore
 	public Set<JobOffer> getJobOffers() {
 		return joboffers;
 	}
-
+	
 	public void setJobOffers(Set<JobOffer> joboffers) {
 		this.joboffers = joboffers;
 	}
-
+	@JsonIgnore
 	public Set<EntrepriseStudent> getEntreprisestudents() {
 		return entreprisestudents;
 	}
@@ -212,7 +218,7 @@ public class Entreprise implements Serializable {
 	public void setEntreprisestudents(Set<EntrepriseStudent> entreprisestudents) {
 		this.entreprisestudents = entreprisestudents;
 	}
-
+	@JsonIgnore
 	public Set<InternshipAgreemen> getInternshipAgreemens() {
 		return internshipAgreemens;
 	}
@@ -220,7 +226,7 @@ public class Entreprise implements Serializable {
 	public void setInternshipAgreemens(Set<InternshipAgreemen> internshipAgreemens) {
 		this.internshipAgreemens = internshipAgreemens;
 	}
-
+    @JsonIgnore
 	public Set<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
@@ -258,6 +264,14 @@ public class Entreprise implements Serializable {
 
 	public Entreprise() {
 		super();
+	}
+
+	public ResponsableEntreprise getResponsableEntreprise() {
+		return responsableEntreprise;
+	}
+
+	public void setResponsableEntreprise(ResponsableEntreprise responsableEntreprise) {
+		this.responsableEntreprise = responsableEntreprise;
 	}
 
 	

@@ -14,6 +14,7 @@ import tn.esprit.pfe.entities.EntrepriseSupervisor;
 import tn.esprit.pfe.entities.InternshipCataloge;
 import tn.esprit.pfe.entities.InternshipOffer;
 import tn.esprit.pfe.entities.JobOffer;
+import tn.esprit.pfe.entities.ResponsableEntreprise;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.EntrepriseServiceRemote;
 
@@ -33,7 +34,7 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	}
 	
 	@Override
-	public int addEntreprise(Entreprise ent) {
+	public int addEntreprise(Entreprise ent, int id) {
 		// TODO Auto-generated method stub
 		if(ValidateMail(ent.getEmailEntreprise())==0) {
 			ent.setXp(0);
@@ -42,6 +43,8 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		}
 		return 0;			
 	}
+	
+
 
 	@Override
 	public void updateEntreprise(Entreprise ent) {
@@ -72,8 +75,10 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	@Override
 	public void addEntreprisetoResponsable(int idR, int idEnt) {
 		// TODO Auto-generated method stub
-		User er = em.find(User.class, idR);
+		//User er = em.find(User.class, idR);
 		Entreprise en = em.find(Entreprise.class, idEnt);
+		ResponsableEntreprise r=em.find(ResponsableEntreprise.class,idR);
+		r.setEntreprise(en);
 
 	}
 
@@ -248,13 +253,7 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		nic.setCatalogName(ic.getCatalogName());
 		nic.setDescription(ic.getDescription());
 	}
-	
-	@Override
-	public void deleteInternshipCatalog(int idIntCat) {
-		InternshipCataloge ic = em.find(InternshipCataloge.class, idIntCat);
-		em.remove(ic);
-	}
-	
+		
 	@Override
 	public InternshipCataloge getInternshipCatalaogeDetails(int idCat) {
 		return em.find(InternshipCataloge.class, idCat);
@@ -268,6 +267,5 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		
 	}
 
-	
 
 }
