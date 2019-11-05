@@ -49,21 +49,23 @@ public class SoutenanceWebService {
 
 	}
 	
-
 	
-	@Path("/note/nbrNote")
+	@Path("/note")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<List<Long>,List<Long>>  NombreSoutenanceNoteEtNonNote() {
+	public List<Soutenance>  SoutenanceNonNote() {
 	
-	   return rst.SoutenanceNoteEtNonNote();
+	   return rst.afficherSoutenanceNonNote();
 		
 	}
+	
+
+	
 	
 	@Path("/note/moyenne")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Double>  MoyenneNote() {
+	public List<Float>  MoyenneNote() {
 	
 	   return rst.MoyenneNote();
 		

@@ -18,8 +18,7 @@ public interface SoutenanceServiceRemote {
 	//mohamed
 
 	public List<Soutenance> afficherSoutenanceNonNote();
-    public Map<List<Long>,List<Long>> SoutenanceNoteEtNonNote();
-    public List<Double> MoyenneNote();
+    public List<Float> MoyenneNote();
 	void testNote(int ids, float notee, float note);
 	List<Soutenance> afficherSoutenanceSelonEtudiant(String titre);
 	
