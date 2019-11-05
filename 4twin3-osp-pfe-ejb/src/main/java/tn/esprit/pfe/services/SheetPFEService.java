@@ -1,24 +1,55 @@
 package tn.esprit.pfe.services;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.google.zxing.WriterException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import net.sf.jasperreports.engine.JRException;
+import tn.esprit.pfe.email.Email;
+import tn.esprit.pfe.entities.Categorie;
+import tn.esprit.pfe.entities.Enseignant;
+import tn.esprit.pfe.entities.EnseignantSheetPFE;
+import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.EtatSheetPFE;
+import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.entities.PFENotification;
 import tn.esprit.pfe.entities.RequestCancelInternship;
 import tn.esprit.pfe.entities.SheetPFE;
 import tn.esprit.pfe.entities.SheetPFEModification;
 import tn.esprit.pfe.interfaces.SheetPFERemote;
-import tn.esprit.pfe.entities.Etudiant;
+import tn.esprit.pfe.pdf.PDF;
+import tn.esprit.pfe.qrcode.QRCode;
 
 @Stateless
 @LocalBean
 public class SheetPFEService implements SheetPFERemote {
+
 	@PersistenceContext
 	EntityManager em;
 
@@ -32,63 +63,474 @@ public class SheetPFEService implements SheetPFERemote {
 		sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
 		sheetPFE.setQrcode(code);
 		em.persist(sheetPFE);
+
+		try {
+			new QRCode().writeQRCode(sheetPFE);
+			new Email().sendQRCodeSheetPFE(sheetPFE);
+
+		} catch (WriterException | IOException | NamingException | MessagingException e) {
+			e.printStackTrace();
+		}
+
 		return sheetPFE.getId();
 
 	}
 
 	@Override
-	public List<SheetPFE> getAllSheetPFE() {
-		// new EmailSheetPFE().send("yassine.lahbib@esprit.tn", "hello", "hello");
-		return em.createQuery("select s from SheetPFE s where s.etat=:etat ", SheetPFE.class)
-				.setParameter("etat", EtatSheetPFE.DEFAULT).getResultList();
+	public List<Etudiant> getAllStudentNoSheet() {
+		return em.createQuery(
+				"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where s.etudiant.id IS NULL",
+				Etudiant.class).getResultList();
 	}
 
 	@Override
-	public SheetPFE getSheetPFEById(int id) {
-		SheetPFE sheetPFE = em.find(SheetPFE.class, id);
-		if (sheetPFE.getEtat().equals(EtatSheetPFE.DEFAULT)) {
-			sheetPFE.setEtat(EtatSheetPFE.VERIFICATION);
-			em.merge(sheetPFE);
+	public List<Etudiant> getAllStudentNoSheetWithYear(int startyear, int toyear) {
+
+		if (toyear == 0) {
+
+			return em.createQuery(
+					"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where e.classe.anneeDeDebut = :year   and s.etudiant.id IS NULL ",
+					Etudiant.class).setParameter("year", startyear).getResultList();
+		} else {
+
+			return em.createQuery(
+					"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where e.classe.anneeDeDebut BETWEEN :startyear and :toyear   and s.etudiant.id IS NULL ",
+					Etudiant.class).setParameter("startyear", startyear).setParameter("toyear", toyear).getResultList();
 		}
-		return em.find(SheetPFE.class, id);
+
 	}
 
 	@Override
-	public SheetPFE getSheetPFEByEtudiant() {
+	public void reminderStudentNoSheet(List<Etudiant> students) {
+
+		for (Etudiant etudiant : students) {
+			try {
+				new Email().reminderStudent(etudiant);
+			} catch (NamingException | MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetPFEFilter(EtatSheetPFE etat, int year, String pays, int id_categorie) {
+
+		if (etat.equals(EtatSheetPFE.ALL)) {
+
+			if (year == 0) {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s", SheetPFE.class).getResultList();
+
+					} else {
+
+						return em.createQuery("select s from SheetPFE s join s.categories c where c.id= :idcategorie",
+								SheetPFE.class).setParameter("idcategorie", id_categorie).getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s join s.entreprise p where p.Pays= :pays",
+								SheetPFE.class).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.entreprise p join s.categories c where p.Pays= :pays and c.id= :idcategorie",
+								SheetPFE.class).setParameter("pays", pays).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				}
+
+			} else {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e where e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.categories c where c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p where p.Pays= :pays and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p join s.categories c where p.Pays= :pays and  c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("year", year).setParameter("idcategorie", id_categorie)
+								.setParameter("pays", pays).getResultList();
+
+					}
+
+				}
+
+			}
+
+		} else {
+
+			if (year == 0) {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery("select s from SheetPFE s where s.etat = :etat ", SheetPFE.class)
+								.setParameter("etat", etat).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.categories c where s.etat = :etat and  c.id= :idcategorie",
+								SheetPFE.class).setParameter("etat", etat).setParameter("idcategorie", id_categorie)
+								.getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.entreprise p where s.etat = :etat and  p.Pays= :pays",
+								SheetPFE.class).setParameter("etat", etat).setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.entreprise p join s.categories c where s.etat = :etat and  p.Pays= :pays and c.id= :idcategorie",
+								SheetPFE.class).setParameter("etat", etat).setParameter("pays", pays)
+								.setParameter("idcategorie", id_categorie).getResultList();
+					}
+
+				}
+
+			} else {
+
+				if (pays.equals("ALL")) {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e where s.etat = :etat and  e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.categories c where s.etat = :etat and  c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year)
+								.setParameter("idcategorie", id_categorie).getResultList();
+					}
+
+				} else {
+
+					if (id_categorie == 0) {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p where s.etat = :etat and  p.Pays= :pays and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year)
+								.setParameter("pays", pays).getResultList();
+
+					} else {
+
+						return em.createQuery(
+								"select s from SheetPFE s join s.etudiant e join s.entreprise p join s.categories c where s.etat = :etat and  p.Pays= :pays and  c.id= :idcategorie  and e.classe.anneeDeDebut = :year",
+								SheetPFE.class).setParameter("etat", etat).setParameter("year", year)
+								.setParameter("idcategorie", id_categorie).setParameter("pays", pays).getResultList();
+
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetPFEDefault() {
+
+		Date date = new Date();
+
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH) + 1;
+
+		if (1 <= month && month <= 5) {
+			year = year - 1;
+		}
+
+		return em.createQuery(
+				"select s from SheetPFE s join s.etudiant e where s.etat ='DEFAULT' and e.classe.anneeDeDebut = :year order by(s.id)",
+				SheetPFE.class).setParameter("year", year).getResultList();
+	}
+
+	@Override
+	public boolean verificationByDirectorSheetPFE(int sheet_id, EtatSheetPFE etat) {
+
+		Enseignant directeur = em.find(Enseignant.class, 3);
+		try {
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+			sheetPFE.setEtat(etat);
+			sheetPFE.setNote("Entreprise does not exist");
+			em.merge(sheetPFE);
+			if (sheetPFE.getEtat().equals(EtatSheetPFE.REFUSE))
+
+				new Email().entrepriseNotExist(sheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(directeur);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("DIRECTEUR");
+			notification.setTitle("Refuse sheet PFE");
+			notification.setNote("Entreprise does not exist");
+
+			em.persist(notification);
+
+			return true;
+
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+
+	@Override
+	public int requestCancelInternship(int sheet_id) {
 
 		Etudiant etudiant = em.find(Etudiant.class, 1);
-		return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
-				.setParameter("etudiantId", etudiant.getId()).getSingleResult();
+
+		List<PFENotification> listnotify = em
+				.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'",
+						PFENotification.class)
+				.setParameter("id", etudiant.getId()).getResultList();
+
+		PFENotification notifyby = listnotify.stream().findFirst().get();
+
+		SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+
+		RequestCancelInternship req = new RequestCancelInternship();
+		req.setCreated(new Date());
+		req.setSheetPFE(sheetPFE);
+		req.setEtat(EtatSheetPFE.DEFAULT);
+		em.persist(req);
+
+		PFENotification notification = new PFENotification();
+		notification.setCreated(new Date());
+		notification.setEnseignant(notifyby.getEnseignant());
+		notification.setEtudiant(sheetPFE.getEtudiant());
+		notification.setSendBy("ETUDIANT");
+		notification.setTitle("Request Cancel Internship");
+		notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
+				+ " send request cancel internship");
+
+		em.persist(notification);
+
+		return req.getId();
 	}
 
 	@Override
-	public boolean updateSheetPFE(SheetPFE sheetPFE) {
-		SheetPFE oldsheet = em.find(SheetPFE.class, sheetPFE.getId());
+	public List<RequestCancelInternship> getAllRequest() {
+		return em.createQuery("select r from RequestCancelInternship r where r.etat= 'DEFAULT'",
+				RequestCancelInternship.class).getResultList();
+
+	}
+
+	@Override
+	public RequestCancelInternship getResquest(int id) {
+		return em.find(RequestCancelInternship.class, id);
+	}
+
+	@Override
+	public boolean updateRequest(int request_id, EtatSheetPFE etat, String note) {
+
+		Enseignant directeur = em.find(Enseignant.class, 3);
+
 		try {
 
-			if (oldsheet.getEtat().equals(EtatSheetPFE.DEFAULT)) {
+			RequestCancelInternship req = em.find(RequestCancelInternship.class, request_id);
+			req.setEtat(etat);
+			req.setNote(note);
+			em.merge(req);
+
+			SheetPFE sheetPFE = em.find(SheetPFE.class, req.getSheetPFE().getId());
+
+			if (etat.equals(EtatSheetPFE.ACCEPTED)) {
+				note = "Your request to cancel the internship accepted.";
+				sheetPFE.setEtat(EtatSheetPFE.CANCEL);
 				em.merge(sheetPFE);
-			} else if (sheetPFE.getFeatures().equals(oldsheet.getFeatures())
-					&& sheetPFE.getProblematic().equals(oldsheet.getProblematic())) {
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(directeur);
+				notification.setEtudiant(sheetPFE.getEtudiant());
+				notification.setSendBy("DIRECTEUR");
+				notification.setTitle("Internship Cancel");
+				notification.setNote(note);
+
+				em.persist(notification);
+
+			} else if (etat.equals(EtatSheetPFE.REFUSE)) {
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(directeur);
+				notification.setEtudiant(sheetPFE.getEtudiant());
+				notification.setSendBy("DIRECTEUR");
+				notification.setTitle("Request Refuse");
+				notification
+						.setNote("Your request to cancel the internship has been refused. Problem of refusing " + note);
+
+				em.persist(notification);
+
+			}
+
+			new Email().requestCancelInternship(sheetPFE, note);
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetValidate() {
+		return em.createQuery("select s from SheetPFE s where s.etat = 'VALIDATE' ", SheetPFE.class).getResultList();
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetPFEAccepted() {
+		return em.createQuery("select s from SheetPFE s where s.etat = 'ACCEPTED' ", SheetPFE.class).getResultList();
+	}
+
+	public List<Enseignant> getValidateur() {
+
+		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
+		List<Enseignant> listEnseignantOrderByCategories = em
+				.createQuery("select e from Enseignant e", Enseignant.class).getResultList();
+
+		for (Enseignant enseignant : listEnseignantOrderByCategories) {
+			Long count = (Long) em.createQuery(
+					"select count(e) from  Enseignant e join e.enseignantsheet es where es.type= 'VALIDATEUR' and e.id = :id")
+					.setParameter("id", enseignant.getId()).getSingleResult();
+
+			if (enseignant.getSite().getMaxPreValidateur() > count.intValue()) {
+				listEnseignant.add(enseignant);
+			}
+		}
+
+		return listEnseignant;
+
+	}
+
+	@Override
+	public String affectValidateurToSheetPFE(int sheet_id) {
+
+		Enseignant chef = em.find(Enseignant.class, 3);
+		try {
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+
+			if (getValidateur().size() == 0) {
+				return "NO_CONTENT";
+			}
+
+			Enseignant enseignant = getValidateur().stream().findFirst().get();
+
+			EnseignantSheetPFE enseignantSheetPFE = new EnseignantSheetPFE();
+			enseignantSheetPFE.setEnseignant(enseignant);
+			enseignantSheetPFE.setSheetPFE(sheetPFE);
+			enseignantSheetPFE.setType("VALIDATEUR");
+			em.merge(enseignantSheetPFE);
+
+			sheetPFE.setEtat(EtatSheetPFE.PRE_VALIDATE);
+			em.merge(sheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Affect Validateur");
+			notification.setNote("Chef Department affect validateur '" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().affectEnseignantToSheetPFE(sheetPFE, enseignant, "VALIDATEUR");
+
+			return "SUCCESS";
+
+		} catch (Exception e) {
+			return "NOT_MODIFIED";
+		}
+	}
+
+	@Override
+	public boolean validateSheetPFE(int sheet_id, EtatSheetPFE etat, String note) {
+
+		Enseignant enseignant = em.find(Enseignant.class, 3);
+
+		try {
+
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+
+			if (etat.equals(EtatSheetPFE.VALIDATE)) {
+
+				note = "Your subject of PFE has been accepted";
+				sheetPFE.setEtat(etat);
 				em.merge(sheetPFE);
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(enseignant);
+				notification.setEtudiant(sheetPFE.getEtudiant());
+				notification.setSendBy("VALIDATEUR");
+				notification.setTitle("Validated Sheet PFE");
+				notification.setNote(note);
+
+				em.persist(notification);
+
+				new Email().validateSheetPFE(sheetPFE, etat, note);
+
 			} else {
-				// Modification old sheet
-				oldsheet.setTitle(sheetPFE.getTitle());
-				oldsheet.setDescription(sheetPFE.getDescription());
-				oldsheet.setEntreprise(sheetPFE.getEntreprise());
-				oldsheet.setCategories(sheetPFE.getCategories());
 
-				em.merge(oldsheet);
+				sheetPFE.setEtat(etat);
+				em.merge(sheetPFE);
 
-				// Add Demande modification
-				SheetPFEModification sheetPFEModification = new SheetPFEModification();
-				sheetPFEModification.setFeatures(sheetPFE.getFeatures());
-				sheetPFEModification.setProblematic(sheetPFE.getProblematic());
-				sheetPFEModification.setCreated(new Date());
-				sheetPFEModification.setSheetPFE(sheetPFE);
-				sheetPFEModification.setEtat(EtatSheetPFE.DEFAULT);
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(enseignant);
+				notification.setEtudiant(sheetPFE.getEtudiant());
+				notification.setSendBy("VALIDATEUR");
+				notification.setTitle("Refused subject PFE");
+				notification.setNote(note);
 
-				em.persist(sheetPFEModification);
+				em.persist(notification);
+
+				new Email().validateSheetPFE(sheetPFE, etat, note);
 
 			}
 
@@ -100,67 +542,670 @@ public class SheetPFEService implements SheetPFERemote {
 	}
 
 	@Override
-	public boolean validateSheetPFE(SheetPFE sheetPFE) {
+	public List<SheetPFE> getAllSheetWaitEncadreur() {
+		return em.createQuery(
+				"select s from SheetPFE s where s.id not in (select s.id from EnseignantSheetPFE es Left join es.sheetPFE s  where es.type = 'ENCADREUR') ",
+				SheetPFE.class).getResultList();
+	}
+
+	@Override
+	public List<Enseignant> getAllEnseignantOrderByEncadrement() {
+		return em.createQuery(
+				"select e.id from Enseignant e JOIN e.enseignantsheet es where es.type='ENCADREUR' group by(e.id) order by(count(e))",
+				Enseignant.class).getResultList();
+	}
+
+	@Override
+	public List<Enseignant> getEncardeurByCategories(int sheet_id) {
+
+//		 return em.createQuery(
+//					"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id and e.id not in (select e.id from  Enseignant e left join e.site se join e.enseignantsheet es where es.type= 'ENCADREUR' group by(e) having count(e) > (se.maxEncadrant) ) group by(e) order by(count(e)) desc",
+//					Enseignant.class).setParameter("id", sheet_id).getResultList();
+
+		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
+		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
+				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id group by(e) order by(count(e)) desc",
+				Enseignant.class).setParameter("id", sheet_id).getResultList();
+
+		for (Enseignant enseignant : listEnseignantOrderByCategories) {
+			Long count = (Long) em.createQuery(
+					"select count(e) from  Enseignant e join e.enseignantsheet es where es.type= 'ENCADREUR' and e.id = :id")
+					.setParameter("id", enseignant.getId()).getSingleResult();
+
+			if (enseignant.getSite().getMaxEncadrant() > count.intValue()) {
+				listEnseignant.add(enseignant);
+			}
+		}
+
+		return listEnseignant;
+
+	}
+
+	@Override
+	public String affectEncadreurToSheetPFEAuto(int sheet_id) {
+
+		Enseignant chef = em.find(Enseignant.class, 3);
 
 		try {
-			em.merge(sheetPFE);
+
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+
+			if (getEncardeurByCategories(sheet_id).size() == 0) {
+				return "NO_CONTENT";
+			}
+
+			Enseignant enseignant = getEncardeurByCategories(sheet_id).stream().findFirst().get();
+			EnseignantSheetPFE enseignantSheetPFE = new EnseignantSheetPFE();
+			enseignantSheetPFE.setEnseignant(enseignant);
+			enseignantSheetPFE.setSheetPFE(sheetPFE);
+			enseignantSheetPFE.setType("ENCADREUR");
+			em.merge(enseignantSheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Affect Encadreur");
+			notification.setNote("Chef Department affect encadreur '" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().affectEnseignantToSheetPFE(sheetPFE, enseignant, "ENCADREUR");
+
+			return "SUCCESS";
+
+		} catch (Exception e) {
+			return "NOT_MODIFIED";
+		}
+
+	}
+
+	@Override
+	public boolean affectEncadreurToSheetPFEManual(int sheet_id, int enseignant_id) {
+
+		Enseignant chef = em.find(Enseignant.class, 3);
+
+		try {
+
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+			Enseignant enseignant = em.find(Enseignant.class, enseignant_id);
+			EnseignantSheetPFE enseignantSheetPFE = new EnseignantSheetPFE();
+			enseignantSheetPFE.setEnseignant(enseignant);
+			enseignantSheetPFE.setSheetPFE(sheetPFE);
+			enseignantSheetPFE.setType("ENCADREUR");
+			em.merge(enseignantSheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Affect Encadreur");
+			notification.setNote("Chef Department affect encadreur '" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().affectEnseignantToSheetPFE(sheetPFE, enseignant, "ENCADREUR");
+
 			return true;
 
 		} catch (Exception e) {
+			return false;
+
+		}
+	}
+
+	@Override
+	public boolean updateEncadreurSheetPFE(int sheetPFE_id, int enseignant_id) {
+
+		Enseignant chef = em.find(Enseignant.class, 3);
+		try {
+
+			EnseignantSheetPFE enseignantSheetPFE = em.createQuery(
+					"select e from EnseignantSheetPFE e left join e.sheetPFE s where s.id = :sheetPFE_id and e.type='ENCADREUR' ",
+					EnseignantSheetPFE.class).setParameter("sheetPFE_id", sheetPFE_id).getSingleResult();
+			Enseignant enseignant = em.find(Enseignant.class, enseignant_id);
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheetPFE_id);
+
+			enseignantSheetPFE.setEnseignant(enseignant);
+			em.merge(enseignantSheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Modify Encadreur");
+			notification.setNote("Chef departement set new encadreur'" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().changeEnseignantToSheetPFE(sheetPFE, enseignant, "ENCADREUR");
+
+			return true;
+
+		} catch (Exception e) {
+
 			return false;
 		}
 
 	}
 
 	@Override
-	public void affectSheetEnseignantToSheetPFEAuto(int id) {
-		// TODO Auto-generated method stub
+	public List<Enseignant> getRapporteurByCategories(int sheet_id) {
+
+		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
+		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
+				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id group by(e) order by(count(e)) desc",
+				Enseignant.class).setParameter("id", sheet_id).getResultList();
+
+		for (Enseignant enseignant : listEnseignantOrderByCategories) {
+			Long count = (Long) em.createQuery(
+					"select count(e) from  Enseignant e join e.enseignantsheet es where es.type= 'RAPPORTEUR' and e.id = :id")
+					.setParameter("id", enseignant.getId()).getSingleResult();
+
+			if (enseignant.getSite().getMaxRapporteur() > count.intValue()) {
+				listEnseignant.add(enseignant);
+			}
+		}
+
+		return listEnseignant;
 
 	}
 
 	@Override
-	public void affectSheetEnseignantToSheetPFEManual(int sheet_id, int enseignant_id) {
-		// TODO Auto-generated method stub
+	public String affectRapporteurToSheetPFEAuto(int sheet_id) {
 
-	}
+		Enseignant chef = em.find(Enseignant.class, 3);
 
-	@Override
-	public int requestCancelInternship(int sheet_id) {
-		SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
-		RequestCancelInternship req = new RequestCancelInternship();
-		req.setCreated(new Date());
-		req.setSheetPFE(sheetPFE);
-		req.setEtat(EtatSheetPFE.DEFAULT);
-		em.persist(req);
-
-		return req.getId();
-	}
-
-	@Override
-	public List<RequestCancelInternship> getAllRequest() {
-		return em.createQuery("select r from RequestCancelInternship r where r.etat=:etat",
-				RequestCancelInternship.class).setParameter("etat", EtatSheetPFE.DEFAULT).getResultList();
-	}
-
-	@Override
-	public RequestCancelInternship getResquest(int id) {
-		return em.find(RequestCancelInternship.class, id);
-	}
-
-	@Override
-	public boolean updateRequest(RequestCancelInternship request) {
 		try {
 
-			SheetPFE sheetPFE = em.find(SheetPFE.class, request.getSheetPFE().getId());
-			sheetPFE.setEtat(EtatSheetPFE.CANCEL);
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
 
-			em.merge(request);
-			em.merge(sheetPFE);
+			if (getRapporteurByCategories(sheet_id).size() == 0) {
+				return "NO_CONTENT";
+			}
+			Enseignant enseignant = getRapporteurByCategories(sheet_id).stream().findFirst().get();
+			EnseignantSheetPFE enseignantSheetPFE = new EnseignantSheetPFE();
+			enseignantSheetPFE.setEnseignant(enseignant);
+			enseignantSheetPFE.setSheetPFE(sheetPFE);
+			enseignantSheetPFE.setType("RAPPORTEUR");
+			em.merge(enseignantSheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Affect Rapporteur");
+			notification.setNote("Chef Department affect rapporteur '" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().affectEnseignantToSheetPFE(sheetPFE, enseignant, "RAPPORTEUR");
+
+			return "SUCCESS";
+
+		} catch (Exception e) {
+			return "NOT_MODIFIED";
+		}
+
+	}
+
+	@Override
+	public boolean affectRapporteurToSheetPFEManual(int sheet_id, int enseignant_id) {
+
+		Enseignant chef = em.find(Enseignant.class, 3);
+
+		try {
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+			Enseignant enseignant = em.find(Enseignant.class, enseignant_id);
+			EnseignantSheetPFE enseignantSheetPFE = new EnseignantSheetPFE();
+			enseignantSheetPFE.setEnseignant(enseignant);
+			enseignantSheetPFE.setSheetPFE(sheetPFE);
+			enseignantSheetPFE.setType("RAPPORTEUR");
+			em.merge(enseignantSheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Affect Rapporteur");
+			notification.setNote("Chef Department affect rapporteur '" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().affectEnseignantToSheetPFE(sheetPFE, enseignant, "RAPPORTEUR");
 
 			return true;
+
+		} catch (Exception e) {
+			return false;
+
+		}
+	}
+
+	@Override
+	public boolean updateRapporteurSheetPFE(int sheetPFE_id, int enseignant_id) {
+
+		Enseignant chef = em.find(Enseignant.class, 3);
+
+		try {
+
+			EnseignantSheetPFE enseignantSheetPFE = em.createQuery(
+					"select e from EnseignantSheetPFE e left join e.sheetPFE s where s.id = :sheetPFE_id and e.type='RAPPORTEUR' ",
+					EnseignantSheetPFE.class).setParameter("sheetPFE_id", sheetPFE_id).getSingleResult();
+			Enseignant enseignant = em.find(Enseignant.class, enseignant_id);
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheetPFE_id);
+
+			enseignantSheetPFE.setEnseignant(enseignant);
+			em.merge(enseignantSheetPFE);
+
+			PFENotification notification = new PFENotification();
+			notification.setCreated(new Date());
+			notification.setEnseignant(chef);
+			notification.setEtudiant(sheetPFE.getEtudiant());
+			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setTitle("Modify Rapporteur");
+			notification.setNote("Chef Department set new rapporteur '" + enseignant.getNom() + " "
+					+ enseignant.getPrenom() + "' to your sheet PFE");
+
+			em.persist(notification);
+
+			new Email().changeEnseignantToSheetPFE(sheetPFE, enseignant, "RAPPORTEUR");
+
+			return true;
+
+		} catch (Exception e) {
+
+			return false;
+		}
+
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetWaitRapporter() {
+		return em.createQuery(
+				"select s from SheetPFE s where s.id not in (select s.id from EnseignantSheetPFE es Left join es.sheetPFE s  where es.type = 'RAPPORTEUR') ",
+				SheetPFE.class).getResultList();
+	}
+
+	@Override
+	public List<Enseignant> getAllValidateur() {
+		return em.createQuery("select e from Enseignant e where e.role='VALIDATEUR'", Enseignant.class).getResultList();
+
+	}
+
+	@Override
+	public SheetPFE getSheetPFEById(int id) {
+		SheetPFE sheetPFE = em.find(SheetPFE.class, id);
+		if (sheetPFE.getEtat().equals(EtatSheetPFE.DEFAULT)) {
+			sheetPFE.setEtat(EtatSheetPFE.VERIFICATION);
+			em.merge(sheetPFE);
+
+			try {
+
+				new Email().progressSheetPFE(sheetPFE);
+
+			} catch (NamingException | MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+		return em.find(SheetPFE.class, id);
+	}
+
+	@Override
+	public SheetPFE getSheetPFEByEtudiant() {
+
+		Etudiant etudiant = em.find(Etudiant.class, 4);
+		return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
+				.setParameter("etudiantId", etudiant.getId()).getSingleResult();
+	}
+
+	@Override
+	public boolean updateSheetPFE(SheetPFE sheetPFE) {
+
+		Etudiant etudiant = em.find(Etudiant.class, 1);
+
+		SheetPFE oldsheet = em.find(SheetPFE.class, sheetPFE.getId());
+		try {
+
+			if (oldsheet.getEtat().equals(EtatSheetPFE.DEFAULT)) {
+				em.merge(sheetPFE);
+			} else if (oldsheet.getEtat().equals(EtatSheetPFE.REFUSE)) {
+
+				SheetPFEModification sheetPFEModification = new SheetPFEModification();
+				sheetPFEModification.setTitle(oldsheet.getTitle());
+				sheetPFEModification.setDescription(oldsheet.getDescription());
+				sheetPFEModification.setFeatures(oldsheet.getFeatures());
+				sheetPFEModification.setProblematic(oldsheet.getProblematic());
+				sheetPFEModification.setCreated(new Date());
+				sheetPFEModification.setSheetPFE(oldsheet);
+				sheetPFEModification.setEtat(EtatSheetPFE.ACCEPTED);
+				sheetPFEModification.getCategories().addAll(oldsheet.getCategories());
+				sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
+
+				em.persist(sheetPFEModification);
+
+				em.merge(sheetPFE);
+
+				List<PFENotification> listnotify = em.createQuery(
+						"select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'",
+						PFENotification.class).setParameter("id", etudiant.getId()).getResultList();
+
+				PFENotification notifyby = listnotify.stream().findFirst().get();
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(notifyby.getEnseignant());
+				notification.setEtudiant(etudiant);
+				notification.setSendBy("ETUDIANT");
+				notification.setTitle("Change sheet PFE");
+				notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom() + " changed the sheet PFE");
+
+				em.persist(notification);
+
+			} else if (oldsheet.getEtat().equals(EtatSheetPFE.PRE_VALIDATE)) {
+
+				SheetPFEModification sheetPFEModification = new SheetPFEModification();
+				sheetPFEModification.setTitle(oldsheet.getTitle());
+				sheetPFEModification.setDescription(oldsheet.getDescription());
+				sheetPFEModification.setFeatures(oldsheet.getFeatures());
+				sheetPFEModification.setProblematic(oldsheet.getProblematic());
+				sheetPFEModification.setCreated(new Date());
+				sheetPFEModification.setSheetPFE(oldsheet);
+				sheetPFEModification.setEtat(EtatSheetPFE.ACCEPTED);
+				sheetPFEModification.getCategories().addAll(oldsheet.getCategories());
+				sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
+
+				em.persist(sheetPFEModification);
+
+				em.merge(sheetPFE);
+
+				Enseignant enseignant = em.createQuery(
+						"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='VALIDATEUR'",
+						Enseignant.class).setParameter("id", sheetPFE.getId()).getSingleResult();
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(enseignant);
+				notification.setEtudiant(etudiant);
+				notification.setSendBy("ETUDIANT");
+				notification.setTitle("Change sheet PFE");
+				notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom() + " changed the sheet PFE");
+
+				em.persist(notification);
+
+			} else if (oldsheet.getEtat().equals(EtatSheetPFE.VALIDATE)) {
+
+				if (oldsheet.getFeatures().equals(sheetPFE.getFeatures())
+						&& oldsheet.getProblematic().equals(sheetPFE.getProblematic())) {
+					SheetPFEModification sheetPFEModification = new SheetPFEModification();
+					sheetPFEModification.setTitle(oldsheet.getTitle());
+					sheetPFEModification.setDescription(oldsheet.getDescription());
+					sheetPFEModification.setFeatures(oldsheet.getFeatures());
+					sheetPFEModification.setProblematic(oldsheet.getProblematic());
+					sheetPFEModification.setCreated(new Date());
+					sheetPFEModification.setSheetPFE(oldsheet);
+					sheetPFEModification.setEtat(EtatSheetPFE.ACCEPTED);
+					sheetPFEModification.getCategories().addAll(oldsheet.getCategories());
+					sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
+
+					em.persist(sheetPFEModification);
+
+					em.merge(sheetPFE);
+
+					Enseignant enseignant = em.createQuery(
+							"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='ENCADREUR'",
+							Enseignant.class).setParameter("id", sheetPFE.getId()).getSingleResult();
+
+					PFENotification notification = new PFENotification();
+					notification.setCreated(new Date());
+					notification.setEnseignant(enseignant);
+					notification.setEtudiant(etudiant);
+					notification.setSendBy("ETUDIANT");
+					notification.setTitle("Change sheet PFE");
+					notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom() + " changed the sheet PFE");
+
+					em.persist(notification);
+
+				} else {
+
+					SheetPFEModification sheetPFEModification = new SheetPFEModification();
+					sheetPFEModification.setTitle(oldsheet.getTitle());
+					sheetPFEModification.setDescription(oldsheet.getDescription());
+					sheetPFEModification.setFeatures(sheetPFE.getFeatures());
+					sheetPFEModification.setProblematic(sheetPFE.getProblematic());
+					sheetPFEModification.setCreated(new Date());
+					sheetPFEModification.setSheetPFE(oldsheet);
+					sheetPFEModification.setEtat(EtatSheetPFE.DEFAULT);
+					sheetPFEModification.getCategories().addAll(oldsheet.getCategories());
+					sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
+
+					em.persist(sheetPFEModification);
+
+					sheetPFE.setFeatures(oldsheet.getFeatures());
+					sheetPFE.setProblematic(oldsheet.getProblematic());
+
+					em.merge(sheetPFE);
+
+					Enseignant enseignant = em.createQuery(
+							"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='ENCADREUR'",
+							Enseignant.class).setParameter("id", sheetPFE.getId()).getSingleResult();
+
+					PFENotification notification = new PFENotification();
+					notification.setCreated(new Date());
+					notification.setEnseignant(enseignant);
+					notification.setEtudiant(etudiant);
+					notification.setSendBy("ETUDIANT");
+					notification.setTitle("Major change sheet PFE");
+					notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom()
+							+ " changed the features and problematic of the sheet PFE");
+
+					em.persist(notification);
+				}
+
+			}
+
+			return true;
+
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetPFEWaitNote() {
+
+		return em.createQuery("select s from SheetPFE  where noteRapporteur= 0 or noteEncadreur= 0 and etat='VALIDATE'",
+				SheetPFE.class).getResultList();
+	}
+
+	public List<SheetPFE> getAllSheetPFEWaitPlaning() {
+		return em.createQuery("select s from SheetPFE  where noteRapporteur > 0 and noteEncadreur > 0 ", SheetPFE.class)
+				.getResultList();
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetByEnseignant(int startyear, int toyear) {
+
+		Enseignant enseignant = em.find(Enseignant.class, 2);
+
+		if (toyear == 0) {
+
+			return em.createQuery(
+					"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where s.etudiant.classe.anneeDeDebut = :year and e.id=:id",
+					SheetPFE.class).setParameter("id", enseignant.getId()).setParameter("year", startyear)
+					.getResultList();
+		} else {
+
+			return em.createQuery(
+					"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and  s.etudiant.classe.anneeDeDebut BETWEEN :startyear and :toyear  ",
+					SheetPFE.class).setParameter("id", enseignant.getId()).setParameter("startyear", startyear)
+					.setParameter("toyear", toyear).getResultList();
+		}
+
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetByValidateur() {
+
+		Enseignant enseignant = em.find(Enseignant.class, 2);
+
+		return em.createQuery(
+				"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type='VALIDATEUR' ",
+				SheetPFE.class).setParameter("id", enseignant.getId()).getResultList();
+
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetByEncadreur() {
+
+		Enseignant enseignant = em.find(Enseignant.class, 2);
+
+		return em.createQuery(
+				"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type='ENCADREUR' ",
+				SheetPFE.class).setParameter("id", enseignant.getId()).getResultList();
+
+	}
+
+	@Override
+	public List<SheetPFE> getAllSheetByRapporteur() {
+
+		Enseignant enseignant = em.find(Enseignant.class, 2);
+
+		return em.createQuery(
+				"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type='RAPPORTEUR' ",
+				SheetPFE.class).setParameter("id", enseignant.getId()).getResultList();
+
+	}
+
+	@Override
+	public boolean addNoteEncadreur(int note, int sheet_id) {
+		try {
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+			sheetPFE.setNoteEncadreur(note);
+			return true;
+		} catch (Exception e) {
+
+			return false;
+
+		}
+	}
+
+	@Override
+	public boolean addNoteRapporteur(int note, int sheet_id) {
+
+		try {
+			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+			sheetPFE.setNoteRapporteur(note);
+			return true;
+		} catch (Exception e) {
+
+			return false;
+
+		}
+	}
+
+	@Override
+	public boolean accepteSheetModify(int sheet_id, EtatSheetPFE etat, String note) {
+
+		Enseignant enseignant = em.find(Enseignant.class, 3);
+
+		try {
+
+			SheetPFEModification sheet = em.find(SheetPFEModification.class, sheet_id);
+
+			if (etat.equals(EtatSheetPFE.ACCEPTED)) {
+
+				note = "Your modification of sheet PFE accepted.";
+
+				SheetPFE sheetPFE = em.find(SheetPFE.class, sheet.getSheetPFE().getId());
+
+				String features = sheetPFE.getFeatures();
+				String problematic = sheetPFE.getProblematic();
+
+				sheetPFE.setFeatures(sheet.getFeatures());
+				sheetPFE.setProblematic(sheet.getProblematic());
+
+				sheet.setFeatures(features);
+				sheet.setProblematic(problematic);
+				sheet.setEtat(etat);
+				sheet.setNote(note);
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(enseignant);
+				notification.setEtudiant(sheet.getSheetPFE().getEtudiant());
+				notification.setSendBy("ENCADREUR");
+				notification.setTitle("Modification accepted");
+				notification.setNote(note);
+
+				em.persist(notification);
+
+				new Email().accepteSheetPFE(sheet);
+
+			} else {
+
+				sheet.setEtat(etat);
+				sheet.setNote(note);
+				em.merge(sheet);
+
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(enseignant);
+				notification.setEtudiant(sheet.getSheetPFE().getEtudiant());
+				notification.setSendBy("ENCADREUR");
+				notification.setTitle("Modification refuse");
+				notification.setNote(note);
+
+				em.persist(notification);
+
+				new Email().accepteSheetPFE(sheet);
+
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			return false;
+
+		}
+	}
+
+	@Override
+	public List<SheetPFEModification> getALLSheetModifyDefault() {
+
+		return em.createQuery("select s from SheetPFEModification s  where s.etat = 'DEFAULT'  ",
+				SheetPFEModification.class).getResultList();
+
+	}
+
+	@Override
+	public SheetPFEModification getSheetModify(int sheet_id) {
+
+		return em.find(SheetPFEModification.class, sheet_id);
+	}
+
+	@Override
+	public List<PFENotification> getAllNotificationByEnseignant(int enseignant_id) {
+
+		return em.createQuery("select n from PFENotification n join n.enseignant e  where e.id = :id ",
+				PFENotification.class).setParameter("id", enseignant_id).getResultList();
+	}
+
+	@Override
+	public List<PFENotification> getAllNotificationByEtudiant(int etudiant_id) {
+
+		return em.createQuery("select n from PFENotification n join n.etudiant e  where e.id = :id ",
+				PFENotification.class).setParameter("id", etudiant_id).getResultList();
 	}
 
 	private String generateRandomCode() {
@@ -174,6 +1219,96 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 		String saltStr = salt.toString();
 		return saltStr;
+	}
+
+	@Override
+	public boolean exportSheetPFE(int sheet_id) {
+
+		SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
+
+		Enseignant enseignant = em.createQuery(
+				"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='ENCADREUR'",
+				Enseignant.class).setParameter("id", sheetPFE.getId()).getSingleResult();
+
+		try {
+			new PDF().generateSheetPFE(sheetPFE, enseignant);
+			return true;
+		} catch (JRException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean uploadExcel(String file) {
+
+		try {
+
+			File excelFile = new File(file);
+			FileInputStream fis = new FileInputStream(file);
+			XSSFWorkbook wb = new XSSFWorkbook(fis);
+			XSSFSheet sheet = wb.getSheetAt(0);
+
+			Iterator<Row> rowIt = sheet.iterator();
+
+			while (rowIt.hasNext()) {
+
+				Row row = rowIt.next();
+
+				double etudiant_id = Double.parseDouble(row.getCell(7).toString());
+
+				Etudiant etudiant = em.find(Etudiant.class, (int) etudiant_id);
+
+				if (etudiant.getSheetPFE() == null) {
+
+					List<Categorie> listCategories = new ArrayList<Categorie>();
+
+					String str = row.getCell(4).toString();
+					String[] arrOfCat = str.split(",");
+
+					for (String item : arrOfCat) {
+
+						Categorie categorie = em
+								.createQuery("select c from Categorie c where c.name = :name ", Categorie.class)
+								.setParameter("name", item).getSingleResult();
+						listCategories.add(categorie);
+					}
+
+					double entreprise_id = Double.parseDouble(row.getCell(6).toString());
+					Entreprise entreprise = em.find(Entreprise.class, (int) entreprise_id);
+					SheetPFE sheetPFE = new SheetPFE();
+					sheetPFE.setTitle(row.getCell(0).toString());
+					sheetPFE.setDescription(row.getCell(1).toString());
+					sheetPFE.setProblematic(row.getCell(2).toString());
+					sheetPFE.setFeatures(row.getCell(3).toString());
+					sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
+					sheetPFE.setQrcode(row.getCell(5).toString());
+					sheetPFE.setEntreprise(entreprise);
+					sheetPFE.setEtudiant(etudiant);
+					sheetPFE.getCategories().addAll(listCategories);
+					em.persist(sheetPFE);
+
+				}
+
+			 }
+
+			return true;
+
+		} catch (IOException e) {
+			return false;
+		}
+
+	}
+
+	@Override
+	public List<Object> dashboard() {
+
+		Query q = em.createQuery(
+				"select e.classe.anneeDeDebut, count(s) from SheetPFE s join s.entreprise es join s.etudiant e  where es.Pays != 'TUNISIE' group by(e.classe.anneeDeDebut) ");
+		List<Object> list = (List<Object>) q.getResultList();
+
+		return list;
+
 	}
 
 }

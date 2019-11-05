@@ -22,34 +22,41 @@ public interface EntrepriseServiceRemote {
 	//public ResponsableEntreprise login(String email,String password);
 	
 	/* Entreprise */
-	public int addEntreprise(Entreprise ent);
+	public int addEntreprise(Entreprise ent, int id);
 	public void addEntreprisetoResponsable(int idR, int idEnt);
 	public void updateEntreprise(Entreprise ent);
 	public void deleteEntreprise(int id);
 	public Entreprise getEntrepriseDetails(int idEnt);
 	
+	
 	/* InternshipOffer */
 	public int addInternshipOffer(InternshipOffer inoff);
 	public void addInternshipOffertoEntreprise(int idEnt, int idIoffer);
 	public void updateInternshipOffer(InternshipOffer inoff);
-	public void deleteInternshipOffer(InternshipOffer inoff);
+	public void deleteInternshipOffer(int inoff);
+	public InternshipOffer getInternshipOfferDetails(int idioff);
+	public void addInternshipOffertoCataloge(int idCat, int idJoffer);
 
 	/* Supervisor */
 	public int addSupervisor(EntrepriseSupervisor es);
 	public void addSupervisortoEntreprise(int idEnt, int idSuper);
 	public void updateSupervisor(EntrepriseSupervisor es);
-	public void deleteSupervisor(EntrepriseSupervisor es);
+	public void deleteSupervisor(int ides);
+	public EntrepriseSupervisor getEntrepriseSupervisor(int ides);
 	
 	/* JobOffre */
 	public int addJobOffre(JobOffer jo);
 	public void addJobOffretoEntreprise(int idEnt, int idJo);
 	public void updateJobOffre(JobOffer jo);
-	public void deleteJobOffre(JobOffer jo);
+	public void deleteJobOffre(int idjo);
+	public JobOffer getJobOfferDetails(int idJo);
+	public void addJobOffretoCataloge(int idCat, int idJo);
 	
 	/* InternshipCatalog */
-	public void addInternshipCatalog(InternshipCataloge ic);
+	public int addInternshipCatalog(InternshipCataloge ic);
 	public void addInternshipCatalogtoEntreprise(int idEnt, int ic);
 	public void updateInternshipCatalog(InternshipCataloge ic);
+	public InternshipCataloge getInternshipCatalaogeDetails(int idCat);
 	
 	/* Student */
 	public void affectStudenttoEntreprise(int idEnt, int ids);

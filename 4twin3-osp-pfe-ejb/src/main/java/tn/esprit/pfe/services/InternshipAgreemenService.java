@@ -8,10 +8,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import tn.esprit.pfe.email.Email;
+//import tn.esprit.pfe.email.Email;
 import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.InternshipAgreemen;
 import tn.esprit.pfe.interfaces.InternshipAgreemenRemote;
+import tn.esprit.pfe.pdf.PDF;
 
 @Stateless
 public class InternshipAgreemenService implements InternshipAgreemenRemote {
@@ -52,11 +55,11 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
 		
    		try {
    			
-   			//pp
-   			String filename = "eee";
+   			String filename = new PDF().generateInternshipAgreemen(internshipAgreemen);
    			internshipAgreemen.setPdf(filename);
    			em.merge(internshipAgreemen);
-			//ee
+   			new Email().sendAgreemen(internshipAgreemen);
+			
 
    			return true;
    			

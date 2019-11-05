@@ -1,6 +1,5 @@
 package tn.esprit.webServices;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -30,70 +29,75 @@ public class EnseignantWebServices {
 
 	@EJB
 	EnseignantService es;
-	
+
 	@Context
 	private HttpHeaders headers;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin"})
-	public Response addEnseignant(Enseignant e) {
-		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.addEnseignant(e, af.getIdUser(headers));
-		if (violations==null) {
+	@Secure(role = { "Admin" })
+	@Path("{id}")
+	public Response addEnseignant(Enseignant e, @PathParam(value = "id") int idSite) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		Set<ValidationError> violations = es.addEnseignant(e, idSite, af.getIdUser(headers));
+		if (violations == null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
-		}
-		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
+		} else
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
-	
+
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin"})
+	@Secure(role = { "Admin" })
 	@GET
 	public Response getListEnseignant() {
-		AuthenticationFilter af=new AuthenticationFilter();
-		List<Enseignant> liste = es.getListEnseignant(af.getIdUser(headers));
+		AuthenticationFilter af = new AuthenticationFilter();
+		Set<Enseignant> liste = es.getListEnseignant(af.getIdUser(headers));
 		return Response.status(Status.OK).entity(liste).build();
 	}
-	
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin"})
-	@Path ("{id}")
-	public Response supprimerEnseignant(@PathParam(value="id") int idEnseignant) {
-		AuthenticationFilter af=new AuthenticationFilter();
-		Set<ValidationError> violations=es.supprimerEnseignant(idEnseignant, af.getIdUser(headers));
-		if (violations==null) {
-			return Response.status(Status.OK).entity("delete successful").build();
-		}
-		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
-	}
-	
-	/*@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	public void updateReclamation(Reclamation rec) {	
-		rst.updateReclamation(rec);
 
-	}
-	
-	
-	
 	@DELETE
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("deleteRec/{idReclamation}")
-	public void deleteClient(@QueryParam("idReclamation") int idRec) {
-	 rst.deleteReclamation(idRec);
-	}
-	
-	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getReclamationByEtudiant")
-	public List<Reclamation> getReclamation(@QueryParam("etudiant_id") int ide){
-		return rst.getReclamationByEtudiant(ide);
-	}*/
-	
+	@Secure(role = { "Admin" })
+	@Path("{id}")
+	public Response supprimerEnseignant(@PathParam(value = "id") int idEnseignant) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		Set<ValidationError> violations = es.supprimerEnseignant(idEnseignant, af.getIdUser(headers));
+		if (violations == null) {
+			return Response.status(Status.OK).entity("delete successful").build();
+		} else
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
+	}
+
+	/*
+	 * @PUT
+	 * 
+	 * @Consumes(MediaType.APPLICATION_JSON)
+	 * 
+	 * @Produces(MediaType.TEXT_PLAIN) public void updateReclamation(Reclamation
+	 * rec) { rst.updateReclamation(rec);
+	 * 
+	 * }
+	 * 
+	 * 
+	 * 
+	 * @DELETE
+	 * 
+	 * @Produces(MediaType.TEXT_PLAIN)
+	 * 
+	 * @Path("deleteRec/{idReclamation}") public void
+	 * deleteClient(@QueryParam("idReclamation") int idRec) {
+	 * rst.deleteReclamation(idRec); }
+	 * 
+	 * @GET
+	 * 
+	 * @Produces(MediaType.APPLICATION_JSON)
+	 * 
+	 * @Path("/getReclamationByEtudiant") public List<Reclamation>
+	 * getReclamation(@QueryParam("etudiant_id") int ide){ return
+	 * rst.getReclamationByEtudiant(ide); }
+	 */
 
 }

@@ -16,9 +16,11 @@ public interface SoutenanceServiceRemote {
 	
 	
 	//mohamed
-	public void ajouterNote(Soutenance so);
+
 	public List<Soutenance> afficherSoutenanceNonNote();
     public Map<List<Long>,List<Long>> SoutenanceNoteEtNonNote();
     public List<Double> MoyenneNote();
+	void testNote(int ids, float notee, float note);
+	List<Soutenance> afficherSoutenanceSelonEtudiant(String titre);
 	
 }

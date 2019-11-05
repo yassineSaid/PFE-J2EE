@@ -1,6 +1,5 @@
 package tn.esprit.webServices;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -21,9 +20,7 @@ import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.Ecole;
 import tn.esprit.pfe.entities.Site;
-import tn.esprit.pfe.services.EcoleService;
 import tn.esprit.pfe.services.SiteService;
 import utilities.ValidationError;
 
@@ -47,6 +44,20 @@ public class SiteWebServices {
 		Set<ValidationError> violations=ss.addSite(s, af.getIdUser(headers));
 		if (violations==null) {
 			return Response.status(Status.CREATED).entity("add successful").build();
+		}
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
+	}
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role={"DirecteurDesStages"})
+	public Response modifierSiteDirecteurDesStages(Site s) {
+		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+		AuthenticationFilter af=new AuthenticationFilter();
+		Set<ValidationError> violations=ss.modifierSiteDirecteurDesStages(s, af.getIdUser(headers));
+		if (violations==null) {
+			return Response.status(Status.OK).entity("modify successful").build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
@@ -84,11 +95,9 @@ public class SiteWebServices {
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin"})
+	@Secure(role={"Admin","DirecteurDesStages"})
 	@Path ("{id}")
 	public Response getSite(@PathParam(value="id") int idSite) {
-		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
-		AuthenticationFilter af=new AuthenticationFilter();
 		Site site=ss.getSite(idSite);
 		if (site!=null) {
 			return Response.status(Status.OK).entity(site).build();

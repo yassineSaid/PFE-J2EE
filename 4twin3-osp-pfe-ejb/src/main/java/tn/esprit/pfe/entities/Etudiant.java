@@ -1,19 +1,26 @@
 package tn.esprit.pfe.entities;
 
+/*<<<<<<< HEAD
+=======*/
+
+import java.util.HashSet;
+import java.util.Set;
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table
@@ -22,42 +29,60 @@ public class Etudiant extends User {
 
 	private static final long serialVersionUID = 1L;
 	
-	@OneToOne(mappedBy="etudiant")
-	private Reclamation Reclamation;
+	@OneToOne
+	private Soutenance S;
 	
+
+
 	@Column
 	private String identifiant;
-	
-	@OneToOne(mappedBy="etudiant")
+
 	@JsonIgnore
+	@OneToOne(mappedBy="etudiant")
 	private InternshipAgreemen internshipAgreemen;
 	
+/*<<<<<<< HEAD
 	 @OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
 		fetch=FetchType.EAGER)
       Set<ForumQuestion> fq;
-	
-	
-	@OneToOne
+=======*/
+	@JsonIgnore
+ 	@OneToOne(mappedBy="etudiant")
 	private SheetPFE sheetPFE;
+
+	 //@OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
+	//	fetch=FetchType.EAGER)
+	//private List<ForumQuestion> fq=new ArrayList<>();
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
+	
+	
+	@JsonIgnore
+	@OneToMany(mappedBy="etudiant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<PFENotification> pfeNotifications = new HashSet<PFENotification>();
+	
+
+	//@OneToMany(mappedBy = "etudiant", cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	// private List<ForumQuestion> fq=new ArrayList<>();
+
+	
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JsonBackReference
+	private Classe classe;
+	
+	
 
 	public Etudiant() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Etudiant(String lastname, String firstname, String email, String password, String identifiant) {
-		super(lastname, firstname, email, password);
-		this.identifiant=identifiant;
+	public Etudiant(String lastname, String firstname, String email, String plainPassword, String identifiant) {
+		super(lastname, firstname, email, plainPassword);
+		this.identifiant = identifiant;
 		// TODO Auto-generated constructor stub
 	}
 
-	public Reclamation getReclamation() {
-		return Reclamation;
-	}
 
-	public void setReclamation(Reclamation reclamation) {
-		Reclamation = reclamation;
-	}
 
 	public String getIdentifiant() {
 		return identifiant;
@@ -83,6 +108,7 @@ public class Etudiant extends User {
 		this.sheetPFE = sheetPFE;
 	}
 
+/*<<<<<<< HEAD
 	public Set<ForumQuestion> getFq() {
 		return fq;
 	}
@@ -90,4 +116,33 @@ public class Etudiant extends User {
 	public void setFq(Set<ForumQuestion> fq) {
 		this.fq = fq;
 	}	
+=======*/
+	public Classe getClasse() {
+		return classe;
+	}
+
+	public void setClasse(Classe classe) {
+		this.classe = classe;
+	}
+
+	public Set<PFENotification> getPfeNotifications() {
+		return pfeNotifications;
+	}
+
+	public void setPfeNotifications(Set<PFENotification> pfeNotifications) {
+		this.pfeNotifications = pfeNotifications;
+	}
+	
+	
+	
+	
+
+	/*
+	 * public List<ForumQuestion> getFq() { return fq; }
+	 * 
+	 * public void setFq(List<ForumQuestion> fq) { this.fq = fq; }
+	 * 
+	 */
+
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 }

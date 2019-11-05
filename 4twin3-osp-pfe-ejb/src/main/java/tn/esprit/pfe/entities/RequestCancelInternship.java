@@ -27,6 +27,7 @@ public class RequestCancelInternship  implements Serializable {
 	private EtatSheetPFE etat;
 	@Temporal (TemporalType.DATE)
 	private Date created;
+	private String note;
 	
 	public RequestCancelInternship() {
 	}
@@ -62,6 +63,15 @@ public class RequestCancelInternship  implements Serializable {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+	
 	
 	
 	

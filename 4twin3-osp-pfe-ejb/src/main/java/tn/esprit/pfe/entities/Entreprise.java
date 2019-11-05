@@ -12,7 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -44,17 +48,14 @@ public class Entreprise implements Serializable {
 	@Column
 	private String TelEntreprise;
 
-	@Column 
-	private String EmailResponsable;
-
-	@Column
-	private String NomPrenomResponsable;
-
 	@Column
 	private String TelResponsable;
+	
+	@OneToOne(mappedBy="entreprise")
+	@JsonIgnore
+	private ResponsableEntreprise responsableEntreprise;
 
-	@Column
-	private String Password;
+	
 
 	@Column
 	private int xp;
@@ -83,14 +84,15 @@ public class Entreprise implements Serializable {
 	private Set<EntrepriseStudent> entreprisestudents;
 
 
+	@JsonManagedReference(value="entreprise-internship")
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<InternshipAgreemen> internshipAgreemens;
 
+	@JsonManagedReference(value="entreprise-sheet")
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs;
-
 
 
 	public int getId() {
@@ -149,21 +151,7 @@ public class Entreprise implements Serializable {
 		TelEntreprise = telEntreprise;
 	}
 
-	public String getEmailResponsable() {
-		return EmailResponsable;
-	}
 
-	public void setEmailResponsable(String emailResponsable) {
-		EmailResponsable = emailResponsable;
-	}
-
-	public String getNomPrenomResponsable() {
-		return NomPrenomResponsable;
-	}
-
-	public void setNomPrenomResponsable(String nomPrenomResponsable) {
-		NomPrenomResponsable = nomPrenomResponsable;
-	}
 
 	public String getTelResponsable() {
 		return TelResponsable;
@@ -173,13 +161,6 @@ public class Entreprise implements Serializable {
 		TelResponsable = telResponsable;
 	}
 
-	public String getPassword() {
-		return Password;
-	}
-
-	public void setPassword(String password) {
-		Password = password;
-	}
 
 	public int getXp() {
 		return xp;
@@ -188,7 +169,7 @@ public class Entreprise implements Serializable {
 	public void setXp(int xp) {
 		this.xp = xp;
 	}
-
+	@JsonIgnore
 	public Set<InternshipOffer> getInternshipOffers() {
 		return internshipoffers;
 	}
@@ -196,7 +177,7 @@ public class Entreprise implements Serializable {
 	public void setInternshipOffers(Set<InternshipOffer> internshipOffers) {
 		this.internshipoffers = internshipOffers;
 	}
-
+	@JsonIgnore
 	public Set<EntrepriseSupervisor> getEntrepriseSupervisors() {
 		return entreprisesupervisors;
 	}
@@ -204,7 +185,7 @@ public class Entreprise implements Serializable {
 	public void setEntrepriseSupervisors(Set<EntrepriseSupervisor> entreprisesupervisors) {
 		this.entreprisesupervisors = entreprisesupervisors;
 	}
-
+	@JsonIgnore
 	public Set<InternshipCataloge> getInternshipcataloges() {
 		return internshipcataloges;
 	}
@@ -213,7 +194,7 @@ public class Entreprise implements Serializable {
 		this.internshipcataloges = internshipcataloges;
 	}
 
-
+	@JsonIgnore
 	public Packs getPacks() {
 		return Packs;
 	}
@@ -221,15 +202,15 @@ public class Entreprise implements Serializable {
 	public void setPacks(Packs packs) {
 		Packs = packs;
 	}
-
+	@JsonIgnore
 	public Set<JobOffer> getJobOffers() {
 		return joboffers;
 	}
-
+	
 	public void setJobOffers(Set<JobOffer> joboffers) {
 		this.joboffers = joboffers;
 	}
-
+	@JsonIgnore
 	public Set<EntrepriseStudent> getEntreprisestudents() {
 		return entreprisestudents;
 	}
@@ -237,7 +218,7 @@ public class Entreprise implements Serializable {
 	public void setEntreprisestudents(Set<EntrepriseStudent> entreprisestudents) {
 		this.entreprisestudents = entreprisestudents;
 	}
-
+	@JsonIgnore
 	public Set<InternshipAgreemen> getInternshipAgreemens() {
 		return internshipAgreemens;
 	}
@@ -245,13 +226,52 @@ public class Entreprise implements Serializable {
 	public void setInternshipAgreemens(Set<InternshipAgreemen> internshipAgreemens) {
 		this.internshipAgreemens = internshipAgreemens;
 	}
-
+    @JsonIgnore
 	public Set<SheetPFE> getSheetPFEs() {
 		return sheetPFEs;
 	}
 
 	public void setSheetPFEs(Set<SheetPFE> sheetPFEs) {
 		this.sheetPFEs = sheetPFEs;
+	}
+
+	public Entreprise(int id, String nameEntreprise, String adresse, String siteweb, String pays,
+			String emailEntreprise, String telEntreprise, String telResponsable, int xp) {
+		super();
+		this.id = id;
+		NameEntreprise = nameEntreprise;
+		Adresse = adresse;
+		Siteweb = siteweb;
+		Pays = pays;
+		EmailEntreprise = emailEntreprise;
+		TelEntreprise = telEntreprise;
+		TelResponsable = telResponsable;
+		this.xp = xp;
+	}
+
+	public Entreprise(String nameEntreprise, String adresse, String siteweb, String pays, String emailEntreprise,
+			String telEntreprise, String telResponsable, int xp) {
+		super();
+		NameEntreprise = nameEntreprise;
+		Adresse = adresse;
+		Siteweb = siteweb;
+		Pays = pays;
+		EmailEntreprise = emailEntreprise;
+		TelEntreprise = telEntreprise;
+		TelResponsable = telResponsable;
+		this.xp = xp;
+	}
+
+	public Entreprise() {
+		super();
+	}
+
+	public ResponsableEntreprise getResponsableEntreprise() {
+		return responsableEntreprise;
+	}
+
+	public void setResponsableEntreprise(ResponsableEntreprise responsableEntreprise) {
+		this.responsableEntreprise = responsableEntreprise;
 	}
 
 	

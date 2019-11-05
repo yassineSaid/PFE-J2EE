@@ -1,7 +1,6 @@
 package tn.esprit.pfe.services;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -12,22 +11,25 @@ import javax.persistence.PersistenceContext;
 
 import tn.esprit.pfe.entities.Admin;
 import tn.esprit.pfe.entities.Enseignant;
+import tn.esprit.pfe.entities.Site;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.EnseignantServiceRemote;
 import utilities.ValidationError;
+
 @Stateless
 @LocalBean
-public class EnseignantService implements EnseignantServiceRemote{
+public class EnseignantService implements EnseignantServiceRemote {
 	@PersistenceContext(unitName = "4twin3-osp-pfe-ejb")
 	EntityManager em;
-	
+
 	@EJB
 	UserService us;
 
 	@Override
-	public Set<ValidationError> addEnseignant(Enseignant e, int idAdmin) {
+	public Set<ValidationError> addEnseignant(Enseignant e, int idSite, int idAdmin) {
 		Set<ValidationError> errors = new HashSet<>();
 		Admin admin = em.find(Admin.class, idAdmin);
+		Site site = em.find(Site.class, idSite);
 		if (admin == null) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Admin");
@@ -35,28 +37,34 @@ public class EnseignantService implements EnseignantServiceRemote{
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		}
-		else if (admin.getEcole()==null) {
+		} else if (site == null) {
+			ValidationError error = new ValidationError();
+			error.setClassName("Site");
+			error.setErrorMessage("Ce site n'éxiste pas");
+			error.setPropertyPath("Site");
+			errors.add(error);
+			return errors;
+		} else if (admin.getEcole() != site.getEcole()) {
 			ValidationError error = new ValidationError();
 			error.setClassName("Ecole");
-			error.setErrorMessage("Cet admin n'a pas encore d'école");
+			error.setErrorMessage("Ce n'appartient pas à votre école");
 			error.setPropertyPath("Admin");
 			errors.add(error);
 			return errors;
-		}
-		else {
+		} else {
 			e.setEcole(admin.getEcole());
+			e.setSite(site);
 			return us.addUser(e);
 		}
 	}
 
 	@Override
 	public Set<Enseignant> getListEnseignant(int idUser) {
-		User user=em.find(User.class, idUser);
-		if (user==null) {
+		User user = em.find(User.class, idUser);
+		if (user == null) {
 			return null;
-		} else if (user.getRole().equals("Admin")){
-			Admin admin=(Admin) user;
+		} else if (user.getRole().equals("Admin")) {
+			Admin admin = (Admin) user;
 			return admin.getEcole().getEnseignants();
 		} else {
 			return null;
@@ -90,12 +98,18 @@ public class EnseignantService implements EnseignantServiceRemote{
 			errors.add(error);
 			return errors;
 		} else {
+			if (enseignant.getDirecteurDesStages()!=null) {
+				enseignant.getDirecteurDesStages().setDirecteurDesStages(null);
+				em.flush();
+			}
+			if (enseignant.getChefDeDepartement()!=null) {
+				enseignant.getChefDeDepartement().setChefDeDepartement(null);
+				em.flush();
+			}
 			em.createQuery("delete from User u where u.id=:id").setParameter("id", idEnseignant).executeUpdate();
 			em.flush();
 		}
 		return null;
 	}
-
-
 
 }

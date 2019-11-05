@@ -1,6 +1,8 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +19,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity(name = "SheetPFE")
 public class SheetPFE implements Serializable {
 
@@ -30,16 +36,35 @@ public class SheetPFE implements Serializable {
 	private String problematic;
 	private String features;
 	@ManyToMany(fetch = FetchType.EAGER)
+/*<<<<<<< HEAD
 	private Set<Categorie> categories;
 	
+=======*/
+	private Set<Categorie> categories = new HashSet<Categorie>();
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 	private String qrcode;
 	@Enumerated(EnumType.STRING)
 	private EtatSheetPFE etat;
 	private String note;
+	private float noteEncadreur;
+	private float noteRapporteur;
+	
+	@JsonBackReference(value="entreprise-sheet")
 	@ManyToOne
 	private Entreprise entreprise;
+	
 	@OneToOne
 	private Etudiant etudiant;
+	
+	@OneToMany(mappedBy="sheetPFE",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<EnseignantSheetPFE> enseignantsheet = new HashSet<EnseignantSheetPFE>();
+	
+	@OneToMany(mappedBy="sheetPFE",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<SheetPFEModification> sheetPFEModifications = new HashSet<SheetPFEModification>();
+	
+	@JsonIgnore
+	@OneToOne(mappedBy="sheetPFE")
+	private RequestCancelInternship request;
 
 	public SheetPFE() {
 	}
@@ -50,15 +75,23 @@ public class SheetPFE implements Serializable {
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
+/*<<<<<<< HEAD
 		
 	}
+=======*/
+	}
+
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 	public SheetPFE(int id, String title, String description, String problematic, String features) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.problematic = problematic;
 		this.features = features;
+/*<<<<<<< HEAD
 		
+=======*/
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 	}
 
 	
@@ -102,6 +135,7 @@ public class SheetPFE implements Serializable {
 		this.features = features;
 	}
 
+/*<<<<<<< HEAD
 	public Set<Categorie> getCategories() {
 		return categories;
 	}
@@ -110,6 +144,8 @@ public class SheetPFE implements Serializable {
 		this.categories = categories;
 	}
 
+=======*/
+//>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 	public String getQrcode() {
 		return qrcode;
 	}
@@ -150,4 +186,60 @@ public class SheetPFE implements Serializable {
 		this.etudiant = etudiant;
 	}
 
+	public Set<Categorie> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(Set<Categorie> set) {
+		this.categories = set;
+	}
+
+	public Set<EnseignantSheetPFE> getEnseignantsheet() {
+		return enseignantsheet;
+	}
+
+	public void setEnseignantsheet(Set<EnseignantSheetPFE> enseignantsheet) {
+		this.enseignantsheet = enseignantsheet;
+	}
+
+
+	public RequestCancelInternship getRequest() {
+		return request;
+	}
+
+	public void setRequest(RequestCancelInternship request) {
+		this.request = request;
+	}
+
+	public Set<SheetPFEModification> getSheetPFEModifications() {
+		return sheetPFEModifications;
+	}
+
+	public void setSheetPFEModifications(Set<SheetPFEModification> sheetPFEModifications) {
+		this.sheetPFEModifications = sheetPFEModifications;
+	}
+
+	public float getNoteEncadreur() {
+		return noteEncadreur;
+	}
+
+	public void setNoteEncadreur(float noteEncadreur) {
+		this.noteEncadreur = noteEncadreur;
+	}
+
+	public float getNoteRapporteur() {
+		return noteRapporteur;
+	}
+
+	public void setNoteRapporteur(float noteRapporteur) {
+		this.noteRapporteur = noteRapporteur;
+	}
+
+	
+	
+	
+	
+
+	
+	
 }
