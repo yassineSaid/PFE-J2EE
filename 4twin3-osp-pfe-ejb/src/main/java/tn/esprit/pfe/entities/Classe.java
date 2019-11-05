@@ -1,6 +1,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -52,7 +53,7 @@ public class Classe implements Serializable {
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="classe")
 	@JsonManagedReference
-	private Set<Etudiant> etudiants;
+	private Set<Etudiant> etudiants = new HashSet<>();
 
 	public Classe() {
 		super();

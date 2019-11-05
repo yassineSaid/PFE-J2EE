@@ -11,6 +11,7 @@ import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.UserServiceRemote;
 import utilities.BCrypt;
@@ -31,7 +32,8 @@ public class UserService implements UserServiceRemote{
 			error.setPropertyPath("email");
 			errors.add(error);
 		}
-		u.setPassword(u.getPlainPassword());
+		u.setPlainPassword(u.getPassword());
+		u.setPassword(u.createPwd(u.getPlainPassword()));
 		u.setRole(u.getClass().getSimpleName());
 		System.out.println();
 		if (u.getRole().equals("SuperAdmin") && (long) em.createQuery("select count(u) from User u where u.role='SuperAdmin'").getSingleResult()>0) {
@@ -44,13 +46,24 @@ public class UserService implements UserServiceRemote{
 		}
 		try {
 			em.persist(u);
+			if (u.getRole().equals("Etudiant")) {
+				Etudiant e=(Etudiant) u;
+				e.getClasse().getEtudiants().add(e);
+			}
 			em.flush();
 			return null;
 		}catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
 			errors.addAll(ValidationError.fromViolations(violations));
 			return errors;
-		}catch (PersistenceException e) {
+		}catch (PersistenceException ex) {
+			org.hibernate.exception.ConstraintViolationException ee = (org.hibernate.exception.ConstraintViolationException) ex.getCause();
+			
+			ValidationError error = new ValidationError();
+			error.setClassName("User");
+			error.setErrorMessage(ee.getSQLException().getLocalizedMessage());
+			error.setPropertyPath("User");
+			errors.add(error);
 			return errors;
 		}
 	}

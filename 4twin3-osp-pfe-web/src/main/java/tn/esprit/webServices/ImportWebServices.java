@@ -22,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -74,7 +75,7 @@ public class ImportWebServices {
 			e.setAdresse(form.getFormDataPart("adresse", String.class, null));
 			e.setNom(form.getFormDataPart("nom", String.class, null));
 			Set<Site> sites = new HashSet<>();
-			for (int i = 2; i < sheet.getLastRowNum()+2; i++) {
+			for (int i = 2; i < sheet.getLastRowNum() + 2; i++) {
 				Site s = new Site();
 				s.setEcole(e);
 				s.setAdresse(eat.getCellData("Site", "Adresse", i));
@@ -83,7 +84,7 @@ public class ImportWebServices {
 				Set<Departement> departements = new HashSet<>();
 				XSSFSheet sheetDep = workbook.getSheet("Departement");
 				System.out.println(sheetDep.getLastRowNum());
-				for (int j = 2; j < sheetDep.getLastRowNum()+2; j++) {
+				for (int j = 2; j < sheetDep.getLastRowNum() + 2; j++) {
 					if (eat.getCellData("Departement", "Site", j).equals(id)) {
 						Departement d = new Departement();
 						d.setSite(s);
@@ -91,7 +92,7 @@ public class ImportWebServices {
 						String idDep = eat.getCellData("Departement", "Id", j);
 						Set<Specialite> specialites = new HashSet<>();
 						XSSFSheet sheetSpec = workbook.getSheet("Specialite");
-						for (int k = 2; k < sheetSpec.getLastRowNum()+2; k++) {
+						for (int k = 2; k < sheetSpec.getLastRowNum() + 2; k++) {
 							if (eat.getCellData("Specialite", "Departement", k).equals(idDep)) {
 								Specialite spec = new Specialite();
 								spec.setDepartement(d);
@@ -99,23 +100,29 @@ public class ImportWebServices {
 								Set<Classe> classes = new HashSet<Classe>();
 								String idSpec = eat.getCellData("Specialite", "Id", k);
 								XSSFSheet sheetClas = workbook.getSheet("Classe");
-								for (int h=2; h < sheetClas.getLastRowNum()+2; h++) {
+								for (int h = 2; h < sheetClas.getLastRowNum() + 2; h++) {
 									if (eat.getCellData("Classe", "Specialite", h).equals(idSpec)) {
+										System.out.println("Specialite=" + idSpec + " Classe="
+												+ eat.getCellData("Classe", "Id", h));
 										Classe c = new Classe();
 										c.setAnneeDeDebut(Calendar.getInstance().get(Calendar.YEAR));
 										c.setNumero((int) Double.parseDouble(eat.getCellData("Classe", "Numero", h)));
 										Set<Etudiant> etudiants = new HashSet<Etudiant>();
-										String idClas = eat.getCellData("Classe", "Id", k);
+										String idClas = eat.getCellData("Classe", "Id", h);
 										XSSFSheet sheetEtud = workbook.getSheet("Etudiant");
-										for (int l=0;l<sheetEtud.getLastRowNum()+2;l++) {
+										for (int l = 2; l < sheetEtud.getLastRowNum() + 2; l++) {
 											if (eat.getCellData("Etudiant", "Classe", l).equals(idClas)) {
+												System.out.println("Classe=" + idClas + " Etudiant="
+														+ eat.getCellData("Etudiant", "Email", l));
 												Etudiant et = new Etudiant();
 												et.setClasse(c);
 												et.setEmail(eat.getCellData("Etudiant", "Email", l));
 												et.setPrenom(eat.getCellData("Etudiant", "Prenom", l));
 												et.setNom(eat.getCellData("Etudiant", "Nom", l));
-												et.setPlainPassword(eat.getCellData("Etudiant", "Identifiant", l));
+												et.setPassword(
+														et.createPwd(eat.getCellData("Etudiant", "Identifiant", l)));
 												et.setIdentifiant(eat.getCellData("Etudiant", "Identifiant", l));
+												et.setRole(et.getClass().getSimpleName());
 												etudiants.add(et);
 											}
 										}
@@ -136,9 +143,12 @@ public class ImportWebServices {
 				sites.add(s);
 			}
 			e.setSites(sites);
-			AuthenticationFilter af=new AuthenticationFilter();
-			
-			return Response.status(Status.OK).entity(es.addEcole(e, af.getIdUser(headers))).build();
+			AuthenticationFilter af = new AuthenticationFilter();
+			Set<ValidationError> violations = es.addEcole(e, af.getIdUser(headers));
+			if (violations == null) {
+				return Response.status(Status.CREATED).entity("add successful").build();
+			} else
+				return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,4 +157,90 @@ public class ImportWebServices {
 		return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 	}
 
+	@POST
+	@Secure(role = { "Admin" })
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response exportEcole() {
+		AuthenticationFilter af= new AuthenticationFilter();
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		Ecole ecole = es.getEcoleAdmin(af.getIdUser(headers));
+		
+		XSSFSheet site = workbook.createSheet("Site");
+		XSSFSheet departement = workbook.createSheet("Departement");
+		XSSFSheet specialite = workbook.createSheet("Specialite");
+		XSSFSheet classe = workbook.createSheet("Classe");
+		XSSFSheet etudiant = workbook.createSheet("Etudiant");
+		
+		XSSFRow siteRow = site.createRow(1);
+		XSSFCell cell = siteRow.createCell(1);
+		cell.setCellValue("Id");
+		cell.setCellValue("Id");
+		
+		return null;
+	}
+
+	private void writeSite(Site site, XSSFRow row) {
+	    XSSFCell cell = row.createCell(1);
+	    cell.setCellValue(site.getId());
+	 
+	    cell = row.createCell(2);
+	    cell.setCellValue(site.getNom());
+	 
+	    cell = row.createCell(3);
+	    cell.setCellValue(site.getAdresse());
+	}
+
+	private void writeDepartement(Departement departement, XSSFRow row) {
+	    XSSFCell cell = row.createCell(1);
+	    cell.setCellValue(departement.getId());
+	 
+	    cell = row.createCell(2);
+	    cell.setCellValue(departement.getNom());
+	 
+	    cell = row.createCell(3);
+	    cell.setCellValue(departement.getSite().getId());
+	}
+
+	private void writeSpecialite(Specialite specialite, XSSFRow row) {
+	    XSSFCell cell = row.createCell(1);
+	    cell.setCellValue(specialite.getId());
+	 
+	    cell = row.createCell(2);
+	    cell.setCellValue(specialite.getNom());
+	 
+	    cell = row.createCell(3);
+	    cell.setCellValue(specialite.getDepartement().getId());
+	}
+
+	private void writeClasse(Classe classe, XSSFRow row) {
+	    XSSFCell cell = row.createCell(1);
+	    cell.setCellValue(classe.getId());
+	 
+	    cell = row.createCell(2);
+	    cell.setCellValue(classe.getNumero());
+	 
+	    cell = row.createCell(3);
+	    cell.setCellValue(classe.getSpecialite().getId());
+	 
+	    cell = row.createCell(4);
+	    cell.setCellValue("5"+classe.getSpecialite().getNom()+classe.getNumero());
+	}
+
+	private void writeEtudiant(Etudiant etudiant, XSSFRow row) {
+	    XSSFCell cell = row.createCell(1);
+	    cell.setCellValue(etudiant.getIdentifiant());
+	 
+	    cell = row.createCell(2);
+	    cell.setCellValue(etudiant.getNom());
+	 
+	    cell = row.createCell(3);
+	    cell.setCellValue(etudiant.getPrenom());
+	 
+	    cell = row.createCell(4);
+	    cell.setCellValue(etudiant.getEmail());
+	 
+	    cell = row.createCell(5);
+	    cell.setCellValue("5"+etudiant.getClasse().getSpecialite().getNom()+etudiant.getClasse().getNumero());
+	}
+	
 }
