@@ -22,6 +22,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -111,16 +112,22 @@ public class EcoleWebServices {
 
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Secure(role = { "Admin" })
-	@Path("image")
+	@Path("image/{id}")
 	public Response getMyEcoleImage(@PathParam(value = "id") int idEcole) {
 		// String authorizationHeader =
 		// headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af = new AuthenticationFilter();
 		Ecole ecole = es.getEcole(idEcole, af.getIdUser(headers));
 		if (ecole != null) {
-			return Response.status(Status.OK).entity(ecole.getLogo()).build();
+			if (ecole.getLogo() != null) {
+				File file = new File (ecole.getLogo());
+				ResponseBuilder rb = Response.ok((Object) file);
+				return rb.status(Status.OK).header("Content-Disposition",
+						"attachment;filename="+file.getName()).build();
+			}
+			return Response.status(Status.OK).entity("Cette école n'a pas de logo").build();
 		} else
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
 					.entity("Cette ecole n'existe pas ou vous n'etes pas autorisé à la consulter").build();
