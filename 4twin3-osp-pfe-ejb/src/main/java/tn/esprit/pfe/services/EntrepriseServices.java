@@ -2,7 +2,6 @@ package tn.esprit.pfe.services;
 
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,10 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.SystemException;
-
 import tn.esprit.pfe.entities.Entreprise;
-import tn.esprit.pfe.entities.EntrepriseStudent;
 import tn.esprit.pfe.entities.EntrepriseSupervisor;
 import tn.esprit.pfe.entities.InternshipCataloge;
 import tn.esprit.pfe.entities.InternshipOffer;
@@ -415,4 +411,13 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		
 	}
 
+	public int getpacks(int idEnt) {
+		Entreprise ent = em.find(Entreprise.class, idEnt);
+		return ent.getPacks().getId();
+	}
+	
+	public Packs getpacksDetails(int idEnt) {
+		Entreprise ent = em.find(Entreprise.class, idEnt);
+		return ent.getPacks();
+	}
 }

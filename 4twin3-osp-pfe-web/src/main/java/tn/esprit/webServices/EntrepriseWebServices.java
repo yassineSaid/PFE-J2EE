@@ -85,6 +85,7 @@ public class EntrepriseWebServices {
 	@Path("updateEntreprise")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response updateEntreprise(Entreprise ent) {
 		es.updateEntreprise(ent);
 		return Response.status(Status.ACCEPTED).entity("Successful Update").build();
@@ -94,6 +95,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("Detail/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getEntrepriseDetails(@PathParam("id") int id)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseDetails(id)).build();
@@ -103,6 +105,7 @@ public class EntrepriseWebServices {
 	@DELETE
 	@Path("Delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response RemoveEntreprise(@PathParam("id") int id)
 	{	
 		es.deleteEntreprise(id);
@@ -113,6 +116,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("All")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getAllentreprise()
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getallEntreprises()).build();
@@ -120,6 +124,7 @@ public class EntrepriseWebServices {
 	
 	@GET
 	@Path("StatEntreprise")
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response gatStatEntreprise( @QueryParam("id") int idEnt)
 	{	Long A=es.nbrOffredestage(idEnt);
 		Long B=es.nbrOffredetr(idEnt);
@@ -134,6 +139,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("AllIntership/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getIntershipByEntreprise(@PathParam("id") int id)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getAllIntershipOfferByEntreprise(id)).build();
@@ -142,6 +148,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("AllIntershipToday")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getIntershipToday()
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getAllIntershipOfferToday()).build();
@@ -150,6 +157,7 @@ public class EntrepriseWebServices {
 	@POST
 	@Path("addInternshipOffer/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response addInternshipOffer(@PathParam("id") int idEnt,InternshipOffer inoff) {
 		int idioff = es.addInternshipOffer(inoff);
 		es.addInternshipOffertoEntreprise(idEnt, idioff);
@@ -163,6 +171,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("internshipOfferDetail/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getInternshipOffer(@PathParam("id") int idioff)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getInternshipOfferDetails(idioff)).build();
@@ -172,6 +181,7 @@ public class EntrepriseWebServices {
 	@Path("updateinternshipOffer")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response updateinternshipOffer(InternshipOffer inoff) {
 		es.updateInternshipOffer(inoff);
 		return Response.status(Status.ACCEPTED).entity("Successful internshipOffer Update").build();
@@ -180,6 +190,7 @@ public class EntrepriseWebServices {
 	@DELETE
 	@Path("DeleteinternshipOffer/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response RemoveInternshipoffer(@PathParam("id") int inoff)
 	{	
 		es.deleteInternshipOffer(inoff);
@@ -191,6 +202,7 @@ public class EntrepriseWebServices {
 	@POST
 	@Path("addSupervisor/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response addSupervisor(@PathParam("id") int idEnt,EntrepriseSupervisor sup) {
 		
 		int idsup = es.addSupervisor(sup);
@@ -206,6 +218,7 @@ public class EntrepriseWebServices {
 	@Path("updateSupervisor")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response updateSupervisor(EntrepriseSupervisor sup) {
 		es.updateSupervisor(sup);;
 		return Response.status(Status.ACCEPTED).entity("Successful Supervisor Update").build();
@@ -214,6 +227,7 @@ public class EntrepriseWebServices {
 	@DELETE
 	@Path("DeleteSupervisor/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response RemoveSupervisor(@PathParam("id") int idsup)
 	{	
 		es.deleteSupervisor(idsup);
@@ -223,6 +237,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("SupervisorDetail/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getSupervisorDetail(@PathParam("id") int idsup)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseSupervisor(idsup)).build();
@@ -231,6 +246,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("AllEntrepriseSupervisor/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getAllEntrepriseSupervisorByEntreprise(@PathParam("id") int id)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getAllEntrepriseSupervisorByEntreprise(id)).build();
@@ -242,10 +258,12 @@ public class EntrepriseWebServices {
 	@Path("addJobOffer/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response addJobOffre(@PathParam("id") int idEnt,JobOffer jo) {
 		int idjo = es.addJobOffre(jo);
 		es.addJobOffretoEntreprise(idEnt, idjo);
-		if(idjo != 0)
+		
+		if(idjo != 0 )
 		{
 			return Response.status(Status.CREATED).entity("JobOffer added Successful").build();
 			
@@ -256,6 +274,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("JobOfferDetail/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getJobOfferDetail(@PathParam("id") int idJo)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getJobOfferDetails(idJo)).build();
@@ -265,6 +284,7 @@ public class EntrepriseWebServices {
 	@Path("updateJobOffer")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response updateJobOffer(JobOffer jo) {
 		es.updateJobOffre(jo);
 		return Response.status(Status.ACCEPTED).entity("Successful JobOffer Update").build();
@@ -273,6 +293,7 @@ public class EntrepriseWebServices {
 	@DELETE
 	@Path("DeleteJobOffre/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response RemoveJobOffre(@PathParam("id") int idjo)
 	{	
 		es.deleteJobOffre(idjo);
@@ -282,6 +303,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("AllJobOffreMois")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getAllJobOffreMois()
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getAllJobOfferToday()).build();
@@ -290,6 +312,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("AllJobOffre/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getAllJobOffreEntreprise(@PathParam("id") int id)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getAllJobOfferByEntreprise(id)).build();
@@ -300,6 +323,7 @@ public class EntrepriseWebServices {
 	@POST
 	@Path("InternshipCatalog/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response addInternshipCatalog(@PathParam("id") int idEnt,InternshipCataloge ic) {
 		int idic = es.addInternshipCatalog(ic);
 		es.addInternshipCatalogtoEntreprise(idEnt, idic);
@@ -313,6 +337,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("InternshipCatalog/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getInternshipCatalogDetail(@PathParam("id") int idCat)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getInternshipCatalaogeDetails(idCat)).build();
@@ -322,6 +347,7 @@ public class EntrepriseWebServices {
 	@Path("updateInternshipCatalog")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response updateInternshipCatalog(InternshipCataloge ic) {
 		es.updateInternshipCatalog(ic);
 		return Response.status(Status.ACCEPTED).entity("Successful InternshipCataloge Update").build();
@@ -330,6 +356,7 @@ public class EntrepriseWebServices {
 	@GET
 	@Path("AllInternshipCatalogEntreprise/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
 	public Response getAllInternshipCatalogByEntreprise(@PathParam("id") int id)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getAllInternshipCatalogeByEntreprise(id)).build();

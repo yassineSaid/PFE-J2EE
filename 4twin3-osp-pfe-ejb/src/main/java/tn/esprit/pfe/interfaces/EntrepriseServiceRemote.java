@@ -10,6 +10,7 @@ import tn.esprit.pfe.entities.EntrepriseSupervisor;
 import tn.esprit.pfe.entities.InternshipCataloge;
 import tn.esprit.pfe.entities.InternshipOffer;
 import tn.esprit.pfe.entities.JobOffer;
+import tn.esprit.pfe.entities.Packs;
 import tn.esprit.pfe.entities.ResponsableEntreprise;
 import tn.esprit.pfe.entities.User;
 import utilities.ValidationError;
@@ -74,5 +75,7 @@ public interface EntrepriseServiceRemote {
 	public void affectStudenttoEntreprise(int idEnt, int ids);
 	
 	public String updatepack(int idEnt,int idP);
+	public Packs getpacksDetails(int idEnt);
+	public int getpacks(int idEnt);
 	
 }
