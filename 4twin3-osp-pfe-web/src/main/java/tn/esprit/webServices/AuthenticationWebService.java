@@ -42,10 +42,10 @@ public class AuthenticationWebService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response login(User u) {
-		System.out.println("Authenticating user...");
+		System.out.println("Authenticating user... "+u.getPlainPassword()+"///"+u.getPassword());
 		//Set<Object> response = new HashSet<>();
 		Map<String, Object> response = new HashMap<>();
-		User user=us.login(u.getEmail(), u.getPlainPassword());
+		User user=us.login(u.getEmail(), u.getPassword());
 		if (user==null) {
 			return Response.status(Status.FORBIDDEN).entity("Erreur de connexion").build();
 		}

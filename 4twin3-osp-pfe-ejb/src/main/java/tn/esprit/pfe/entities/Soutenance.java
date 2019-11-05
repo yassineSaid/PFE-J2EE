@@ -1,13 +1,16 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,21 +20,40 @@ import javax.persistence.TemporalType;
 @Table(name = "Soutenance")
 public class Soutenance implements Serializable {
 	
+	
+	
+	
+	
+	@OneToOne(mappedBy="S")
+	private Etudiant E;
+
+	
+
+	public List<Jury> getJury() {
+		return jury;
+	}
+
+	public void setJury(List<Jury> jury) {
+		this.jury = jury;
+	}
 
 	/**
 	 * 
 	 */
+	
+	@OneToMany(mappedBy="soutenance")
+	private List<Jury> jury = new ArrayList<Jury>();
 	private static final long serialVersionUID = 1L;
 
-	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,float noteSoutenance) {
+	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance,int noteSoutenance,List<Jury> jury) {
 		Titre = titre;
 		Description = description;
 		this.dateSoutenance = dateSoutenance;
 		Salle = salle;
 		HeureSoutenance = heureSoutenance;
 		NoteSoutenance = noteSoutenance;
+		
 	}
-
 	public Soutenance(String titre, String description, Date dateSoutenance, String salle, Date heureSoutenance) {
 		Titre = titre;
 		Description = description;
@@ -53,7 +75,7 @@ public class Soutenance implements Serializable {
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column
 	private int id;
 
@@ -72,9 +94,6 @@ public class Soutenance implements Serializable {
 	private Date HeureSoutenance;
 	@Column
 	private float NoteSoutenance;
-	
-	@OneToOne(mappedBy="soutenance")
-	private Reclamation Reclamation;
 	
 	
 
@@ -128,12 +147,14 @@ public class Soutenance implements Serializable {
 		HeureSoutenance = heureSoutenance;
 	}
 
-	public float  getNoteSoutenance() {
+	public float getNoteSoutenance() {
 		return NoteSoutenance;
 	}
 
 	public void setNoteSoutenance(float noteSoutenance) {
 		NoteSoutenance = noteSoutenance;
 	}
+
+
 
 }

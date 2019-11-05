@@ -1,6 +1,7 @@
 package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -31,7 +32,7 @@ public class Classe implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue (strategy = GenerationType.AUTO)
 	@Column
 	private int id;
 	
@@ -44,15 +45,15 @@ public class Classe implements Serializable {
 	@Min(value=2019)
 	@Max(value=2100)
 	private int anneeDeDebut;
-	
-	@ManyToOne
+
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
 	private Specialite specialite;
 	
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="classe")
 	@JsonManagedReference
-	private Set<Etudiant> etudiants;
+	private Set<Etudiant> etudiants = new HashSet<>();
 
 	public Classe() {
 		super();

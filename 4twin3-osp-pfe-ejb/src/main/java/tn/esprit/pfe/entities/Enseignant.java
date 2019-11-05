@@ -13,14 +13,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 
 @Entity
-@Table
+@Table(name = "Enseignant")
+
 public class Enseignant extends User {
 
 	private static final long serialVersionUID = 1L;

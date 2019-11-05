@@ -35,13 +35,13 @@ public class SoutenanceServices implements SoutenanceServiceRemote {
 	@Override
 	public void updateSoutenance(Soutenance s) {
 		// TODO Auto-generated method stub
-		Soutenance en = em.find(Soutenance.class, s.getId());
-		s.setTitre(s.getTitre());
-		s.setSalle(s.getSalle());
-		s.setNoteSoutenance(s.getNoteSoutenance());
-		s.setHeureSoutenance(s.getHeureSoutenance());
-		s.setDescription(s.getDescription());
-		s.setDateSoutenance(s.getDateSoutenance());
+		Soutenance st = em.find(Soutenance.class, s.getId());
+		st.setTitre(s.getTitre());
+		st.setSalle(s.getSalle());
+		st.setNoteSoutenance(s.getNoteSoutenance());
+		st.setHeureSoutenance(s.getHeureSoutenance());
+		st.setDescription(s.getDescription());
+		st.setDateSoutenance(s.getDateSoutenance());
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package tn.esprit.pfe.services;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+
+import org.hibernate.HibernateException;
 
 import tn.esprit.pfe.entities.Admin;
 import tn.esprit.pfe.entities.Ecole;
@@ -56,7 +59,21 @@ public class EcoleService implements EcoleServiceRemote {
 				errors.clear();
 				errors.addAll(ValidationError.fromViolations(violations));
 				return errors;
+			}catch (HibernateException ex) {
+				ValidationError error = new ValidationError();
+				error.setClassName("Ecole");
+				error.setErrorMessage(ex.getLocalizedMessage());
+				error.setPropertyPath("Ecole");
+				errors.add(error);
+				return errors;
 			}catch (PersistenceException ex) {
+				org.hibernate.exception.ConstraintViolationException ee = (org.hibernate.exception.ConstraintViolationException) ex.getCause();
+				
+				ValidationError error = new ValidationError();
+				error.setClassName("Ecole");
+				error.setErrorMessage(ee.getSQLException().getLocalizedMessage());
+				error.setPropertyPath("Ecole");
+				errors.add(error);
 				return errors;
 			}
 		}
@@ -157,8 +174,52 @@ public class EcoleService implements EcoleServiceRemote {
 	}
 
 	@Override
+	public Ecole getEcoleAdmin(int idAdmin) {
+		Admin admin = em.find(Admin.class, idAdmin);
+		if (admin == null) {
+			return null;
+		} else if (admin.getEcole() != null) {
+			return admin.getEcole();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
 	public List<Ecole> getListEcole() {
 		return em.createQuery("from Ecole",Ecole.class).getResultList();
+	}
+
+	@Override
+	public Set<ValidationError> addImage(String image, int idAdmin) {
+		Set<ValidationError> errors = new HashSet<>();
+		Admin admin = em.find(Admin.class, idAdmin);
+		if (admin == null) {
+			ValidationError error = new ValidationError();
+			error.setClassName("Admin");
+			error.setErrorMessage("Cet admin n'éxiste pas");
+			error.setPropertyPath("Admin");
+			errors.add(error);
+			return errors;
+		} else {
+			Ecole e=admin.getEcole();
+			if (e.getLogo()!=null) {
+				File file = new File(e.getLogo()); 
+				file.delete();
+			}
+			e.setLogo(image);
+			try {
+				em.merge(e);
+				return null;
+			}catch (ConstraintViolationException ex) {
+				Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+				errors.clear();
+				errors.addAll(ValidationError.fromViolations(violations));
+				return errors;
+			}catch (PersistenceException ex) {
+				return errors;
+			}
+		}
 	}
 
 }

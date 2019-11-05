@@ -88,14 +88,15 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
-<dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-annotations</artifactId>
-    <version>3.5.6-Final</version>
-</dependency>
-		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.5.6-Final</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.jboss.arquillian.protocol</groupId>
@@ -108,7 +109,7 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.5.3</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
@@ -132,7 +133,31 @@
 			<artifactId>jasperreports</artifactId>
 			<version>6.5.1</version>
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.4.7.Final</version>
+			<scope>provided</scope>
+
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+
+
+
+
+
 	</dependencies>
 
 	<build>

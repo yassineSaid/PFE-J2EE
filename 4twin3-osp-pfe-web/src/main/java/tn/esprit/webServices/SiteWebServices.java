@@ -51,6 +51,20 @@ public class SiteWebServices {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role={"DirecteurDesStages"})
+	public Response modifierSiteDirecteurDesStages(Site s) {
+		//String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+		AuthenticationFilter af=new AuthenticationFilter();
+		Set<ValidationError> violations=ss.modifierSiteDirecteurDesStages(s, af.getIdUser(headers));
+		if (violations==null) {
+			return Response.status(Status.OK).entity("modify successful").build();
+		}
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
+	}
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role={"Admin"})
 	@Path ("{id}")
 	public Response modifierSite(Site s, @PathParam(value="id") int idSite) {
@@ -81,7 +95,7 @@ public class SiteWebServices {
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Secure(role={"Admin"})
+	@Secure(role={"Admin","DirecteurDesStages"})
 	@Path ("{id}")
 	public Response getSite(@PathParam(value="id") int idSite) {
 		Site site=ss.getSite(idSite);

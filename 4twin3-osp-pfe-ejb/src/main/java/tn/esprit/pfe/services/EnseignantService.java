@@ -52,6 +52,7 @@ public class EnseignantService implements EnseignantServiceRemote {
 			errors.add(error);
 			return errors;
 		} else {
+			e.setPassword("testtest");
 			e.setEcole(admin.getEcole());
 			e.setSite(site);
 			return us.addUser(e);
@@ -65,6 +66,9 @@ public class EnseignantService implements EnseignantServiceRemote {
 			return null;
 		} else if (user.getRole().equals("Admin")) {
 			Admin admin = (Admin) user;
+			if (admin.getEcole() == null) {
+				return new HashSet<>();
+			}
 			return admin.getEcole().getEnseignants();
 		} else {
 			return null;

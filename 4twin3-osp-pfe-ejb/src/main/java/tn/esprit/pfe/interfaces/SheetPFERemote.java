@@ -3,11 +3,8 @@ package tn.esprit.pfe.interfaces;
 import java.util.List;
 
 import javax.ejb.Remote;
-import javax.management.Notification;
 
-import tn.esprit.pfe.entities.Categorie;
 import tn.esprit.pfe.entities.Enseignant;
-import tn.esprit.pfe.entities.EnseignantSheetPFE;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.PFENotification;
@@ -19,6 +16,7 @@ import tn.esprit.pfe.entities.SheetPFEModification;
 public interface SheetPFERemote {
 
 	public int addSheetPFE(SheetPFE sheetPFE);
+	public boolean exportSheetPFE(int sheet_id);
 	public List<Etudiant> getAllStudentNoSheet();
 	public List<Etudiant> getAllStudentNoSheetWithYear(int startyear,int toyear);
 	public void reminderStudentNoSheet(List<Etudiant> students);
@@ -37,7 +35,7 @@ public interface SheetPFERemote {
 	public List<SheetPFE> getAllSheetWaitRapporter();
 	public List<SheetPFE> getAllSheetValidate();
 	public List<Enseignant> getAllValidateur();
-	public boolean affectValidateurToSheetPFE(int sheet_id);
+	public String affectValidateurToSheetPFE(int sheet_id);
 	public boolean validateSheetPFE(int sheet_id,EtatSheetPFE etat,String note);
 	public List<Enseignant> getAllEnseignantOrderByEncadrement();
 	public List<Enseignant> getEncardeurByCategories(int sheet_id);
@@ -61,6 +59,7 @@ public interface SheetPFERemote {
 	public SheetPFEModification getSheetModify(int sheet_id);
 	public List<PFENotification> getAllNotificationByEnseignant(int enseignant_id);
 	public List<PFENotification> getAllNotificationByEtudiant(int etudiant_id);
-	
+	public boolean uploadExcel(String file);
+	public List<Object> dashboard();
 
 }

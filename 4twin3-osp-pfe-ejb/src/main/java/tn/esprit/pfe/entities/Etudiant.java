@@ -13,20 +13,27 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table
+@Table(name = "Etudiant", uniqueConstraints = { @UniqueConstraint(columnNames = "identifiant", name = "uniqueIdentifiantConstraint") })
 @PrimaryKeyJoinColumn(name = "id")
 public class Etudiant extends User {
 
 	private static final long serialVersionUID = 1L;
+	
+	@OneToOne
+	private Soutenance S;
+	
 
 
 	@Column
+	@NotBlank
 	private String identifiant;
 
 	@JsonIgnore
@@ -36,6 +43,11 @@ public class Etudiant extends User {
 	@JsonIgnore
  	@OneToOne(mappedBy="etudiant")
 	private SheetPFE sheetPFE;
+
+	 //@OneToMany(mappedBy="etudiant", cascade = {CascadeType.ALL}, 
+	//	fetch=FetchType.EAGER)
+	//private List<ForumQuestion> fq=new ArrayList<>();
+	
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="etudiant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -46,9 +58,11 @@ public class Etudiant extends User {
 	// private List<ForumQuestion> fq=new ArrayList<>();
 
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JsonBackReference
 	private Classe classe;
+	
+	
 
 	public Etudiant() {
 		super();
