@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
+import tn.esprit.pfe.email.JavaMail;
 import tn.esprit.pfe.entities.Admin;
 import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.EntrepriseSupervisor;
@@ -46,20 +48,36 @@ public class EntrepriseWebServices {
 	private HttpHeaders headers;
 
 	/* Entreprise */
-	
+
+
 	@POST
 	@Path("addEntreprise")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Secure(role = { "ResponsableEntreprise" })
-	public Response RegistreEntreprise(Entreprise ent) {
+	public Response RegistreEntreprise(Entreprise ent) throws MessagingException {
 		AuthenticationFilter af = new AuthenticationFilter();
 		int idEnt = es.addEntreprise(ent,af.getIdUser(headers));
+		String email = es.Email(af.getIdUser(headers));
 		es.addEntreprisetoResponsable(af.getIdUser(headers), idEnt);
 		if(idEnt != 0)
 		{
+			JavaMail.sendConfirmationAcount(email);
 			return Response.status(Status.CREATED).entity("Registeration Successful").build();
 		}
 		return Response.status(Status.NOT_ACCEPTABLE).entity("Registration Failed ").build();
+	}
+	
+	
+	@POST
+	@Path("responsable")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addResponsable(ResponsableEntreprise re) {
+		Set<ValidationError> violations=us.addUser(re);
+		if (violations==null) {
+			return Response.status(Status.CREATED).entity("add successful").build();
+		}
+		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
 	
 
@@ -71,6 +89,7 @@ public class EntrepriseWebServices {
 		es.updateEntreprise(ent);
 		return Response.status(Status.ACCEPTED).entity("Successful Update").build();
 	}
+	
 
 	@GET
 	@Path("Detail/{id}")
@@ -79,6 +98,7 @@ public class EntrepriseWebServices {
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseDetails(id)).build();
 	}
+	
 	
 	@DELETE
 	@Path("Delete/{id}")
@@ -89,12 +109,24 @@ public class EntrepriseWebServices {
 	    return Response.status(Status.ACCEPTED).entity("Entreprise Deleted").build();
 	}
 	
+	
 	@GET
 	@Path("All")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllentreprise()
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getallEntreprises()).build();
+	}
+	
+	@GET
+	@Path("StatEntreprise")
+	public Response gatStatEntreprise( @QueryParam("id") int idEnt)
+	{	Long A=es.nbrOffredestage(idEnt);
+		Long B=es.nbrOffredetr(idEnt);
+		Long C=es.nbrcatalog(idEnt);
+		Long D=es.nbrsupervisor(idEnt);
+		String S = "Number of Your internship Offer = "+A+" Number of Your JobOffer= "+B+"Number of Your InternshipCataloge= "+C+"Number of Your Supervisor=" +D;
+		return Response.status(Status.ACCEPTED).entity(S).build();
 	}
 	
 	/* Internship */
@@ -160,6 +192,7 @@ public class EntrepriseWebServices {
 	@Path("addSupervisor/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addSupervisor(@PathParam("id") int idEnt,EntrepriseSupervisor sup) {
+		
 		int idsup = es.addSupervisor(sup);
 		es.addSupervisortoEntreprise(idEnt, idsup);
 		if(idsup != 0)
@@ -195,6 +228,14 @@ public class EntrepriseWebServices {
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseSupervisor(idsup)).build();
 	}
 
+	@GET
+	@Path("AllEntrepriseSupervisor/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllEntrepriseSupervisorByEntreprise(@PathParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllEntrepriseSupervisorByEntreprise(id)).build();
+	}
+	
 	/* JobOffre */
 	
 	@POST
@@ -206,8 +247,8 @@ public class EntrepriseWebServices {
 		es.addJobOffretoEntreprise(idEnt, idjo);
 		if(idjo != 0)
 		{
-			//return Response.status(Status.CREATED).entity("JobOffer added Successful").build();
-			return Response.status(Status.CREATED).entity(es.getEntrepriseDetails(idEnt)).build();
+			return Response.status(Status.CREATED).entity("JobOffer added Successful").build();
+			
 		}
 		return Response.status(Status.NOT_ACCEPTABLE).entity("JobOffer added Failed ").build();
 	}
@@ -238,6 +279,22 @@ public class EntrepriseWebServices {
 	    return Response.status(Status.ACCEPTED).entity("JobOffre Deleted").build();
 	}
 
+	@GET
+	@Path("AllJobOffreMois")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllJobOffreMois()
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllJobOfferToday()).build();
+	}
+	
+	@GET
+	@Path("AllJobOffre/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllJobOffreEntreprise(@PathParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllJobOfferByEntreprise(id)).build();
+	}
+	
 	/* InternshipCatalog */
 
 	@POST
@@ -270,15 +327,12 @@ public class EntrepriseWebServices {
 		return Response.status(Status.ACCEPTED).entity("Successful InternshipCataloge Update").build();
 	}
 
-	@POST
-	@Path("responsable")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("AllInternshipCatalogEntreprise/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnseignant(ResponsableEntreprise re) {
-		Set<ValidationError> violations=us.addUser(re);
-		if (violations==null) {
-			return Response.status(Status.CREATED).entity("add successful").build();
-		}
-		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
+	public Response getAllInternshipCatalogByEntreprise(@PathParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllInternshipCatalogeByEntreprise(id)).build();
 	}
+	
 }

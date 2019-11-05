@@ -2,6 +2,7 @@ package tn.esprit.pfe.services;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
+import javax.transaction.SystemException;
 
 import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.EntrepriseStudent;
@@ -43,16 +44,19 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		if(ValidateMail(ent.getEmailEntreprise())==0) {
 			ent.setXp(5);
-			Packs p = em.find(Packs.class, 1);
-			ent.setPacks(p);
 			em.persist(ent);
 			return ent.getId();
 		}
 		return 0;			
 	}
 	
-
-
+	@Override
+	public void addpacktoEntreprise(int idEnt,int idP) {
+		Entreprise es = em.find(Entreprise.class, idEnt);
+		Packs p = em.find(Packs.class, idP);
+		es.setPacks(p);
+	}
+	
 	@Override
 	public void updateEntreprise(Entreprise ent) {
 		// TODO Auto-generated method stub
@@ -88,7 +92,46 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		r.setEntreprise(en);
 
 	}
+	
+	@Override
+	public String Email(int id) {
+		User e = em.find(User.class, id);
+		System.out.println(e.getEmail());
+		return e.getEmail();
+	}
 
+	@Override
+	public Long nbrOffredestage(int idEnt) {
+		TypedQuery<Long> query =
+				em.createQuery("select count(A) from InternshipOffre A where A.entreprise="+idEnt, Long.class);
+		Long nbr=query.getSingleResult();
+		return nbr;
+	}
+	
+	@Override
+	public Long nbrOffredetr(int idEnt) {
+		TypedQuery<Long> query =
+				em.createQuery("select count(A) from JobOffre A where A.entreprise="+idEnt, Long.class);
+		Long nbr=query.getSingleResult();
+		return nbr;
+	}
+	
+	@Override
+	public Long nbrcatalog(int idEnt) {
+		TypedQuery<Long> query =
+				em.createQuery("select count(A) from InternshipCataloge A where A.entreprise="+idEnt, Long.class);
+		Long nbr=query.getSingleResult();
+		return nbr;
+	}
+	
+	@Override
+	public Long nbrsupervisor(int idEnt) {
+		TypedQuery<Long> query =
+				em.createQuery("select count(A) from EntrepriseSupervisor A where A.entreprise="+idEnt, Long.class);
+		Long nbr=query.getSingleResult();
+		return nbr;
+	}
+	
 	/* InternshipOffer */
 	
 	@Override
@@ -105,6 +148,9 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		Entreprise ide = em.find(Entreprise.class, idEnt);
 		InternshipOffer ioffer = em.find(InternshipOffer.class, idIoffer);
+		int oxp = ide.getXp();
+		int nxp = oxp+30;
+		ide.setXp(nxp);
 		ioffer.setEntreprise(ide);
 	}
 
@@ -179,6 +225,9 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		Entreprise ide = em.find(Entreprise.class, idEnt);
 		EntrepriseSupervisor es = em.find(EntrepriseSupervisor.class, idSuper);
+		int oxp = ide.getXp();
+		int nxp = oxp+5;
+		ide.setXp(nxp);
 		es.setEntreprise(ide);
 	}
 
@@ -205,6 +254,14 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		return em.find(EntrepriseSupervisor.class, ides);
 	}
 	
+	public List<EntrepriseSupervisor> getAllEntrepriseSupervisorByEntreprise(int idE){
+		TypedQuery<EntrepriseSupervisor> Q =em.createQuery("Select I from EntrepriseSupervisor I where I.entreprise="+idE, EntrepriseSupervisor.class);
+		List<EntrepriseSupervisor> E = Q.getResultList();
+		return E;
+		
+	}
+	
+	
 	/* JobOffre */
 	
 	@Override
@@ -221,6 +278,9 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		Entreprise ide = em.find(Entreprise.class, idEnt);
 		JobOffer idjo = em.find(JobOffer.class, idJo);
+		int oxp = ide.getXp();
+		int nxp = oxp+25;
+		ide.setXp(nxp);
 		idjo.setEntreprise(ide);
 	}
 
@@ -254,6 +314,23 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		jo.setInternshipCataloge(ic);
 	}
 	
+	@Override
+	public List<JobOffer> getAllJobOfferToday() {
+		Date date= new Date();
+		SimpleDateFormat formatter=new SimpleDateFormat("YYYY-MM-dd");
+		TypedQuery<JobOffer> Q =em.createQuery("Select I from JobOffer I where MONTH(I.datePublier)=MONTH(:date)", JobOffer.class);
+		Q.setParameter("date", formatter.format(date));
+		List<JobOffer> E = Q.getResultList();
+		return E;
+	}
+	
+	@Override
+	public List<JobOffer> getAllJobOfferByEntreprise(int idE) {
+		TypedQuery<JobOffer> Q =em.createQuery("Select I from JobOffer I where I.entreprise="+idE, JobOffer.class);
+		List<JobOffer> E=Q.getResultList();
+		return E;
+	}
+	
 	/* InternshipCatalog */
 	
 	@Override
@@ -268,6 +345,9 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		Entreprise es = em.find(Entreprise.class, idEnt);
 		InternshipCataloge inc = em.find(InternshipCataloge.class, ic);
+		int oxp = es.getXp();
+		int nxp = oxp+10;
+		es.setXp(nxp);
 		inc.setEntreprise(es);
 	}
 
@@ -282,6 +362,14 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	@Override
 	public InternshipCataloge getInternshipCatalaogeDetails(int idCat) {
 		return em.find(InternshipCataloge.class, idCat);
+	}
+	
+	public List<InternshipCataloge> getAllInternshipCatalogeByEntreprise(int idE){
+		TypedQuery<InternshipCataloge> Q =em.createQuery("Select I from InternshipCataloge I where I.entreprise="+idE, InternshipCataloge.class);
+		List<InternshipCataloge> E= Q.getResultList();
+		return E;
+		
+		
 	}
 	
 	/* Student */
@@ -300,9 +388,31 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		return E;
 	}
 
+	/* Packs */
 	
-	
-	
-
+	public String updatepack(int idEnt,int idP) {
+		
+		Entreprise ent = em.find(Entreprise.class, idEnt);
+		Packs pak = em.find(Packs.class, idP);
+		if (idP == 2) {
+			if (ent.getXp()>= 50) {
+				ent.setPacks(pak);
+				return "Your pack now is Standard";
+			}else {
+				return "your Xp doesn't allow you to get this pack";
+			}
+		}
+		if (idP == 3) {
+			if (ent.getXp()>= 100) {
+				ent.setPacks(pak);
+				return "Your pack now is Premier";
+				
+			}else {
+				return "your Xp doesn't allow you to get this pack";
+			}
+		}
+		return null;
+		
+	}
 
 }
