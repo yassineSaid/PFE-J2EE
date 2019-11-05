@@ -1,5 +1,6 @@
 package tn.esprit.pfe.interfaces;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Remote;
@@ -22,11 +23,12 @@ public interface EntrepriseServiceRemote {
 	//public ResponsableEntreprise login(String email,String password);
 	
 	/* Entreprise */
-	public int addEntreprise(Entreprise ent);
+	public int addEntreprise(Entreprise ent, int id);
 	public void addEntreprisetoResponsable(int idR, int idEnt);
 	public void updateEntreprise(Entreprise ent);
 	public void deleteEntreprise(int id);
 	public Entreprise getEntrepriseDetails(int idEnt);
+	public List<Entreprise> getallEntreprises();
 	
 	/* InternshipOffer */
 	public int addInternshipOffer(InternshipOffer inoff);
@@ -35,7 +37,8 @@ public interface EntrepriseServiceRemote {
 	public void deleteInternshipOffer(int inoff);
 	public InternshipOffer getInternshipOfferDetails(int idioff);
 	public void addInternshipOffertoCataloge(int idCat, int idJoffer);
-
+	public List<InternshipOffer> getAllIntershipOfferByEntreprise(int idE);
+	public List<InternshipOffer> getAllIntershipOfferToday() ;
 	/* Supervisor */
 	public int addSupervisor(EntrepriseSupervisor es);
 	public void addSupervisortoEntreprise(int idEnt, int idSuper);
@@ -55,7 +58,6 @@ public interface EntrepriseServiceRemote {
 	public int addInternshipCatalog(InternshipCataloge ic);
 	public void addInternshipCatalogtoEntreprise(int idEnt, int ic);
 	public void updateInternshipCatalog(InternshipCataloge ic);
-	public void deleteInternshipCatalog(int idIntCat);
 	public InternshipCataloge getInternshipCatalaogeDetails(int idCat);
 	
 	/* Student */
