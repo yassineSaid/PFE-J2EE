@@ -3,11 +3,8 @@ package tn.esprit.pfe.interfaces;
 import java.util.List;
 
 import javax.ejb.Remote;
-import javax.management.Notification;
 
-import tn.esprit.pfe.entities.Categorie;
 import tn.esprit.pfe.entities.Enseignant;
-import tn.esprit.pfe.entities.EnseignantSheetPFE;
 import tn.esprit.pfe.entities.EtatSheetPFE;
 import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.PFENotification;
@@ -62,6 +59,7 @@ public interface SheetPFERemote {
 	public SheetPFEModification getSheetModify(int sheet_id);
 	public List<PFENotification> getAllNotificationByEnseignant(int enseignant_id);
 	public List<PFENotification> getAllNotificationByEtudiant(int etudiant_id);
-	
+	public boolean uploadExcel(String file);
+	public List<Object> dashboard();
 
 }
