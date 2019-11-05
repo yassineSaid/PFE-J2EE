@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
 import tn.esprit.pfe.entities.Admin;
 import tn.esprit.pfe.entities.Entreprise;
@@ -37,6 +38,7 @@ import utilities.ValidationError;
 public class EntrepriseWebServices {
 	@Inject
 	EntrepriseServices es;
+	
 	@EJB
 	UserService us;
 
@@ -46,11 +48,13 @@ public class EntrepriseWebServices {
 	/* Entreprise */
 	
 	@POST
-	@Path("addEntreprise/{id}")
+	@Path("addEntreprise")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response RegistreEntreprise(@PathParam("id") int id , Entreprise ent) {
-		int idEnt = es.addEntreprise(ent,id);
-		es.addEntreprisetoResponsable(id, idEnt);
+	@Secure(role = { "ResponsableEntreprise" })
+	public Response RegistreEntreprise(Entreprise ent) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		int idEnt = es.addEntreprise(ent,af.getIdUser(headers));
+		es.addEntreprisetoResponsable(af.getIdUser(headers), idEnt);
 		if(idEnt != 0)
 		{
 			return Response.status(Status.CREATED).entity("Registeration Successful").build();
@@ -85,7 +89,31 @@ public class EntrepriseWebServices {
 	    return Response.status(Status.ACCEPTED).entity("Entreprise Deleted").build();
 	}
 	
+	@GET
+	@Path("All")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllentreprise()
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getallEntreprises()).build();
+	}
+	
 	/* Internship */
+	
+	@GET
+	@Path("AllIntership/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getIntershipByEntreprise(@PathParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllIntershipOfferByEntreprise(id)).build();
+	}
+	
+	@GET
+	@Path("AllIntershipToday")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getIntershipToday()
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllIntershipOfferToday()).build();
+	}
 	
 	@POST
 	@Path("addInternshipOffer/{id}")
@@ -102,7 +130,7 @@ public class EntrepriseWebServices {
 	
 	@GET
 	@Path("internshipOfferDetail/{id}")
-	//@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInternshipOffer(@PathParam("id") int idioff)
 	{
 		return Response.status(Status.ACCEPTED).entity(es.getInternshipOfferDetails(idioff)).build();
@@ -127,6 +155,7 @@ public class EntrepriseWebServices {
 	}
 	
 	/* Supervisor */
+	
 	@POST
 	@Path("addSupervisor/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -171,12 +200,14 @@ public class EntrepriseWebServices {
 	@POST
 	@Path("addJobOffer/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addJobOffre(@PathParam("id") int idEnt,JobOffer jo) {
 		int idjo = es.addJobOffre(jo);
 		es.addJobOffretoEntreprise(idEnt, idjo);
 		if(idjo != 0)
 		{
-			return Response.status(Status.CREATED).entity("JobOffer added Successful").build();
+			//return Response.status(Status.CREATED).entity("JobOffer added Successful").build();
+			return Response.status(Status.CREATED).entity(es.getEntrepriseDetails(idEnt)).build();
 		}
 		return Response.status(Status.NOT_ACCEPTABLE).entity("JobOffer added Failed ").build();
 	}

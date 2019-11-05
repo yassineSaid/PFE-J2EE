@@ -1,6 +1,9 @@
 package tn.esprit.pfe.services;
 
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -8,12 +11,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+
 import tn.esprit.pfe.entities.Entreprise;
 import tn.esprit.pfe.entities.EntrepriseStudent;
 import tn.esprit.pfe.entities.EntrepriseSupervisor;
 import tn.esprit.pfe.entities.InternshipCataloge;
 import tn.esprit.pfe.entities.InternshipOffer;
 import tn.esprit.pfe.entities.JobOffer;
+import tn.esprit.pfe.entities.Packs;
 import tn.esprit.pfe.entities.ResponsableEntreprise;
 import tn.esprit.pfe.entities.User;
 import tn.esprit.pfe.interfaces.EntrepriseServiceRemote;
@@ -37,7 +42,9 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	public int addEntreprise(Entreprise ent, int id) {
 		// TODO Auto-generated method stub
 		if(ValidateMail(ent.getEmailEntreprise())==0) {
-			ent.setXp(0);
+			ent.setXp(5);
+			Packs p = em.find(Packs.class, 1);
+			ent.setPacks(p);
 			em.persist(ent);
 			return ent.getId();
 		}
@@ -137,6 +144,24 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		io.setInternshipCataloge(ic);
 	}
 	
+	@Override
+	public List<InternshipOffer> getAllIntershipOfferToday() {
+		Date date= new Date();
+		SimpleDateFormat formatter=new SimpleDateFormat("YYYY-MM-dd");
+		TypedQuery<InternshipOffer> Q =em.createQuery("Select I from InternshipOffer I where MONTH(I.datePublier)=MONTH(:date)", InternshipOffer.class);
+		Q.setParameter("date", formatter.format(date));
+		
+		List<InternshipOffer> E=Q.getResultList();
+		return E;
+	}
+	
+	@Override
+	public List<InternshipOffer> getAllIntershipOfferByEntreprise(int idE) {
+		TypedQuery<InternshipOffer> Q =em.createQuery("Select I from InternshipOffer I where I.entreprise="+idE, InternshipOffer.class);
+		List<InternshipOffer> E=Q.getResultList();
+		return E;
+	}
+	
 	/* Supervisor */
 	
 	@Override
@@ -194,9 +219,9 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 	@Override
 	public void addJobOffretoEntreprise(int idEnt, int idJo) {
 		// TODO Auto-generated method stub
-		Entreprise ides = em.find(Entreprise.class, idEnt);
-		JobOffer jo = em.find(JobOffer.class, idJo);
-		jo.setEntreprise(ides);
+		Entreprise ide = em.find(Entreprise.class, idEnt);
+		JobOffer idjo = em.find(JobOffer.class, idJo);
+		idjo.setEntreprise(ide);
 	}
 
 	@Override
@@ -266,6 +291,18 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public List<Entreprise> getallEntreprises() {
+		TypedQuery<Entreprise> Q =em.createQuery("Select e from Entreprise e", Entreprise.class)
+			;
+		List<Entreprise> E=Q.getResultList();
+		return E;
+	}
+
+	
+	
+	
 
 
 }
