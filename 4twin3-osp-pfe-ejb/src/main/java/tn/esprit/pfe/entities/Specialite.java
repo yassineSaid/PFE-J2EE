@@ -38,7 +38,7 @@ public class Specialite implements Serializable {
 	private String nom;
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="specialite")
-	private Set<Classe> classes;
+	private Set<Classe> classes = new HashSet<>();
 	
 	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore

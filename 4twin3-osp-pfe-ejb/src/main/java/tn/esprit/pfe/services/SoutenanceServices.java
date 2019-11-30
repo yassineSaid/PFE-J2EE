@@ -5,9 +5,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+
+import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import tn.esprit.pfe.interfaces.SoutenanceServiceRemote;
 import tn.esprit.pfe.entities.Etudiant;
@@ -81,7 +85,8 @@ public class SoutenanceServices implements SoutenanceServiceRemote {
 
 	@Override
 	public List<Soutenance> afficherSoutenanceNonNote() {
-		Query query = em.createQuery("select   s.Titre 	, s.Description , s.dateSoutenance , s.Salle from Soutenance s where s.NoteSoutenance IS NULL ORDER BY s.dateSoutenance desc");
+		float n = 0;
+		Query query = em.createQuery("select   s.Titre 	, s.Description , s.dateSoutenance , s.Salle from Soutenance s where s.NoteSoutenance = :n ORDER BY s.dateSoutenance desc").setParameter("n", n);
 		return query.getResultList();
 	}
 	
@@ -93,24 +98,30 @@ public class SoutenanceServices implements SoutenanceServiceRemote {
 
 
 	
-	
-	public Map<List<Long>,List<Long>> SoutenanceNoteEtNonNote()
-	{
-		List<Long> soutenance = em.createQuery("select   count(*)   from Soutenance s where s.NoteSoutenance IS NULL ", Long.class).getResultList();
-		List<Long> soutenanceNote = em.createQuery("select   count(*)  from Soutenance s where s.NoteSoutenance IS NOT NULL", Long.class).getResultList();
-		Map<List<Long>,List<Long>> maprh=new HashMap<List<Long>,List<Long>>();
-		maprh.put(soutenance, soutenanceNote);
-		return maprh;
-		
-		
-		
-	}
+
 	
 	@Override
-	public List<Double> MoyenneNote() {
+	public List<Float> MoyenneNote() {
 		
-		List<Double> soutenance = em.createQuery("select  AVG (s.NoteSoutenance) from Soutenance s where s.NoteSoutenance IS NOT NULL ", Double.class).getResultList();
-		return soutenance;
+		List<Float> soutenance = em.createQuery("select  s.NoteSoutenance from Soutenance s where s.NoteSoutenance IS NOT NULL ", Float.class).getResultList();
+	
+		DoubleSummaryStatistics isn = new DoubleSummaryStatistics();
+		isn.accept(soutenance.get(0));
+		isn.accept(soutenance.get(1));
+		isn.accept(soutenance.get(2));
+		isn.accept(soutenance.get(3));
+		 System.out.println("Count Note : " + isn.getCount());
+	        System.out.println("Sum Note :  " + isn.getSum());
+	        System.out.println("Min Note :  " + isn.getMin());
+	        System.out.println("Max Note :  " + isn.getMax());
+	        System.out.println("Average Note :  " + isn.getAverage());
+	       List <Float> a = new ArrayList<Float>();
+	       a.add((float) isn.getCount());
+	       a.add((float) isn.getSum());
+	       a.add((float) isn.getMin());
+	       a.add((float) isn.getMax());
+	       a.add((float) isn.getAverage());
+		return a;
 	}
 	
 

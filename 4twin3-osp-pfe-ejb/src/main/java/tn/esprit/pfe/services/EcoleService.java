@@ -13,6 +13,8 @@ import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.hibernate.HibernateException;
+
 import tn.esprit.pfe.entities.Admin;
 import tn.esprit.pfe.entities.Ecole;
 import tn.esprit.pfe.interfaces.EcoleServiceRemote;
@@ -57,15 +59,21 @@ public class EcoleService implements EcoleServiceRemote {
 				errors.clear();
 				errors.addAll(ValidationError.fromViolations(violations));
 				return errors;
+			}catch (HibernateException ex) {
+				ValidationError error = new ValidationError();
+				error.setClassName("Ecole");
+				error.setErrorMessage(ex.getLocalizedMessage());
+				error.setPropertyPath("Ecole");
+				errors.add(error);
+				return errors;
 			}catch (PersistenceException ex) {
-				System.out.println(ex.getLocalizedMessage());
-				System.out.println(ex.getMessage());
-				System.out.println(ex.toString());
-				System.out.println(ex.getCause());
 				org.hibernate.exception.ConstraintViolationException ee = (org.hibernate.exception.ConstraintViolationException) ex.getCause();
-				System.out.println(ee.getLocalizedMessage());
-				System.out.println(ee.getSQL());
-				System.out.println(ee.getSQLException());
+				
+				ValidationError error = new ValidationError();
+				error.setClassName("Ecole");
+				error.setErrorMessage(ee.getSQLException().getLocalizedMessage());
+				error.setPropertyPath("Ecole");
+				errors.add(error);
 				return errors;
 			}
 		}
@@ -159,6 +167,18 @@ public class EcoleService implements EcoleServiceRemote {
 		if (admin == null) {
 			return null;
 		} else if (admin.getEcole().getId()==idEcole) {
+			return admin.getEcole();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Ecole getEcoleAdmin(int idAdmin) {
+		Admin admin = em.find(Admin.class, idAdmin);
+		if (admin == null) {
+			return null;
+		} else if (admin.getEcole() != null) {
 			return admin.getEcole();
 		} else {
 			return null;

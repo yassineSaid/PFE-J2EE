@@ -23,6 +23,8 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import utilities.BCrypt;
 
 @Entity
@@ -46,7 +48,7 @@ public class User implements Serializable {
 	@NotBlank(message = "Donnez un prenom")
 	private String prenom;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\." + "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
 			+ "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Cet email est invalide")
 	private String email;
@@ -57,6 +59,7 @@ public class User implements Serializable {
 	@Length(min = 8, message = "Le mot de passe doit contenir un minimum de 8 caractères")
 	@NotNull
 	@Transient
+	@JsonIgnore
 	private String plainPassword="testtest";
 
 	@Column
@@ -76,7 +79,6 @@ public class User implements Serializable {
 		this.prenom = prenom;
 		this.email = email;
 		this.plainPassword = plainPassword;
-		this.password = this.createPwd(plainPassword);
 	}
 	
 	
@@ -88,6 +90,10 @@ public class User implements Serializable {
 		this.email = email;
 		this.password = password;
 		this.role = role;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getId() {
@@ -124,7 +130,7 @@ public class User implements Serializable {
 	}
 
 	public void setPassword(String password) {
-		this.password = this.createPwd(password);
+		this.password = password;
 	}
 
 	public String getPlainPassword() {

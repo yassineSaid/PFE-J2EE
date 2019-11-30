@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name= "JobOffer")
 public class JobOffer implements Serializable{
@@ -72,13 +74,13 @@ public class JobOffer implements Serializable{
 	public void setDescription(String description) {
 		Description = description;
 	}
-
+	@JsonIgnore
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}
 
 	public void setEntreprise(Entreprise entreprise) {
-		entreprise = entreprise;
+		this.entreprise = entreprise;
 	}
 
 	public String getProfilrecherche() {

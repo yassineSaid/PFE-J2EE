@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name= "InternshipOffer")
@@ -100,7 +102,7 @@ public class InternshipOffer implements Serializable {
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
 	}
-
+	@JsonIgnore
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}

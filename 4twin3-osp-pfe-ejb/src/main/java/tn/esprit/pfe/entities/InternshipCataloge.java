@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name= "InternshipCataloge")
 public class InternshipCataloge implements Serializable{
@@ -39,7 +41,8 @@ public class InternshipCataloge implements Serializable{
 	
 	@ManyToOne
 	Entreprise entreprise;
-
+	
+	@JsonIgnore
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}
@@ -71,7 +74,8 @@ public class InternshipCataloge implements Serializable{
 	public void setDescription(String description) {
 		Description = description;
 	}
-
+	
+	@JsonIgnore
 	public Set<JobOffer> getJobOffers() {
 		return joboffers;
 	}
@@ -80,6 +84,7 @@ public class InternshipCataloge implements Serializable{
 		this.joboffers = jobOffers;
 	}
 
+	@JsonIgnore
 	public Set<InternshipOffer> getInternshipOffers() {
 		return internshipoffers;
 	}

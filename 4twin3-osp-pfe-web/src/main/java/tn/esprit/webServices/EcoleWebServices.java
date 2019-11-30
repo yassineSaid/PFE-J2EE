@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -22,6 +24,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -29,7 +32,11 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import rest.utilities.authentication.AuthenticationFilter;
 import rest.utilities.authentication.Secure;
+import tn.esprit.pfe.entities.Classe;
+import tn.esprit.pfe.entities.Departement;
 import tn.esprit.pfe.entities.Ecole;
+import tn.esprit.pfe.entities.Site;
+import tn.esprit.pfe.entities.Specialite;
 import tn.esprit.pfe.services.EcoleService;
 import utilities.ValidationError;
 
@@ -113,14 +120,60 @@ public class EcoleWebServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secure(role = { "Admin" })
-	@Path("image")
+	@Path("statistiques/{id}")
+	public Response getMyEcoleStats(@PathParam(value = "id") int idEcole) {
+		// String authorizationHeader =
+		// headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+		AuthenticationFilter af = new AuthenticationFilter();
+		Map<String, Object> response = new HashMap<>();
+		int nbDepartements=0;
+		int nbSpecialites=0;
+		int nbClasses=0;
+		int nbEtudiants=0;
+		Ecole ecole = es.getEcole(idEcole, af.getIdUser(headers));
+		if (ecole != null) {
+			response.put("Nombre d'enseignants", ecole.getEnseignants().size());
+			response.put("Nombre de sites", ecole.getSites().size());
+			for (Site s:ecole.getSites()) {
+				nbDepartements+=s.getDepartements().size();
+				for (Departement d:s.getDepartements()) {
+					nbSpecialites+=d.getSpecialites().size();
+					for (Specialite sp:d.getSpecialites()) {
+						nbClasses+=sp.getClasses().size();
+						for (Classe c:sp.getClasses()) {
+							nbEtudiants+=c.getEtudiants().size();
+						}
+					}
+				}
+			}
+			response.put("Nombre de départements", nbDepartements);
+			response.put("Nombre de Spécialités", nbSpecialites);
+			response.put("Nombre de Classes", nbClasses);
+			response.put("Nombre d'étudiants", nbEtudiants);
+			return Response.status(Status.OK).entity(response).build();
+		} else
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Cette ecole n'existe pas ou vous n'etes pas autorisé à la consulter").build();
+	}
+
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Secure(role = { "Admin" })
+	@Path("image/{id}")
 	public Response getMyEcoleImage(@PathParam(value = "id") int idEcole) {
 		// String authorizationHeader =
 		// headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 		AuthenticationFilter af = new AuthenticationFilter();
 		Ecole ecole = es.getEcole(idEcole, af.getIdUser(headers));
 		if (ecole != null) {
-			return Response.status(Status.OK).entity(ecole.getLogo()).build();
+			if (ecole.getLogo() != null) {
+				File file = new File (ecole.getLogo());
+				ResponseBuilder rb = Response.ok((Object) file);
+				return rb.status(Status.OK).header("Content-Disposition",
+						"attachment;filename="+file.getName()).build();
+			}
+			return Response.status(Status.OK).entity("Cette école n'a pas de logo").build();
 		} else
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
 					.entity("Cette ecole n'existe pas ou vous n'etes pas autorisé à la consulter").build();

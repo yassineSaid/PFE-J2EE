@@ -21,7 +21,7 @@ public interface ReclamationServiceRemote {
      public List<Reclamation> getAllReclamation();
      public List<Reclamation> getReclamationByEtudiant(String nom , String prenom);
      public List<Reclamation> getReclamationBySoutenance(int id);
-     public  List<Object[]> nombreDeReclamationSelonDateAjout();
+     public  List<Float> nombreDeReclamationSelonDateAjout();
      public  List<Object[]> nombreDeReclamationParMois();
 	//afficher les soutenances non noté (done ) + notifier l'enseignant affecte
 	//afficher les soutenances qui attend un rapporteur
