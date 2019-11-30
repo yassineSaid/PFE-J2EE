@@ -35,12 +35,6 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		return nbr;
 	}
 	
-	@Override
-	public List<Entreprise> getAllEntreprise() {
-		return em.createQuery("select e from Entreprise e", Entreprise.class).getResultList();
-
-	}
-
 	
 	@Override
 	public int addEntreprise(Entreprise ent, int id) {
@@ -383,6 +377,13 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		
 	}
 
+	@Override
+	public List<Entreprise> getallEntreprises() {
+		TypedQuery<Entreprise> Q =em.createQuery("Select e from Entreprise e", Entreprise.class)
+			;
+		List<Entreprise> E=Q.getResultList();
+		return E;
+	}
 
 	/* Packs */
 	
