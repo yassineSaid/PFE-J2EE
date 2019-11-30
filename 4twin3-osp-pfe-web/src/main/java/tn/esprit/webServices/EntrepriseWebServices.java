@@ -76,6 +76,13 @@ public class EntrepriseWebServices {
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseDetails(id)).build();
 	}
 	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllEntreprises()
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getAllEntreprise()).build();
+	}
+	
 	@DELETE
 	@Path("Delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)

@@ -1,5 +1,6 @@
 package tn.esprit.pfe.interfaces;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Remote;
@@ -23,6 +24,7 @@ public interface EntrepriseServiceRemote {
 	
 	/* Entreprise */
 	public int addEntreprise(Entreprise ent, int id);
+	public List<Entreprise> getAllEntreprise();
 	public void addEntreprisetoResponsable(int idR, int idEnt);
 	public void updateEntreprise(Entreprise ent);
 	public void deleteEntreprise(int id);

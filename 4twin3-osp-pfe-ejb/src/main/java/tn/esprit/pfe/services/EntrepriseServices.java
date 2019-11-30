@@ -1,6 +1,7 @@
 package tn.esprit.pfe.services;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -32,6 +33,13 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		Long nbr=query.getSingleResult();
 		return nbr;
 	}
+	
+	@Override
+	public List<Entreprise> getAllEntreprise() {
+		return em.createQuery("select e from Entreprise e", Entreprise.class).getResultList();
+
+	}
+
 	
 	@Override
 	public int addEntreprise(Entreprise ent, int id) {
@@ -267,5 +275,6 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		
 	}
 
+	
 
 }

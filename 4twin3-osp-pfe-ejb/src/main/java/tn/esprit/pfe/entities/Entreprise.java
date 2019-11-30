@@ -84,12 +84,12 @@ public class Entreprise implements Serializable {
 	private Set<EntrepriseStudent> entreprisestudents;
 
 
-	@JsonManagedReference(value="entreprise-internship")
+	@JsonIgnore
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<InternshipAgreemen> internshipAgreemens;
 
-	@JsonManagedReference(value="entreprise-sheet")
+	@JsonIgnore
 	@OneToMany(mappedBy="entreprise", cascade = {CascadeType.ALL}, 
 			fetch=FetchType.EAGER)
 	private Set<SheetPFE> sheetPFEs;
