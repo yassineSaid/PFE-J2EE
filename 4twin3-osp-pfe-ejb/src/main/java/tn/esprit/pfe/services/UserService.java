@@ -70,7 +70,9 @@ public class UserService implements UserServiceRemote{
 
 	@Override
 	public User login(String email, String password) {
+		if ( (long) em.createQuery("select count(u) from User u where email=:email").setParameter("email", email).getSingleResult() < 1) return null;
 		User u=(User) em.createQuery("select u from User u where email=:email").setParameter("email", email).getSingleResult();
+		if (u==null) return null;
 		if (BCrypt.checkpw(password, u.getPassword())) return u;
 		else return null;
 	}
