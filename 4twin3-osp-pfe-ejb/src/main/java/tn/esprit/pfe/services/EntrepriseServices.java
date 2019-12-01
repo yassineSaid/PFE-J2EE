@@ -420,4 +420,11 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		Entreprise ent = em.find(Entreprise.class, idEnt);
 		return ent.getPacks();
 	}
+	
+	public List<Packs>  getallpacks() {
+		
+		TypedQuery<Packs> Q =em.createQuery("Select e from Packs e", Packs.class)
+				;
+			List<Packs> E=Q.getResultList();
+			return E;	}
 }
