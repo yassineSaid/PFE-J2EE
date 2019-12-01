@@ -53,12 +53,13 @@ public class SheetPFEService implements SheetPFERemote {
 	@PersistenceContext
 	EntityManager em;
 
+	//test
 	@Override
-	public int addSheetPFE(SheetPFE sheetPFE) {
+	public int addSheetPFE(SheetPFE sheetPFE,int user_id) {
 
 		String code = generateRandomCode();
 
-		Etudiant etudiant = em.find(Etudiant.class, 1);
+		Etudiant etudiant = em.find(Etudiant.class, user_id);
 		sheetPFE.setEtudiant(etudiant);
 		sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
 		sheetPFE.setQrcode(code);
@@ -76,17 +77,25 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
-	@Override
-	public List<Etudiant> getAllStudentNoSheet() {
-		return em.createQuery(
-				"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where s.etudiant.id IS NULL",
-				Etudiant.class).getResultList();
-	}
+	//test
+//	@Override
+//	public List<Etudiant> getAllStudentNoSheet() {
+//		return em.createQuery(
+//				"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where s.etudiant.id IS NULL",
+//				Etudiant.class).getResultList();
+//	}
 
+	//test
 	@Override
-	public List<Etudiant> getAllStudentNoSheetWithYear(int startyear, int toyear) {
+	public List<Etudiant> getAllStudentNoSheet(int startyear, int toyear) {
 
-		if (toyear == 0) {
+		if(toyear == 0 && startyear == 0) {
+			
+			return em.createQuery(
+					"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where s.etudiant.id IS NULL",
+					Etudiant.class).getResultList();
+			
+		} else if (toyear == 0) {
 
 			return em.createQuery(
 					"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where e.classe.anneeDeDebut = :year   and s.etudiant.id IS NULL ",
@@ -100,6 +109,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
 	public void reminderStudentNoSheet(List<Etudiant> students) {
 
@@ -112,6 +122,7 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEFilter(EtatSheetPFE etat, int year, String pays, int id_categorie) {
 
@@ -268,6 +279,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEDefault() {
 
@@ -287,28 +299,39 @@ public class SheetPFEService implements SheetPFERemote {
 				SheetPFE.class).setParameter("year", year).getResultList();
 	}
 
+	//test
 	@Override
-	public boolean verificationByDirectorSheetPFE(int sheet_id, EtatSheetPFE etat) {
+	public boolean verificationByDirectorSheetPFE(int sheet_id, EtatSheetPFE etat, int user_id) {
 
-		Enseignant directeur = em.find(Enseignant.class, 3);
+		Enseignant directeur = em.find(Enseignant.class, user_id);
+		
 		try {
 			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
-			sheetPFE.setEtat(etat);
-			sheetPFE.setNote("Entreprise does not exist");
-			em.merge(sheetPFE);
-			if (sheetPFE.getEtat().equals(EtatSheetPFE.REFUSE))
+			
+			
+			if (sheetPFE.getEtat().equals(EtatSheetPFE.REFUSE)) {
+				sheetPFE.setEtat(etat);
+				sheetPFE.setNote("Entreprise does not exist");
+				em.merge(sheetPFE);
 
 				new Email().entrepriseNotExist(sheetPFE);
+				
+				PFENotification notification = new PFENotification();
+				notification.setCreated(new Date());
+				notification.setEnseignant(directeur);
+				notification.setEtudiant(sheetPFE.getEtudiant());
+				notification.setSendBy("DIRECTEUR");
+				notification.setTitle("Refuse sheet PFE");
+				notification.setNote("Entreprise does not exist");
+	
+				em.persist(notification);
+			}else {
+				sheetPFE.setEtat(etat);
+				sheetPFE.setNote("Entreprise exist");
+				em.merge(sheetPFE);
+			}
 
-			PFENotification notification = new PFENotification();
-			notification.setCreated(new Date());
-			notification.setEnseignant(directeur);
-			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("DIRECTEUR");
-			notification.setTitle("Refuse sheet PFE");
-			notification.setNote("Entreprise does not exist");
-
-			em.persist(notification);
+				
 
 			return true;
 
@@ -319,9 +342,9 @@ public class SheetPFEService implements SheetPFERemote {
 	}
 
 	@Override
-	public int requestCancelInternship(int sheet_id) {
+	public int requestCancelInternship(int sheet_id, int user_id) {
 
-		Etudiant etudiant = em.find(Etudiant.class, 1);
+		Etudiant etudiant = em.find(Etudiant.class, user_id);
 
 		List<PFENotification> listnotify = em
 				.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'",
@@ -365,9 +388,9 @@ public class SheetPFEService implements SheetPFERemote {
 	}
 
 	@Override
-	public boolean updateRequest(int request_id, EtatSheetPFE etat, String note) {
+	public boolean updateRequest(int request_id, EtatSheetPFE etat, String note,int user_id) {
 
-		Enseignant directeur = em.find(Enseignant.class, 3);
+		Enseignant directeur = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -382,6 +405,13 @@ public class SheetPFEService implements SheetPFERemote {
 				note = "Your request to cancel the internship accepted.";
 				sheetPFE.setEtat(EtatSheetPFE.CANCEL);
 				em.merge(sheetPFE);
+				
+				
+//				List<EnseignantSheetPFE> list = em.createQuery("select es from Enseignantsheet es join es.etudiant e where e.id = :id ",EnseignantSheetPFE.class)
+//						.setParameter("id", sheetPFE.getEtudiant().getId()).getResultList();
+//				for (EnseignantSheetPFE enseignantSheetPFE : list) {
+//					em.remove(enseignantSheetPFE);
+//				}
 
 				PFENotification notification = new PFENotification();
 				notification.setCreated(new Date());
@@ -421,16 +451,21 @@ public class SheetPFEService implements SheetPFERemote {
 		return em.createQuery("select s from SheetPFE s where s.etat = 'VALIDATE' ", SheetPFE.class).getResultList();
 	}
 
+	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEAccepted() {
 		return em.createQuery("select s from SheetPFE s where s.etat = 'ACCEPTED' ", SheetPFE.class).getResultList();
 	}
 
-	public List<Enseignant> getValidateur() {
+	//test
+	@Override
+	public List<Enseignant> getValidateurByCategories(int sheet_id) {
+
 
 		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
-		List<Enseignant> listEnseignantOrderByCategories = em
-				.createQuery("select e from Enseignant e", Enseignant.class).getResultList();
+		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
+				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id group by(e) order by(count(e)) desc",
+				 Enseignant.class).setParameter("id", sheet_id).getResultList();
 
 		for (Enseignant enseignant : listEnseignantOrderByCategories) {
 			Long count = (Long) em.createQuery(
@@ -446,18 +481,15 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public String affectValidateurToSheetPFE(int sheet_id) {
+	public boolean affectValidateurToSheetPFE(int sheet_id,int enseignant_id, int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 		try {
+			
 			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
-
-			if (getValidateur().size() == 0) {
-				return "NO_CONTENT";
-			}
-
-			Enseignant enseignant = getValidateur().stream().findFirst().get();
+			Enseignant enseignant = em.find(Enseignant.class, enseignant_id);
 
 			EnseignantSheetPFE enseignantSheetPFE = new EnseignantSheetPFE();
 			enseignantSheetPFE.setEnseignant(enseignant);
@@ -481,17 +513,18 @@ public class SheetPFEService implements SheetPFERemote {
 
 			new Email().affectEnseignantToSheetPFE(sheetPFE, enseignant, "VALIDATEUR");
 
-			return "SUCCESS";
+			return true;
 
 		} catch (Exception e) {
-			return "NOT_MODIFIED";
+			return false;
 		}
 	}
 
+	//test
 	@Override
-	public boolean validateSheetPFE(int sheet_id, EtatSheetPFE etat, String note) {
+	public boolean validateSheetPFE(int sheet_id, EtatSheetPFE etat, String note,int user_id) {
 
-		Enseignant enseignant = em.find(Enseignant.class, 3);
+		Enseignant enseignant = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -500,6 +533,7 @@ public class SheetPFEService implements SheetPFERemote {
 			if (etat.equals(EtatSheetPFE.VALIDATE)) {
 
 				note = "Your subject of PFE has been accepted";
+				sheetPFE.setNote(note);
 				sheetPFE.setEtat(etat);
 				em.merge(sheetPFE);
 
@@ -516,8 +550,7 @@ public class SheetPFEService implements SheetPFERemote {
 				new Email().validateSheetPFE(sheetPFE, etat, note);
 
 			} else {
-
-				sheetPFE.setEtat(etat);
+				sheetPFE.setNote(note);
 				em.merge(sheetPFE);
 
 				PFENotification notification = new PFENotification();
@@ -541,6 +574,7 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
 	public List<SheetPFE> getAllSheetWaitEncadreur() {
 		return em.createQuery(
@@ -555,12 +589,9 @@ public class SheetPFEService implements SheetPFERemote {
 				Enseignant.class).getResultList();
 	}
 
+	//test
 	@Override
 	public List<Enseignant> getEncardeurByCategories(int sheet_id) {
-
-//		 return em.createQuery(
-//					"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id and e.id not in (select e.id from  Enseignant e left join e.site se join e.enseignantsheet es where es.type= 'ENCADREUR' group by(e) having count(e) > (se.maxEncadrant) ) group by(e) order by(count(e)) desc",
-//					Enseignant.class).setParameter("id", sheet_id).getResultList();
 
 		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
 		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
@@ -581,10 +612,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public String affectEncadreurToSheetPFEAuto(int sheet_id) {
+	public String affectEncadreurToSheetPFEAuto(int sheet_id, int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -622,10 +654,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public boolean affectEncadreurToSheetPFEManual(int sheet_id, int enseignant_id) {
+	public boolean affectEncadreurToSheetPFEManual(int sheet_id, int enseignant_id,int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -658,10 +691,11 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
-	public boolean updateEncadreurSheetPFE(int sheetPFE_id, int enseignant_id) {
+	public boolean updateEncadreurSheetPFE(int sheetPFE_id, int enseignant_id,int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 		try {
 
 			EnseignantSheetPFE enseignantSheetPFE = em.createQuery(
@@ -695,6 +729,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
 	public List<Enseignant> getRapporteurByCategories(int sheet_id) {
 
@@ -717,10 +752,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public String affectRapporteurToSheetPFEAuto(int sheet_id) {
+	public String affectRapporteurToSheetPFEAuto(int sheet_id,int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -757,10 +793,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public boolean affectRapporteurToSheetPFEManual(int sheet_id, int enseignant_id) {
+	public boolean affectRapporteurToSheetPFEManual(int sheet_id, int enseignant_id,int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 
 		try {
 			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
@@ -792,10 +829,11 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
-	public boolean updateRapporteurSheetPFE(int sheetPFE_id, int enseignant_id) {
+	public boolean updateRapporteurSheetPFE(int sheetPFE_id, int enseignant_id,int user_id) {
 
-		Enseignant chef = em.find(Enseignant.class, 3);
+		Enseignant chef = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -803,6 +841,7 @@ public class SheetPFEService implements SheetPFERemote {
 					"select e from EnseignantSheetPFE e left join e.sheetPFE s where s.id = :sheetPFE_id and e.type='RAPPORTEUR' ",
 					EnseignantSheetPFE.class).setParameter("sheetPFE_id", sheetPFE_id).getSingleResult();
 			Enseignant enseignant = em.find(Enseignant.class, enseignant_id);
+			
 			SheetPFE sheetPFE = em.find(SheetPFE.class, sheetPFE_id);
 
 			enseignantSheetPFE.setEnseignant(enseignant);
@@ -830,6 +869,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
 	public List<SheetPFE> getAllSheetWaitRapporter() {
 		return em.createQuery(
@@ -837,47 +877,53 @@ public class SheetPFEService implements SheetPFERemote {
 				SheetPFE.class).getResultList();
 	}
 
+	//test
 	@Override
 	public List<Enseignant> getAllValidateur() {
 		return em.createQuery("select e from Enseignant e where e.role='VALIDATEUR'", Enseignant.class).getResultList();
 
 	}
 
+	//test
 	@Override
 	public SheetPFE getSheetPFEById(int id) {
-		SheetPFE sheetPFE = em.find(SheetPFE.class, id);
-		if (sheetPFE.getEtat().equals(EtatSheetPFE.DEFAULT)) {
-			sheetPFE.setEtat(EtatSheetPFE.VERIFICATION);
-			em.merge(sheetPFE);
-
-			try {
-
+		try {
+			SheetPFE sheetPFE = em.find(SheetPFE.class, id);
+			if (sheetPFE.getEtat().equals(EtatSheetPFE.DEFAULT)) {
+				sheetPFE.setEtat(EtatSheetPFE.VERIFICATION);
+				em.merge(sheetPFE);
 				new Email().progressSheetPFE(sheetPFE);
-
-			} catch (NamingException | MessagingException e) {
-				e.printStackTrace();
 			}
+			return sheetPFE;
+		} catch (Exception e) {
+			return null;
 		}
-		return em.find(SheetPFE.class, id);
 	}
 
+	//test
 	@Override
-	public SheetPFE getSheetPFEByEtudiant() {
+	public SheetPFE getSheetPFEByEtudiant(int user_id) {
 
-		Etudiant etudiant = em.find(Etudiant.class, 4);
-		return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
-				.setParameter("etudiantId", etudiant.getId()).getSingleResult();
+		Etudiant etudiant = em.find(Etudiant.class, user_id);
+		try {
+			return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
+					.setParameter("etudiantId", etudiant.getId()).getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+		
 	}
 
+	//test
 	@Override
-	public boolean updateSheetPFE(SheetPFE sheetPFE) {
+	public boolean updateSheetPFE(SheetPFE sheetPFE,int user_id) {
 
-		Etudiant etudiant = em.find(Etudiant.class, 1);
-
+		Etudiant etudiant = em.find(Etudiant.class, user_id);
 		SheetPFE oldsheet = em.find(SheetPFE.class, sheetPFE.getId());
 		try {
 
 			if (oldsheet.getEtat().equals(EtatSheetPFE.DEFAULT)) {
+				sheetPFE.setEtudiant(etudiant);
 				em.merge(sheetPFE);
 			} else if (oldsheet.getEtat().equals(EtatSheetPFE.REFUSE)) {
 
@@ -893,6 +939,9 @@ public class SheetPFEService implements SheetPFERemote {
 				sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
 
 				em.persist(sheetPFEModification);
+				
+				sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
+				sheetPFE.setEtudiant(etudiant);
 
 				em.merge(sheetPFE);
 
@@ -927,6 +976,8 @@ public class SheetPFEService implements SheetPFERemote {
 
 				em.persist(sheetPFEModification);
 
+				sheetPFE.setEtat(EtatSheetPFE.PRE_VALIDATE);
+				sheetPFE.setEtudiant(etudiant);
 				em.merge(sheetPFE);
 
 				Enseignant enseignant = em.createQuery(
@@ -960,6 +1011,8 @@ public class SheetPFEService implements SheetPFERemote {
 
 					em.persist(sheetPFEModification);
 
+					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
+					sheetPFE.setEtudiant(etudiant);
 					em.merge(sheetPFE);
 
 					Enseignant enseignant = em.createQuery(
@@ -993,7 +1046,9 @@ public class SheetPFEService implements SheetPFERemote {
 
 					sheetPFE.setFeatures(oldsheet.getFeatures());
 					sheetPFE.setProblematic(oldsheet.getProblematic());
-
+					
+					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
+					sheetPFE.setEtudiant(etudiant);
 					em.merge(sheetPFE);
 
 					Enseignant enseignant = em.createQuery(
@@ -1021,6 +1076,7 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEWaitNote() {
 
@@ -1033,10 +1089,11 @@ public class SheetPFEService implements SheetPFERemote {
 				.getResultList();
 	}
 
+	//test
 	@Override
-	public List<SheetPFE> getAllSheetByEnseignant(int startyear, int toyear) {
+	public List<SheetPFE> getAllSheetByEnseignant(int startyear, int toyear,int user_id) {
 
-		Enseignant enseignant = em.find(Enseignant.class, 2);
+		Enseignant enseignant = em.find(Enseignant.class, user_id);
 
 		if (toyear == 0) {
 
@@ -1054,10 +1111,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public List<SheetPFE> getAllSheetByValidateur() {
+	public List<SheetPFE> getAllSheetByValidateur(int user_id) {
 
-		Enseignant enseignant = em.find(Enseignant.class, 2);
+		Enseignant enseignant = em.find(Enseignant.class, user_id);
 
 		return em.createQuery(
 				"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type='VALIDATEUR' ",
@@ -1065,10 +1123,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public List<SheetPFE> getAllSheetByEncadreur() {
+	public List<SheetPFE> getAllSheetByEncadreur(int user_id) {
 
-		Enseignant enseignant = em.find(Enseignant.class, 2);
+		Enseignant enseignant = em.find(Enseignant.class, user_id);
 
 		return em.createQuery(
 				"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type='ENCADREUR' ",
@@ -1076,10 +1135,11 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
-	public List<SheetPFE> getAllSheetByRapporteur() {
+	public List<SheetPFE> getAllSheetByRapporteur(int user_id) {
 
-		Enseignant enseignant = em.find(Enseignant.class, 2);
+		Enseignant enseignant = em.find(Enseignant.class, user_id);
 
 		return em.createQuery(
 				"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type='RAPPORTEUR' ",
@@ -1087,6 +1147,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
 	public boolean addNoteEncadreur(int note, int sheet_id) {
 		try {
@@ -1100,6 +1161,7 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
 	public boolean addNoteRapporteur(int note, int sheet_id) {
 
@@ -1114,10 +1176,11 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
-	public boolean accepteSheetModify(int sheet_id, EtatSheetPFE etat, String note) {
+	public boolean accepteSheetModify(int sheet_id, EtatSheetPFE etat, String note,int user_id) {
 
-		Enseignant enseignant = em.find(Enseignant.class, 3);
+		Enseignant enseignant = em.find(Enseignant.class, user_id);
 
 		try {
 
@@ -1180,6 +1243,7 @@ public class SheetPFEService implements SheetPFERemote {
 		}
 	}
 
+	//test
 	@Override
 	public List<SheetPFEModification> getALLSheetModifyDefault() {
 
@@ -1188,12 +1252,14 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
+	//test
 	@Override
 	public SheetPFEModification getSheetModify(int sheet_id) {
 
 		return em.find(SheetPFEModification.class, sheet_id);
 	}
 
+	//test
 	@Override
 	public List<PFENotification> getAllNotificationByEnseignant(int enseignant_id) {
 
@@ -1201,6 +1267,7 @@ public class SheetPFEService implements SheetPFERemote {
 				PFENotification.class).setParameter("id", enseignant_id).getResultList();
 	}
 
+	//test
 	@Override
 	public List<PFENotification> getAllNotificationByEtudiant(int etudiant_id) {
 
@@ -1255,9 +1322,10 @@ public class SheetPFEService implements SheetPFERemote {
 
 				Row row = rowIt.next();
 
-				double etudiant_id = Double.parseDouble(row.getCell(7).toString());
+				Etudiant etudiant = em
+						.createQuery("select e from Etudiant e where e.email = :email ", Etudiant.class)
+						.setParameter("email", row.getCell(7).toString()).getSingleResult();
 
-				Etudiant etudiant = em.find(Etudiant.class, (int) etudiant_id);
 
 				if (etudiant.getSheetPFE() == null) {
 
@@ -1270,12 +1338,14 @@ public class SheetPFEService implements SheetPFERemote {
 
 						Categorie categorie = em
 								.createQuery("select c from Categorie c where c.name = :name ", Categorie.class)
-								.setParameter("name", item).getSingleResult();
+								.setParameter("name", item.toUpperCase()).getSingleResult();
 						listCategories.add(categorie);
 					}
-
-					double entreprise_id = Double.parseDouble(row.getCell(6).toString());
-					Entreprise entreprise = em.find(Entreprise.class, (int) entreprise_id);
+					
+					Entreprise entreprise = em
+							.createQuery("select e from Entreprise e where e.EmailEntreprise = :email ", Entreprise.class)
+							.setParameter("email", row.getCell(6).toString()).getSingleResult();
+					
 					SheetPFE sheetPFE = new SheetPFE();
 					sheetPFE.setTitle(row.getCell(0).toString());
 					sheetPFE.setDescription(row.getCell(1).toString());
@@ -1304,7 +1374,7 @@ public class SheetPFEService implements SheetPFERemote {
 	public List<Object> dashboard() {
 
 		Query q = em.createQuery(
-				"select e.classe.anneeDeDebut, count(s) from SheetPFE s join s.entreprise es join s.etudiant e  where es.Pays != 'TUNISIE' group by(e.classe.anneeDeDebut) ");
+				"select e.classe.anneeDeDebut, count(s) from SheetPFE s join s.entreprise es join s.etudiant e  where es.Pays != 'TUNISIA' and s.etat != 'CANCEL' group by(e.classe.anneeDeDebut) ");
 		List<Object> list = (List<Object>) q.getResultList();
 
 		return list;

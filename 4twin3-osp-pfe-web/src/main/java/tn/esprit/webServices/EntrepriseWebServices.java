@@ -129,6 +129,7 @@ public class EntrepriseWebServices {
 		return Response.status(Status.ACCEPTED).entity(es.getEntrepriseDetails(id)).build();
 	}
 	
+
 	
 	@DELETE
 	@Path("Delete/{id}")

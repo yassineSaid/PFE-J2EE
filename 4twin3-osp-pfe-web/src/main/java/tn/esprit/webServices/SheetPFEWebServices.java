@@ -49,9 +49,14 @@ public class SheetPFEWebServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addSheetPFE(SheetPFE sheetPFE) {
+		
+		//AuthenticationFilter af = new AuthenticationFilter();
 
-		sheetPFE.setId(IsheetPFE.addSheetPFE(sheetPFE));
-		return Response.status(Status.CREATED).entity(sheetPFE).build();
+		if(IsheetPFE.addSheetPFE(sheetPFE,301) > 0) 
+			return Response.status(Status.CREATED).build();
+		
+		return Response.status(Status.BAD_REQUEST).build();
+		
 
 	}
 
@@ -61,7 +66,7 @@ public class SheetPFEWebServices {
 	public Response getAllStudentNoSheetWithYear(@PathParam(value = "startyear") int startyear,
 			@PathParam(value = "toyear") int toyear) {
 
-		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheetWithYear(startyear, toyear);
+		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheet(startyear, toyear);
 
 		if (listetudiant.size() != 0) {
 
@@ -72,21 +77,21 @@ public class SheetPFEWebServices {
 
 	}
 
-	@GET
-	@Path("/nostudent")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllStudentNoSheetPFE() {
-
-		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheet();
-
-		if (listetudiant.size() != 0) {
-
-			return Response.status(Status.ACCEPTED).entity(listetudiant).build();
-		}
-
-		return Response.status(Status.NO_CONTENT).build();
-
-	}
+//	@GET
+//	@Path("/nostudent")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getAllStudentNoSheetPFE() {
+//
+//		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheet();
+//
+//		if (listetudiant.size() != 0) {
+//
+//			return Response.status(Status.ACCEPTED).entity(listetudiant).build();
+//		}
+//
+//		return Response.status(Status.NO_CONTENT).build();
+//
+//	}
 
 	@POST
 	@Path("/reminder")
@@ -206,28 +211,32 @@ public class SheetPFEWebServices {
 		if (IsheetPFE.getSheetPFEById(id) != null)
 			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(id)).build();
 
-		return Response.status(Status.NOT_FOUND).build();
+		return Response.status(Status.NO_CONTENT).build();
 	}
 
 	@GET
 	@Path("/etudiant")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAgreemenByEtudiant() {
+		
+		//AuthenticationFilter af = new AuthenticationFilter();
 
-		if (IsheetPFE.getSheetPFEByEtudiant() != null)
-			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEByEtudiant()).build();
+		if (IsheetPFE.getSheetPFEByEtudiant(301) != null)
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEByEtudiant(301)).build();
 
-		return Response.status(Status.NOT_FOUND).build();
+		return Response.status(Status.NO_CONTENT).build();
 
 	}
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateInternshipAgreemen(SheetPFE sheetPFE) {
+	public Response updateSheet(SheetPFE sheetPFE) {
 
-		if (IsheetPFE.updateSheetPFE(sheetPFE))
-			return Response.status(Status.ACCEPTED).entity(sheetPFE).build();
+		AuthenticationFilter af = new AuthenticationFilter();
+
+		if (IsheetPFE.updateSheetPFE(sheetPFE,af.getIdUser(headers)))
+			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
 
@@ -238,8 +247,10 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verificationByDirectorSheetPFE(@PathParam(value = "sheet_id") int sheet_id,
 			@PathParam(value = "etat") EtatSheetPFE etat) {
-
-		if (IsheetPFE.verificationByDirectorSheetPFE(sheet_id, etat))
+		
+		AuthenticationFilter af = new AuthenticationFilter();
+		
+		if (IsheetPFE.verificationByDirectorSheetPFE(sheet_id, etat,af.getIdUser(headers)))
 			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(sheet_id)).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -250,8 +261,10 @@ public class SheetPFEWebServices {
 	@Path("/cancel/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response requestCancelInternship(@PathParam(value = "id") int id) {
+		
+		AuthenticationFilter af = new AuthenticationFilter();
 
-		IsheetPFE.requestCancelInternship(id);
+		IsheetPFE.requestCancelInternship(id,af.getIdUser(headers));
 		return Response.status(Status.CREATED).entity(IsheetPFE.getResquest(id)).build();
 
 	}
@@ -286,10 +299,12 @@ public class SheetPFEWebServices {
 	@PUT
 	@Path("/cancel/{request_id}/{etat}/{note}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateInternshipAgreemen(@PathParam(value = "request_id") int request_id,
+	public Response updateRequest(@PathParam(value = "request_id") int request_id,
 			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note) {
 
-		if (IsheetPFE.updateRequest(request_id, etat, note))
+		AuthenticationFilter af = new AuthenticationFilter();
+		
+		if (IsheetPFE.updateRequest(request_id, etat, note,af.getIdUser(headers)))
 			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getResquest(request_id)).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -315,11 +330,12 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response affectEncadreurToSheetPFEAuto(@PathParam(value = "id") int id) {
 
-		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id).equals("SUCCESS")) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id,af.getIdUser(headers)).equals("SUCCESS")) {
 
 			return Response.status(Status.ACCEPTED).build();
 		}
-		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id).equals("NO_CONTENT")) {
+		if (IsheetPFE.affectEncadreurToSheetPFEAuto(id,af.getIdUser(headers)).equals("NO_CONTENT")) {
 
 			return Response.status(Status.NO_CONTENT).build();
 
@@ -335,7 +351,8 @@ public class SheetPFEWebServices {
 	public Response affectEncadreurToSheetPFEManual(@PathParam(value = "idSheet") int idSheet,
 			@PathParam(value = "idEnseignant") int idEnseignant) {
 
-		if (IsheetPFE.affectEncadreurToSheetPFEManual(idSheet, idEnseignant)) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.affectEncadreurToSheetPFEManual(idSheet, idEnseignant,af.getIdUser(headers))) {
 
 			return Response.status(Status.ACCEPTED).build();
 		}
@@ -363,11 +380,12 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response affectRapporteurToSheetPFEAuto(@PathParam(value = "id") int id) {
 
-		if (IsheetPFE.affectRapporteurToSheetPFEAuto(id).equals("SUCCESS")) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.affectRapporteurToSheetPFEAuto(id,af.getIdUser(headers)).equals("SUCCESS")) {
 
 			return Response.status(Status.ACCEPTED).build();
 
-		} else if (IsheetPFE.affectRapporteurToSheetPFEAuto(id).equals("NO_CONTENT")) {
+		} else if (IsheetPFE.affectRapporteurToSheetPFEAuto(id,af.getIdUser(headers)).equals("NO_CONTENT")) {
 
 			return Response.status(Status.NO_CONTENT).build();
 
@@ -385,7 +403,8 @@ public class SheetPFEWebServices {
 	public Response affectRapporteurToSheetPFEManual(@PathParam(value = "idSheet") int idSheet,
 			@PathParam(value = "idEnseignant") int idEnseignant) {
 
-		if (IsheetPFE.affectRapporteurToSheetPFEManual(idSheet, idEnseignant)) {
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.affectRapporteurToSheetPFEManual(idSheet, idEnseignant,af.getIdUser(headers))) {
 
 			return Response.status(Status.ACCEPTED).build();
 		}
@@ -400,7 +419,8 @@ public class SheetPFEWebServices {
 	public Response updateRapporteurSheetPFE(@PathParam(value = "sheetPFE_id") int sheetPFE_id,
 			@PathParam(value = "enseignant_id") int enseignant_id) {
 
-		if (IsheetPFE.updateRapporteurSheetPFE(sheetPFE_id, enseignant_id))
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.updateRapporteurSheetPFE(sheetPFE_id, enseignant_id,af.getIdUser(headers)))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -426,7 +446,8 @@ public class SheetPFEWebServices {
 	public Response getAllSheetByEnseignant(@PathParam(value = "startyear") int startyear,
 			@PathParam(value = "toyear") int toyear) {
 
-		List<SheetPFE> list = IsheetPFE.getAllSheetByEnseignant(startyear, toyear);
+		AuthenticationFilter af = new AuthenticationFilter();
+		List<SheetPFE> list = IsheetPFE.getAllSheetByEnseignant(startyear, toyear,af.getIdUser(headers));
 
 		if (list.size() > 0) {
 
@@ -441,8 +462,9 @@ public class SheetPFEWebServices {
 	@Path("/encadreur")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllSheetByEncadreur() {
+		AuthenticationFilter af = new AuthenticationFilter();
 
-		List<SheetPFE> list = IsheetPFE.getAllSheetByEncadreur();
+		List<SheetPFE> list = IsheetPFE.getAllSheetByEncadreur(af.getIdUser(headers));
 
 		if (list.size() > 0) {
 
@@ -458,7 +480,8 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllSheetByRapporteur() {
 
-		List<SheetPFE> list = IsheetPFE.getAllSheetByRapporteur();
+		AuthenticationFilter af = new AuthenticationFilter();
+		List<SheetPFE> list = IsheetPFE.getAllSheetByRapporteur(af.getIdUser(headers));
 
 		if (list.size() > 0) {
 
@@ -474,7 +497,8 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllSheetByValidateur() {
 
-		List<SheetPFE> list = IsheetPFE.getAllSheetByValidateur();
+		AuthenticationFilter af = new AuthenticationFilter();
+		List<SheetPFE> list = IsheetPFE.getAllSheetByValidateur(af.getIdUser(headers));
 
 		if (list.size() != 0) {
 
@@ -491,7 +515,8 @@ public class SheetPFEWebServices {
 	public Response updateEncadreurSheetPFE(@PathParam(value = "sheetPFE_id") int sheetPFE_id,
 			@PathParam(value = "enseignant_id") int enseignant_id) {
 
-		if (IsheetPFE.updateEncadreurSheetPFE(sheetPFE_id, enseignant_id))
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.updateEncadreurSheetPFE(sheetPFE_id, enseignant_id,af.getIdUser(headers)))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -501,7 +526,7 @@ public class SheetPFEWebServices {
 	@GET
 	@Path("/validateur")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllRapporteur() {
+	public Response getAllValidateur() {
 
 		List<Enseignant> list = IsheetPFE.getAllValidateur();
 
@@ -513,33 +538,60 @@ public class SheetPFEWebServices {
 		return Response.status(Status.NO_CONTENT).build();
 
 	}
+	
+	
+	@GET
+	@Path("/validateur/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getValidateurByCategories(@PathParam(value = "sheet_id") int id) {
+
+		if (IsheetPFE.getValidateurByCategories(id) != null) {
+
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getValidateurByCategories(id)).build();
+		}
+
+		return Response.status(Status.NO_CONTENT).build();
+
+	}
 
 	@POST
-	@Path("/validateur/affect/{sheet_id}")
+	@Path("/validateur/affect/{sheet_id}/{idEnseignant}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response affectValidateurToSheetPFEAuto(@PathParam(value = "sheet_id") int id) {
+	public Response affectValidateurToSheetPFE(@PathParam(value = "sheet_id") int id,@PathParam(value = "idEnseignant") int idEnseignant) {
 
-		if (IsheetPFE.affectValidateurToSheetPFE(id).equals("SUCCESS")) {
-
+		AuthenticationFilter af = new AuthenticationFilter();
+		
+		if (IsheetPFE.affectValidateurToSheetPFE(id,idEnseignant,af.getIdUser(headers))) {
 			return Response.status(Status.ACCEPTED).build();
 		}
-		if (IsheetPFE.affectValidateurToSheetPFE(id).equals("NO_CONTENT")) {
-
-			return Response.status(Status.NO_CONTENT).build();
-
-		} else {
+		 else {
 			return Response.status(Status.NOT_MODIFIED).build();
 		}
 
 	}
-
+	
 	@PUT
 	@Path("/accptedsheetmodifiy/{sheet_id}/{etat}/{note}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response accepteSheetModify(@PathParam(value = "sheet_id") int sheet_id,
 			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note) {
 
-		if (IsheetPFE.accepteSheetModify(sheet_id, etat, note))
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.accepteSheetModify(sheet_id, etat, note,af.getIdUser(headers)))
+			return Response.status(Status.ACCEPTED).build();
+
+		return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+
+	@POST
+	@Path("/valid/{sheet_id}/{etat}/{note}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validateSheetPFE(@PathParam(value = "sheet_id") int sheet_id,
+			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note) {
+
+		AuthenticationFilter af = new AuthenticationFilter();
+		if (IsheetPFE.validateSheetPFE(sheet_id, etat, note,af.getIdUser(headers)))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -707,6 +759,56 @@ public class SheetPFEWebServices {
 	public Response dashboard() {
 		
 		return Response.status(Status.ACCEPTED).entity(IsheetPFE.dashboard()).build();
+
+	}
+	
+	@POST
+	@Path("/addencadreurnote/{note}/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addNoteEncadreur(@PathParam(value = "sheet_id") int sheet_id, @PathParam(value = "note") int note) {
+
+		if (IsheetPFE.addNoteEncadreur(note,sheet_id))
+			return Response.status(Status.ACCEPTED).build();
+
+		return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+	
+	@POST
+	@Path("/addrapporteurnote/{note}/{sheet_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addNoteRapporteur(@PathParam(value = "sheet_id") int sheet_id, @PathParam(value = "note") int note) {
+
+		if (IsheetPFE.addNoteRapporteur(note,sheet_id))
+			return Response.status(Status.ACCEPTED).build();
+
+		return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+	
+	@GET
+	@Path("/waitNote")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEWaitNote() {
+
+		List<SheetPFE> list = IsheetPFE.getAllSheetPFEWaitNote();
+		if (list.size() > 0)
+			return Response.status(Status.ACCEPTED).entity(list).build();
+
+		return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+	
+	@GET
+	@Path("/waitPlaning")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEWaitPlaning() {
+
+		List<SheetPFE> list = IsheetPFE.getAllSheetPFEWaitPlaning();
+		if (list.size() > 0)
+			return Response.status(Status.ACCEPTED).entity(list).build();
+
+		return Response.status(Status.NOT_MODIFIED).build();
 
 	}
 	

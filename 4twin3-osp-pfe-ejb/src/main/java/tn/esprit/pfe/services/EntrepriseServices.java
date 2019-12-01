@@ -35,6 +35,7 @@ public class EntrepriseServices implements EntrepriseServiceRemote {
 		return nbr;
 	}
 	
+	
 	@Override
 	public int addEntreprise(Entreprise ent, int id) {
 		// TODO Auto-generated method stub

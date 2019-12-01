@@ -44,7 +44,6 @@ public class SheetPFE implements Serializable {
 	private float noteEncadreur;
 	private float noteRapporteur;
 	
-	@JsonBackReference(value="entreprise-sheet")
 	@ManyToOne
 	private Entreprise entreprise;
 	
