@@ -409,13 +409,12 @@ public class SheetPFEWebServices {
 	}
 
 	@PUT
-	@Path("/rapporteur/{sheetPFE_id}/{enseignant_id}")
+	@Path("/rapporteur/{sheetPFE_id}/{enseignant_id}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateRapporteurSheetPFE(@PathParam(value = "sheetPFE_id") int sheetPFE_id,
-			@PathParam(value = "enseignant_id") int enseignant_id) {
+			@PathParam(value = "enseignant_id") int enseignant_id, @PathParam(value = "user_id") int user_id) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-		if (IsheetPFE.updateRapporteurSheetPFE(sheetPFE_id, enseignant_id,af.getIdUser(headers)))
+		if (IsheetPFE.updateRapporteurSheetPFE(sheetPFE_id, enseignant_id, user_id))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -505,13 +504,13 @@ public class SheetPFEWebServices {
 	}
 
 	@PUT
-	@Path("/encadreur/{sheetPFE_id}/{enseignant_id}")
+	@Path("/encadreur/{sheetPFE_id}/{enseignant_id}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEncadreurSheetPFE(@PathParam(value = "sheetPFE_id") int sheetPFE_id,
-			@PathParam(value = "enseignant_id") int enseignant_id) {
+			@PathParam(value = "enseignant_id") int enseignant_id, @PathParam(value = "user_id") int user_id ) {
 
 		AuthenticationFilter af = new AuthenticationFilter();
-		if (IsheetPFE.updateEncadreurSheetPFE(sheetPFE_id, enseignant_id,af.getIdUser(headers)))
+		if (IsheetPFE.updateEncadreurSheetPFE(sheetPFE_id, enseignant_id, user_id))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();

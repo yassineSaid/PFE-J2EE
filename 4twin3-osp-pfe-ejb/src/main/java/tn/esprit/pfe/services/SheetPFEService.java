@@ -58,6 +58,8 @@ public class SheetPFEService implements SheetPFERemote {
 	public int addSheetPFE(SheetPFE sheetPFE) {
 		String code = generateRandomCode();
 		sheetPFE.setQrcode(code);
+		sheetPFE.setNoteEncadreur(-1);
+		sheetPFE.setNoteRapporteur(-1);
 		em.persist(sheetPFE);
 
 		try {
