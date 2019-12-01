@@ -49,6 +49,34 @@ public class EntrepriseWebServices {
 
 	/* Entreprise */
 
+	@GET
+	@Path("updatepack/{id}/{idp}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
+	public Response getupdatePack(@PathParam("id") int id,@PathParam("idp") int idp)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.updatepack(id, idp)).build();
+	}
+	
+	@GET
+	@Path("packdetails/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
+	public Response getPackdetails(@PathParam("id") int id)
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getpacksDetails(id)).build();
+	}
+	
+	@GET
+	@Path("packdetails")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Secure(role = { "ResponsableEntreprise" })
+	public Response getallPack()
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getallpacks()).build();
+	}
+	
+	
 
 	@POST
 	@Path("addEntreprise")
