@@ -55,13 +55,8 @@ public class SheetPFEService implements SheetPFERemote {
 
 	//test
 	@Override
-	public int addSheetPFE(SheetPFE sheetPFE,int user_id) {
-
+	public int addSheetPFE(SheetPFE sheetPFE) {
 		String code = generateRandomCode();
-
-		Etudiant etudiant = em.find(Etudiant.class, user_id);
-		sheetPFE.setEtudiant(etudiant);
-		sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
 		sheetPFE.setQrcode(code);
 		em.persist(sheetPFE);
 
@@ -77,13 +72,6 @@ public class SheetPFEService implements SheetPFERemote {
 
 	}
 
-	//test
-//	@Override
-//	public List<Etudiant> getAllStudentNoSheet() {
-//		return em.createQuery(
-//				"select e from Etudiant e LEFT JOIN e.sheetPFE s ON s.etudiant.id = e.id where s.etudiant.id IS NULL",
-//				Etudiant.class).getResultList();
-//	}
 
 	//test
 	@Override
@@ -578,7 +566,7 @@ public class SheetPFEService implements SheetPFERemote {
 	@Override
 	public List<SheetPFE> getAllSheetWaitEncadreur() {
 		return em.createQuery(
-				"select s from SheetPFE s where s.id not in (select s.id from EnseignantSheetPFE es Left join es.sheetPFE s  where es.type = 'ENCADREUR') ",
+				"select s from SheetPFE s where s.id not in (select s.id from EnseignantSheetPFE es Left join es.sheetPFE s  where es.type = 'ENCADREUR') and s.etat='VALIDATE' ",
 				SheetPFE.class).getResultList();
 	}
 
@@ -873,7 +861,7 @@ public class SheetPFEService implements SheetPFERemote {
 	@Override
 	public List<SheetPFE> getAllSheetWaitRapporter() {
 		return em.createQuery(
-				"select s from SheetPFE s where s.id not in (select s.id from EnseignantSheetPFE es Left join es.sheetPFE s  where es.type = 'RAPPORTEUR') ",
+				"select s from SheetPFE s where s.id not in (select s.id from EnseignantSheetPFE es Left join es.sheetPFE s  where es.type = 'RAPPORTEUR') and s.etat ='VALIDATE'",
 				SheetPFE.class).getResultList();
 	}
 
@@ -1079,13 +1067,12 @@ public class SheetPFEService implements SheetPFERemote {
 	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEWaitNote() {
-
-		return em.createQuery("select s from SheetPFE  where noteRapporteur= 0 or noteEncadreur= 0 and etat='VALIDATE'",
+		return em.createQuery("select s from SheetPFE s where s.noteRapporteur= 0 or s.noteEncadreur= 0 and etat='VALIDATE'",
 				SheetPFE.class).getResultList();
 	}
 
 	public List<SheetPFE> getAllSheetPFEWaitPlaning() {
-		return em.createQuery("select s from SheetPFE  where noteRapporteur > 0 and noteEncadreur > 0 ", SheetPFE.class)
+		return em.createQuery("select s from SheetPFE s where s.noteRapporteur > 0 and s.noteEncadreur > 0 ", SheetPFE.class)
 				.getResultList();
 	}
 

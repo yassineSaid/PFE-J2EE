@@ -15,7 +15,7 @@ import tn.esprit.pfe.entities.SheetPFEModification;
 @Remote
 public interface SheetPFERemote {
 
-	public int addSheetPFE(SheetPFE sheetPFE,int user_id);
+	public int addSheetPFE(SheetPFE sheetPFE);
 	public boolean exportSheetPFE(int sheet_id);
 	public List<Etudiant> getAllStudentNoSheet(int startyear,int toyear);
 	public void reminderStudentNoSheet(List<Etudiant> students);

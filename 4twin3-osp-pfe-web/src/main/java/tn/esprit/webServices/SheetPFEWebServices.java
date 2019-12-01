@@ -50,9 +50,7 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addSheetPFE(SheetPFE sheetPFE) {
 		
-		//AuthenticationFilter af = new AuthenticationFilter();
-
-		if(IsheetPFE.addSheetPFE(sheetPFE,301) > 0) 
+		if(IsheetPFE.addSheetPFE(sheetPFE) > 0) 
 			return Response.status(Status.CREATED).build();
 		
 		return Response.status(Status.BAD_REQUEST).build();
@@ -215,14 +213,12 @@ public class SheetPFEWebServices {
 	}
 
 	@GET
-	@Path("/etudiant")
+	@Path("/etudiant/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAgreemenByEtudiant() {
+	public Response getAgreemenByEtudiant(@PathParam(value = "id") int id) {
 		
-		//AuthenticationFilter af = new AuthenticationFilter();
-
-		if (IsheetPFE.getSheetPFEByEtudiant(301) != null)
-			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEByEtudiant(301)).build();
+		if (IsheetPFE.getSheetPFEByEtudiant(id) != null)
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEByEtudiant(id)).build();
 
 		return Response.status(Status.NO_CONTENT).build();
 
@@ -346,13 +342,12 @@ public class SheetPFEWebServices {
 	}
 
 	@POST
-	@Path("/encadreur/affect/{idSheet}/{idEnseignant}")
+	@Path("/encadreur/affect/{idSheet}/{idEnseignant}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response affectEncadreurToSheetPFEManual(@PathParam(value = "idSheet") int idSheet,
-			@PathParam(value = "idEnseignant") int idEnseignant) {
+			@PathParam(value = "idEnseignant") int idEnseignant,  @PathParam(value = "user_id") int user_id) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-		if (IsheetPFE.affectEncadreurToSheetPFEManual(idSheet, idEnseignant,af.getIdUser(headers))) {
+		if (IsheetPFE.affectEncadreurToSheetPFEManual(idSheet, idEnseignant,user_id)) {
 
 			return Response.status(Status.ACCEPTED).build();
 		}
@@ -398,13 +393,13 @@ public class SheetPFEWebServices {
 	}
 
 	@POST
-	@Path("/rapporteur/affect/{idSheet}/{idEnseignant}")
+	@Path("/rapporteur/affect/{idSheet}/{idEnseignant}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response affectRapporteurToSheetPFEManual(@PathParam(value = "idSheet") int idSheet,
-			@PathParam(value = "idEnseignant") int idEnseignant) {
+			@PathParam(value = "idEnseignant") int idEnseignant,  @PathParam(value = "user_id") int user_id) {
 
 		AuthenticationFilter af = new AuthenticationFilter();
-		if (IsheetPFE.affectRapporteurToSheetPFEManual(idSheet, idEnseignant,af.getIdUser(headers))) {
+		if (IsheetPFE.affectRapporteurToSheetPFEManual(idSheet, idEnseignant, user_id)) {
 
 			return Response.status(Status.ACCEPTED).build();
 		}
@@ -555,13 +550,11 @@ public class SheetPFEWebServices {
 	}
 
 	@POST
-	@Path("/validateur/affect/{sheet_id}/{idEnseignant}")
+	@Path("/validateur/affect/{sheet_id}/{idEnseignant}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response affectValidateurToSheetPFE(@PathParam(value = "sheet_id") int id,@PathParam(value = "idEnseignant") int idEnseignant) {
-
-		AuthenticationFilter af = new AuthenticationFilter();
+	public Response affectValidateurToSheetPFE(@PathParam(value = "sheet_id") int id, @PathParam(value = "idEnseignant") int idEnseignant, @PathParam(value = "user_id") int user_id) {
 		
-		if (IsheetPFE.affectValidateurToSheetPFE(id,idEnseignant,af.getIdUser(headers))) {
+		if (IsheetPFE.affectValidateurToSheetPFE(id,idEnseignant,user_id)) {
 			return Response.status(Status.ACCEPTED).build();
 		}
 		 else {

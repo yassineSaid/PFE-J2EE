@@ -124,6 +124,13 @@ public class EntrepriseWebServices {
 	}
 	
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEntreprises()
+	{
+		return Response.status(Status.ACCEPTED).entity(es.getallEntreprises()).build();
+	}
+	
+	@GET
 	@Path("StatEntreprise")
 	@Secure(role = { "ResponsableEntreprise" })
 	public Response gatStatEntreprise( @QueryParam("id") int idEnt)
