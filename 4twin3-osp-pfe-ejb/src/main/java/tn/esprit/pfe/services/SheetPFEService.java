@@ -541,6 +541,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 			} else {
 				sheetPFE.setNote(note);
+				sheetPFE.setEtat(etat);
 				em.merge(sheetPFE);
 
 				PFENotification notification = new PFENotification();
@@ -879,11 +880,6 @@ public class SheetPFEService implements SheetPFERemote {
 	public SheetPFE getSheetPFEById(int id) {
 		try {
 			SheetPFE sheetPFE = em.find(SheetPFE.class, id);
-			if (sheetPFE.getEtat().equals(EtatSheetPFE.DEFAULT)) {
-				sheetPFE.setEtat(EtatSheetPFE.VERIFICATION);
-				em.merge(sheetPFE);
-				new Email().progressSheetPFE(sheetPFE);
-			}
 			return sheetPFE;
 		} catch (Exception e) {
 			return null;
@@ -1069,35 +1065,37 @@ public class SheetPFEService implements SheetPFERemote {
 	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEWaitNote() {
-		return em.createQuery("select s from SheetPFE s where s.noteRapporteur= 0 or s.noteEncadreur= 0 and etat='VALIDATE'",
+		return em.createQuery("select s from SheetPFE s where s.noteRapporteur= -1 or s.noteEncadreur= -1 and etat='VALIDATE'",
 				SheetPFE.class).getResultList();
 	}
 
 	public List<SheetPFE> getAllSheetPFEWaitPlaning() {
-		return em.createQuery("select s from SheetPFE s where s.noteRapporteur > 0 and s.noteEncadreur > 0 ", SheetPFE.class)
+		return em.createQuery("select s from SheetPFE s where s.noteRapporteur > -1 and s.noteEncadreur > -1 ", SheetPFE.class)
 				.getResultList();
 	}
 
 	//test
 	@Override
-	public List<SheetPFE> getAllSheetByEnseignant(int startyear, int toyear,int user_id) {
+	public List<SheetPFE> getAllSheetByEnseignant(int startyear, int toyear, String type, int user_id) {
 
 		Enseignant enseignant = em.find(Enseignant.class, user_id);
-
-		if (toyear == 0) {
-
-			return em.createQuery(
-					"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where s.etudiant.classe.anneeDeDebut = :year and e.id=:id",
-					SheetPFE.class).setParameter("id", enseignant.getId()).setParameter("year", startyear)
-					.getResultList();
-		} else {
+		
+		if (type.equals("ALL")) {
 
 			return em.createQuery(
-					"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and  s.etudiant.classe.anneeDeDebut BETWEEN :startyear and :toyear  ",
+					"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id  and s.etudiant.classe.anneeDeDebut BETWEEN :startyear and :toyear  ",
 					SheetPFE.class).setParameter("id", enseignant.getId()).setParameter("startyear", startyear)
 					.setParameter("toyear", toyear).getResultList();
-		}
+			
+		} else {
+			
+			return em.createQuery(
+					"select s from SheetPFE s join s.enseignantsheet es join es.enseignant e where e.id = :id and es.type = :type and  s.etudiant.classe.anneeDeDebut BETWEEN :startyear and :toyear  ",
+					SheetPFE.class).setParameter("id", enseignant.getId()).setParameter("startyear", startyear).setParameter("type", type)
+					.setParameter("toyear", toyear).getResultList();
 
+		}
+		
 	}
 
 	//test

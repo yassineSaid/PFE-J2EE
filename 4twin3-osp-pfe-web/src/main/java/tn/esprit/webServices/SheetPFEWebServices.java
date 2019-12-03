@@ -239,14 +239,12 @@ public class SheetPFEWebServices {
 	}
 
 	@PUT
-	@Path("/verification/{sheet_id}/{etat}")
+	@Path("/verification/{sheet_id}/{etat}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verificationByDirectorSheetPFE(@PathParam(value = "sheet_id") int sheet_id,
-			@PathParam(value = "etat") EtatSheetPFE etat) {
-		
-		AuthenticationFilter af = new AuthenticationFilter();
-		
-		if (IsheetPFE.verificationByDirectorSheetPFE(sheet_id, etat,af.getIdUser(headers)))
+			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "user_id") int user_id ) {
+				
+		if (IsheetPFE.verificationByDirectorSheetPFE(sheet_id, etat, user_id))
 			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(sheet_id)).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -435,13 +433,12 @@ public class SheetPFEWebServices {
 	}
 
 	@GET
-	@Path("/enseignant/{startyear}/{toyear}")
+	@Path("/enseignant/{startyear}/{toyear}/{type}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllSheetByEnseignant(@PathParam(value = "startyear") int startyear,
-			@PathParam(value = "toyear") int toyear) {
+			@PathParam(value = "toyear") int toyear, @PathParam(value = "type") String type, @PathParam(value = "user_id") int user_id) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-		List<SheetPFE> list = IsheetPFE.getAllSheetByEnseignant(startyear, toyear,af.getIdUser(headers));
+		List<SheetPFE> list = IsheetPFE.getAllSheetByEnseignant(startyear, toyear, type, user_id);
 
 		if (list.size() > 0) {
 
@@ -577,13 +574,11 @@ public class SheetPFEWebServices {
 	}
 
 	@POST
-	@Path("/valid/{sheet_id}/{etat}/{note}")
+	@Path("/valid/{sheet_id}/{etat}/{note}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response validateSheetPFE(@PathParam(value = "sheet_id") int sheet_id,
-			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note) {
-
-		AuthenticationFilter af = new AuthenticationFilter();
-		if (IsheetPFE.validateSheetPFE(sheet_id, etat, note,af.getIdUser(headers)))
+			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note, @PathParam(value = "user_id") int user_id) {
+		if (IsheetPFE.validateSheetPFE(sheet_id, etat, note, user_id))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();

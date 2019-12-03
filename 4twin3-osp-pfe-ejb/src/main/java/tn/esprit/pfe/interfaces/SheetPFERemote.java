@@ -50,7 +50,7 @@ public interface SheetPFERemote {
 	public List<SheetPFE> getAllSheetPFEWaitPlaning();
 	public boolean addNoteEncadreur(int note,int sheet_id);
 	public boolean addNoteRapporteur(int note,int sheet_id);
-	public List<SheetPFE> getAllSheetByEnseignant(int startyear,int toyear,int user_id);
+	public List<SheetPFE> getAllSheetByEnseignant(int startyear,int toyear, String type, int user_id);
 	public List<SheetPFE> getAllSheetByEncadreur(int user_id);
 	public List<SheetPFE> getAllSheetByRapporteur(int user_id);
 	public List<SheetPFE> getAllSheetByValidateur(int user_id);
