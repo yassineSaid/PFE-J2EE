@@ -35,9 +35,7 @@ public class InternshipAgreemenWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addAgreemen(InternshipAgreemen internshipAgreemen) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-
-		int id = Iagreemen.addInternshipAgreemen(internshipAgreemen, af.getIdUser(headers));
+		int id = Iagreemen.addInternshipAgreemen(internshipAgreemen);
 
 		return Response.status(Status.CREATED).entity(Iagreemen.getAgreemenById(id)).build();
 
@@ -70,14 +68,12 @@ public class InternshipAgreemenWebServices {
 	}
 
 	@GET
-	@Path("/etudiant/")
+	@Path("/etudiant/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAgreemenByEtudiant() {
+	public Response getAgreemenByEtudiant(@PathParam(value = "id") int id) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-
-		if (Iagreemen.getAgreemenByEtudiant(af.getIdUser(headers)) != null)
-			return Response.status(Status.ACCEPTED).entity(Iagreemen.getAgreemenByEtudiant(af.getIdUser(headers)))
+		if (Iagreemen.getAgreemenByEtudiant(id) != null)
+			return Response.status(Status.ACCEPTED).entity(Iagreemen.getAgreemenByEtudiant(id))
 					.build();
 
 		return Response.status(Status.NO_CONTENT).build();

@@ -229,9 +229,7 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSheet(SheetPFE sheetPFE) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-
-		if (IsheetPFE.updateSheetPFE(sheetPFE,af.getIdUser(headers)))
+		if (IsheetPFE.updateSheetPFE(sheetPFE))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();

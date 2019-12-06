@@ -24,7 +24,7 @@ public interface SheetPFERemote {
 	public List<SheetPFE> getAllSheetPFEAccepted();
 	public SheetPFE getSheetPFEById(int id);
 	public SheetPFE getSheetPFEByEtudiant(int user_id);
-	public boolean updateSheetPFE(SheetPFE sheetPFE,int user_id);
+	public boolean updateSheetPFE(SheetPFE sheetPFE);
 	public boolean verificationByDirectorSheetPFE(int sheet_id,EtatSheetPFE etat,int user_id);
 	public int requestCancelInternship(int sheet_id,int user_id);
 	public List<RequestCancelInternship> getAllRequest();

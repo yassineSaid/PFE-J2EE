@@ -60,6 +60,7 @@ public class SheetPFEService implements SheetPFERemote {
 		sheetPFE.setQrcode(code);
 		sheetPFE.setNoteEncadreur(-1);
 		sheetPFE.setNoteRapporteur(-1);
+		sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
 		em.persist(sheetPFE);
 
 		try {
@@ -454,7 +455,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
 		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
-				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id group by(e) order by(count(e)) desc",
+				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where e.role='Enseignant' and s.id=:id group by(e) order by(count(e)) desc",
 				 Enseignant.class).setParameter("id", sheet_id).getResultList();
 
 		for (Enseignant enseignant : listEnseignantOrderByCategories) {
@@ -586,7 +587,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
 		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
-				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id group by(e) order by(count(e)) desc",
+				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where e.role='Enseignant' and s.id=:id group by(e) order by(count(e)) desc",
 				Enseignant.class).setParameter("id", sheet_id).getResultList();
 
 		for (Enseignant enseignant : listEnseignantOrderByCategories) {
@@ -726,7 +727,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 		List<Enseignant> listEnseignant = new ArrayList<Enseignant>();
 		List<Enseignant> listEnseignantOrderByCategories = em.createQuery(
-				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where s.id=:id group by(e) order by(count(e)) desc",
+				"select e from Enseignant e join  e.categories c join c.sheetPFEs s where e.role='Enseignant' and s.id=:id group by(e) order by(count(e)) desc",
 				Enseignant.class).setParameter("id", sheet_id).getResultList();
 
 		for (Enseignant enseignant : listEnseignantOrderByCategories) {
@@ -902,14 +903,12 @@ public class SheetPFEService implements SheetPFERemote {
 
 	//test
 	@Override
-	public boolean updateSheetPFE(SheetPFE sheetPFE,int user_id) {
+	public boolean updateSheetPFE(SheetPFE sheetPFE) {
 
-		Etudiant etudiant = em.find(Etudiant.class, user_id);
 		SheetPFE oldsheet = em.find(SheetPFE.class, sheetPFE.getId());
 		try {
 
 			if (oldsheet.getEtat().equals(EtatSheetPFE.DEFAULT)) {
-				sheetPFE.setEtudiant(etudiant);
 				em.merge(sheetPFE);
 			} else if (oldsheet.getEtat().equals(EtatSheetPFE.REFUSE)) {
 
@@ -927,27 +926,26 @@ public class SheetPFEService implements SheetPFERemote {
 				em.persist(sheetPFEModification);
 				
 				sheetPFE.setEtat(EtatSheetPFE.DEFAULT);
-				sheetPFE.setEtudiant(etudiant);
 
 				em.merge(sheetPFE);
 
 				List<PFENotification> listnotify = em.createQuery(
 						"select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'",
-						PFENotification.class).setParameter("id", etudiant.getId()).getResultList();
+						PFENotification.class).setParameter("id", sheetPFE.getEtudiant().getId()).getResultList();
 
 				PFENotification notifyby = listnotify.stream().findFirst().get();
 
 				PFENotification notification = new PFENotification();
 				notification.setCreated(new Date());
 				notification.setEnseignant(notifyby.getEnseignant());
-				notification.setEtudiant(etudiant);
+				notification.setEtudiant(sheetPFE.getEtudiant());
 				notification.setSendBy("ETUDIANT");
 				notification.setTitle("Change sheet PFE");
-				notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom() + " changed the sheet PFE");
+				notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom() + " changed the sheet PFE");
 
 				em.persist(notification);
 
-			} else if (oldsheet.getEtat().equals(EtatSheetPFE.PRE_VALIDATE)) {
+			} else if (oldsheet.getEtat().equals(EtatSheetPFE.PRE_VALIDATE) || oldsheet.getEtat().equals(EtatSheetPFE.REQUEST)) {
 
 				SheetPFEModification sheetPFEModification = new SheetPFEModification();
 				sheetPFEModification.setTitle(oldsheet.getTitle());
@@ -963,7 +961,6 @@ public class SheetPFEService implements SheetPFERemote {
 				em.persist(sheetPFEModification);
 
 				sheetPFE.setEtat(EtatSheetPFE.PRE_VALIDATE);
-				sheetPFE.setEtudiant(etudiant);
 				em.merge(sheetPFE);
 
 				Enseignant enseignant = em.createQuery(
@@ -973,10 +970,10 @@ public class SheetPFEService implements SheetPFERemote {
 				PFENotification notification = new PFENotification();
 				notification.setCreated(new Date());
 				notification.setEnseignant(enseignant);
-				notification.setEtudiant(etudiant);
+				notification.setEtudiant(sheetPFE.getEtudiant());
 				notification.setSendBy("ETUDIANT");
 				notification.setTitle("Change sheet PFE");
-				notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom() + " changed the sheet PFE");
+				notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom() + " changed the sheet PFE");
 
 				em.persist(notification);
 
@@ -998,7 +995,6 @@ public class SheetPFEService implements SheetPFERemote {
 					em.persist(sheetPFEModification);
 
 					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
-					sheetPFE.setEtudiant(etudiant);
 					em.merge(sheetPFE);
 
 					Enseignant enseignant = em.createQuery(
@@ -1008,10 +1004,10 @@ public class SheetPFEService implements SheetPFERemote {
 					PFENotification notification = new PFENotification();
 					notification.setCreated(new Date());
 					notification.setEnseignant(enseignant);
-					notification.setEtudiant(etudiant);
+					notification.setEtudiant(sheetPFE.getEtudiant());
 					notification.setSendBy("ETUDIANT");
 					notification.setTitle("Change sheet PFE");
-					notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom() + " changed the sheet PFE");
+					notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom() + " changed the sheet PFE");
 
 					em.persist(notification);
 
@@ -1034,7 +1030,6 @@ public class SheetPFEService implements SheetPFERemote {
 					sheetPFE.setProblematic(oldsheet.getProblematic());
 					
 					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
-					sheetPFE.setEtudiant(etudiant);
 					em.merge(sheetPFE);
 
 					Enseignant enseignant = em.createQuery(
@@ -1044,10 +1039,10 @@ public class SheetPFEService implements SheetPFERemote {
 					PFENotification notification = new PFENotification();
 					notification.setCreated(new Date());
 					notification.setEnseignant(enseignant);
-					notification.setEtudiant(etudiant);
+					notification.setEtudiant(sheetPFE.getEtudiant());
 					notification.setSendBy("ETUDIANT");
 					notification.setTitle("Major change sheet PFE");
-					notification.setNote(etudiant.getPrenom() + " " + etudiant.getNom()
+					notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
 							+ " changed the features and problematic of the sheet PFE");
 
 					em.persist(notification);

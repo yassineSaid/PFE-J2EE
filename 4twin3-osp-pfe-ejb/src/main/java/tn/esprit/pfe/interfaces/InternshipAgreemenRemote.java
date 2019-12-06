@@ -11,7 +11,7 @@ import tn.esprit.pfe.entities.InternshipAgreemen;
 @Remote
 public interface InternshipAgreemenRemote {
 
-	public int addInternshipAgreemen(InternshipAgreemen internshipAgreemen,int user_id);
+	public int addInternshipAgreemen(InternshipAgreemen internshipAgreemen);
 	public List<InternshipAgreemen> getAllAgreemen();
 	public InternshipAgreemen getAgreemenById(int id);
 	public InternshipAgreemen getAgreemenByEtudiant(int user_id);

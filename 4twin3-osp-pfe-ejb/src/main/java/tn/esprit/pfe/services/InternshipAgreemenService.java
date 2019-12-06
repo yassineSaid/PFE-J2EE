@@ -22,9 +22,7 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
     EntityManager em;
     
     @Override
-   	public int addInternshipAgreemen(InternshipAgreemen internshipAgreemen,int user_id) {
-		Etudiant etudiant = em.find(Etudiant.class, user_id);
-		internshipAgreemen.setEtudiant(etudiant);
+   	public int addInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
    		em.persist(internshipAgreemen);
    		return internshipAgreemen.getId();
    	}
@@ -41,11 +39,15 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
 
    	@Override
    	public InternshipAgreemen getAgreemenByEtudiant(int user_id) {
-		     Etudiant etudiant = em.find(Etudiant.class, user_id);
-		     return em.createQuery(
-		    		 "select i from InternshipAgreemen i join i.etudiant e where e.id=:etudiantId", 
-   					  InternshipAgreemen.class)
-		    		 .setParameter("etudiantId", etudiant.getId()).getSingleResult();
+   		try {
+   		 return em.createQuery(
+	    		 "select i from InternshipAgreemen i join i.etudiant e where e.id=:etudiantId", 
+					  InternshipAgreemen.class)
+	    		 .setParameter("etudiantId", user_id).getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+		    
    	}
 
    	@Override
@@ -90,11 +92,16 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
 
 	@Override
 	public List<InternshipAgreemen> searchInternshipAgreemen(String email) {
-		
-		 return em.createQuery(
-	    		 "select i from InternshipAgreemen i join i.etudiant e where  e.email LIKE :email", 
-					  InternshipAgreemen.class)
-	    		 .setParameter("email", "%"+email+"%").getResultList();
+	
+		 if (email.equals("ALL")) {
+			 return em.createQuery(
+		    		 "select i from InternshipAgreemen i",InternshipAgreemen.class).getResultList();
+		 } else {
+			 return em.createQuery(
+		    		 "select i from InternshipAgreemen i join i.etudiant e where  e.email LIKE :email", 
+						  InternshipAgreemen.class)
+		    		 .setParameter("email", "%"+email+"%").getResultList();
+		 }
 	}
 
 	@Override
