@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -993,6 +994,8 @@ public class SheetPFEService implements SheetPFERemote {
 					sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
 
 					em.persist(sheetPFEModification);
+					
+					System.out.println(sheetPFE);
 
 					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
 					em.merge(sheetPFE);
@@ -1174,14 +1177,25 @@ public class SheetPFEService implements SheetPFERemote {
 
 				SheetPFE sheetPFE = em.find(SheetPFE.class, sheet.getSheetPFE().getId());
 
+				String title = sheetPFE.getTitle();
 				String features = sheetPFE.getFeatures();
 				String problematic = sheetPFE.getProblematic();
+				String description = sheetPFE.getDescription();
+				Set<Categorie> categories = sheetPFE.getCategories();
+				
 
 				sheetPFE.setFeatures(sheet.getFeatures());
 				sheetPFE.setProblematic(sheet.getProblematic());
+				sheetPFE.setDescription(sheet.getDescription());
+				sheetPFE.setTitle(sheet.getTitle());
+				sheetPFE.setCategories(sheet.getCategories());
+
 
 				sheet.setFeatures(features);
 				sheet.setProblematic(problematic);
+				sheet.setTitle(title);
+				sheet.setCategories(categories);
+				sheet.setDescription(description);
 				sheet.setEtat(etat);
 				sheet.setNote(note);
 
@@ -1199,7 +1213,7 @@ public class SheetPFEService implements SheetPFERemote {
 
 			} else {
 
-				sheet.setEtat(etat);
+				sheet.setEtat(EtatSheetPFE.REFUSE);
 				sheet.setNote(note);
 				em.merge(sheet);
 

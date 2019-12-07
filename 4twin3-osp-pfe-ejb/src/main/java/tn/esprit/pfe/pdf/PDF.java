@@ -1,10 +1,13 @@
 package tn.esprit.pfe.pdf;
 
+import java.io.File;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import javax.persistence.EntityManager;
+
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -48,6 +51,10 @@ public class PDF {
 		JasperReport jasperReport = JasperCompileManager.compileReport(
 				"C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Internship.jrxml");
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+		
+		File file = new File("C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Internship2.pdf");  
+   
+        
 		JasperExportManager.exportReportToPdfFile(jasperPrint,
 				"C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\" + filename);
 

@@ -20,6 +20,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.IOUtils;
@@ -75,21 +76,6 @@ public class SheetPFEWebServices {
 
 	}
 
-//	@GET
-//	@Path("/nostudent")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response getAllStudentNoSheetPFE() {
-//
-//		List<Etudiant> listetudiant = IsheetPFE.getAllStudentNoSheet();
-//
-//		if (listetudiant.size() != 0) {
-//
-//			return Response.status(Status.ACCEPTED).entity(listetudiant).build();
-//		}
-//
-//		return Response.status(Status.NO_CONTENT).build();
-//
-//	}
 
 	@POST
 	@Path("/reminder")
@@ -558,13 +544,12 @@ public class SheetPFEWebServices {
 	}
 	
 	@PUT
-	@Path("/accptedsheetmodifiy/{sheet_id}/{etat}/{note}")
+	@Path("/accptedsheetmodifiy/{sheet_id}/{etat}/{note}/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response accepteSheetModify(@PathParam(value = "sheet_id") int sheet_id,
-			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note) {
+			@PathParam(value = "etat") EtatSheetPFE etat, @PathParam(value = "note") String note ,@PathParam(value = "user_id") int user_id) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
-		if (IsheetPFE.accepteSheetModify(sheet_id, etat, note,af.getIdUser(headers)))
+		if (IsheetPFE.accepteSheetModify(sheet_id, etat, note,user_id))
 			return Response.status(Status.ACCEPTED).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
@@ -797,5 +782,14 @@ public class SheetPFEWebServices {
 
 	}
 	
+	@GET  
+    @Path("/pdf")  
+    @Produces("application/pdf")  
+    public Response getFile() {  
+        File file = new File("C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Internship2.pdf");  
+        ResponseBuilder response = Response.ok((Object) file);  
+        response.header("Content-Disposition","attachment; filename=\"javatpoint_pdf.pdf\"");  
+        return response.build();  
+    }  
 
 }
