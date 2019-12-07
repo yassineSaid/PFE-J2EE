@@ -1,5 +1,6 @@
 package tn.esprit.webServices;
 
+import java.io.File;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import rest.utilities.authentication.AuthenticationFilter;
@@ -116,11 +118,16 @@ public class InternshipAgreemenWebServices {
 
 	@GET
 	@Path("/export/{id}")
+	@Produces("application/pdf")  
 	public Response exportInternshipAgreemen(@PathParam(value = "id") int id) {
-
-		if (Iagreemen.exportPDE(id))
-			return Response.status(Status.ACCEPTED).build();
-
+		
+		if ( Iagreemen.exportPDE(id) != null) {
+				File file = new File(getClass().getClassLoader().getResource("PDF/"+Iagreemen.exportPDE(id)).getFile());
+		        ResponseBuilder response = Response.ok((Object) file);  
+		        response.header("Content-Disposition","attachment; filename=\"Internship.pdf\"");  
+		        return response.build();  
+		}
+		
 		return Response.status(Status.BAD_REQUEST).build();
 	}
 

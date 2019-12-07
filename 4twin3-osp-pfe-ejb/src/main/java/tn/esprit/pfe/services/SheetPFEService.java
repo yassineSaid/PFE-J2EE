@@ -1285,20 +1285,23 @@ public class SheetPFEService implements SheetPFERemote {
 	}
 
 	@Override
-	public boolean exportSheetPFE(int sheet_id) {
+	public String exportSheetPFE(int sheet_id) {
 
 		SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
-
-		Enseignant enseignant = em.createQuery(
-				"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='ENCADREUR'",
-				Enseignant.class).setParameter("id", sheetPFE.getId()).getSingleResult();
-
+		
+		String filename ;
 		try {
-			new PDF().generateSheetPFE(sheetPFE, enseignant);
-			return true;
+			Enseignant enseignant = em.createQuery(
+					"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='ENCADREUR'",
+					Enseignant.class).setParameter("id", sheetPFE.getId()).getSingleResult();
+			
+			filename = new PDF().generateSheetPFE(sheetPFE, enseignant);
+   			sheetPFE.setPdf(filename);
+			return filename;
+			
 		} catch (JRException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 

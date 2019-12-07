@@ -43,6 +43,7 @@ public class SheetPFE implements Serializable {
 	private String note;
 	private float noteEncadreur;
 	private float noteRapporteur;
+	private String pdf;
 	
 	@ManyToOne
 	private Entreprise entreprise;
@@ -209,6 +210,15 @@ public class SheetPFE implements Serializable {
 		this.noteRapporteur = noteRapporteur;
 	}
 
+	public String getPdf() {
+		return pdf;
+	}
+
+	public void setPdf(String pdf) {
+		this.pdf = pdf;
+	}
+
+	
 	
 	
 	

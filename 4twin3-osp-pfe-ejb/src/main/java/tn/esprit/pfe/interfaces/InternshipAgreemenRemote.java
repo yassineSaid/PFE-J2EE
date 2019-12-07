@@ -18,6 +18,6 @@ public interface InternshipAgreemenRemote {
 	public boolean updateInternshipAgreemen(InternshipAgreemen internshipAgreemen);
 	public boolean removeInternshipAgreemen(int id);
 	public List<InternshipAgreemen> searchInternshipAgreemen(String email);
-	public boolean exportPDE(int id);
+	public String exportPDE(int id);
 	
 }

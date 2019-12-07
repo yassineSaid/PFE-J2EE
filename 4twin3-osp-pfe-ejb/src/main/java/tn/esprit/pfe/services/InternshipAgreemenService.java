@@ -105,24 +105,27 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
 	}
 
 	@Override
-	public boolean exportPDE(int id) {
+	public String exportPDE(int id) {
 		
 		  InternshipAgreemen internshipAgreemen = em.find(InternshipAgreemen.class, id);
-			
-	   		try {
+		  String filename ;
+	   	  try {
 	   			
-	   			String filename = new PDF().generateInternshipAgreemen(internshipAgreemen);
+   			if (internshipAgreemen.getPdf() == null) {
+   				filename = new PDF().generateInternshipAgreemen(internshipAgreemen);
 	   			internshipAgreemen.setPdf(filename);
 	   			em.merge(internshipAgreemen);
+   			} else {
+   				filename = internshipAgreemen.getPdf();
+   			}
+   			
 				
-
-	   			return true;
+   			return filename;
 	   			
-
-	   		} catch (Exception e) {
-	   			e.printStackTrace();
-	   			return false;
-	   		}
+	   	  } catch (Exception e) {
+	   		    e.printStackTrace();
+	   			return null;
+	   	  }
 	   		
 		
 	}

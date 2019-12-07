@@ -16,7 +16,7 @@ import tn.esprit.pfe.entities.SheetPFEModification;
 public interface SheetPFERemote {
 
 	public int addSheetPFE(SheetPFE sheetPFE);
-	public boolean exportSheetPFE(int sheet_id);
+	public String exportSheetPFE(int sheet_id);
 	public List<Etudiant> getAllStudentNoSheet(int startyear,int toyear);
 	public void reminderStudentNoSheet(List<Etudiant> students);
 	public List<SheetPFE> getAllSheetPFEFilter(EtatSheetPFE etat, int year, String pays, int id_categorie);

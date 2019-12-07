@@ -1,13 +1,11 @@
 package tn.esprit.pfe.pdf;
 
-import java.io.File;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -43,25 +41,17 @@ public class PDF {
 		params.put("nameEtudiant",
 				internshipAgreemen.getEtudiant().getPrenom() + " " + internshipAgreemen.getEtudiant().getNom());
 		params.put("emailEtudiant", internshipAgreemen.getEtudiant().getEmail());
-		// InputStream inputStream =
-		// this.getClass().getResourceAsStream("Internship.jrxml");
-
+		
+		String path = getClass().getClassLoader().getResource("PDF/").getPath();
 		String filename = "Internship" + internshipAgreemen.getId() + ".pdf";
 
-		JasperReport jasperReport = JasperCompileManager.compileReport(
-				"C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Internship.jrxml");
+		JasperReport jasperReport = JasperCompileManager.compileReport(path + "Internship.jrxml");
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-		
-		File file = new File("C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Internship2.pdf");  
-   
-        
-		JasperExportManager.exportReportToPdfFile(jasperPrint,
-				"C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\" + filename);
-
+		JasperExportManager.exportReportToPdfFile(jasperPrint, path + filename);
 		return filename;
 	}
 
-	public void generateSheetPFE(SheetPFE sheetPFE,Enseignant enseignant) throws JRException {
+	public String generateSheetPFE(SheetPFE sheetPFE,Enseignant enseignant) throws JRException {
 
 		
 		Map<String, Object> params = new HashMap<>();
@@ -81,12 +71,15 @@ public class PDF {
 		}
 		params.put("categorie",categorie);
 	
+		
+		String path = getClass().getClassLoader().getResource("PDF/").getPath();
+		String filename = "Sheet" + sheetPFE.getId() + ".pdf";
 
-		JasperReport jasperReport = JasperCompileManager.compileReport(
-				"C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Sheet.jrxml");
+		JasperReport jasperReport = JasperCompileManager.compileReport(path + "Sheet.jrxml");
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-		JasperExportManager.exportReportToPdfFile(jasperPrint,
-				"C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\"+generatename()+".pdf");
+		JasperExportManager.exportReportToPdfFile(jasperPrint, path + filename);
+		
+		return filename;
 	}
 	
 

@@ -632,15 +632,17 @@ public class SheetPFEWebServices {
 
 	@GET
 	@Path("/export/{sheet_id}")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("application/pdf")  
 	public Response exportSheetPFE(@PathParam(value = "sheet_id") int sheet_id) {
 
-		if (IsheetPFE.exportSheetPFE(sheet_id)) {
-
-			return Response.status(Status.ACCEPTED).build();
+		if ( IsheetPFE.exportSheetPFE(sheet_id) != null) {
+			File file = new File(getClass().getClassLoader().getResource("PDF/"+IsheetPFE.exportSheetPFE(sheet_id)).getFile());
+	        ResponseBuilder response = Response.ok((Object) file);  
+	        response.header("Content-Disposition","attachment; filename=\"Sheet.pdf\"");  
+	        return response.build();  
 		}
-
-		return Response.status(Status.NO_CONTENT).build();
+	
+		return Response.status(Status.BAD_REQUEST).build();
 
 	}
 
@@ -782,14 +784,6 @@ public class SheetPFEWebServices {
 
 	}
 	
-	@GET  
-    @Path("/pdf")  
-    @Produces("application/pdf")  
-    public Response getFile() {  
-        File file = new File("C:\\Users\\lhbya\\git\\4twin3-osp-pfe\\4twin3-osp-pfe-ejb\\src\\main\\resources\\PDF\\Internship2.pdf");  
-        ResponseBuilder response = Response.ok((Object) file);  
-        response.header("Content-Disposition","attachment; filename=\"javatpoint_pdf.pdf\"");  
-        return response.build();  
-    }  
+	
 
 }
