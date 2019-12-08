@@ -52,7 +52,7 @@ public class SheetPFEWebServices {
 	public Response addSheetPFE(SheetPFE sheetPFE) {
 		
 		if(IsheetPFE.addSheetPFE(sheetPFE) > 0) 
-			return Response.status(Status.CREATED).build();
+			return Response.status(Status.CREATED).entity(IsheetPFE.getSheetPFEById(IsheetPFE.addSheetPFE(sheetPFE))).build();
 		
 		return Response.status(Status.BAD_REQUEST).build();
 		
@@ -216,7 +216,7 @@ public class SheetPFEWebServices {
 	public Response updateSheet(SheetPFE sheetPFE) {
 
 		if (IsheetPFE.updateSheetPFE(sheetPFE))
-			return Response.status(Status.ACCEPTED).build();
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(IsheetPFE.addSheetPFE(sheetPFE))).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
 
@@ -490,7 +490,6 @@ public class SheetPFEWebServices {
 	public Response updateEncadreurSheetPFE(@PathParam(value = "sheetPFE_id") int sheetPFE_id,
 			@PathParam(value = "enseignant_id") int enseignant_id, @PathParam(value = "user_id") int user_id ) {
 
-		AuthenticationFilter af = new AuthenticationFilter();
 		if (IsheetPFE.updateEncadreurSheetPFE(sheetPFE_id, enseignant_id, user_id))
 			return Response.status(Status.ACCEPTED).build();
 
@@ -783,6 +782,19 @@ public class SheetPFEWebServices {
 		return Response.status(Status.NOT_MODIFIED).build();
 
 	}
+	
+	@GET
+	@Path("/vu/{user_id}/{role}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllSheetPFEWaitPlaning(@PathParam(value = "user_id") int user_id,  @PathParam(value = "role") String role) {
+
+		if (IsheetPFE.changeVu(user_id, role))
+			return Response.status(Status.ACCEPTED).build();
+
+		return Response.status(Status.NOT_MODIFIED).build();
+
+	}
+	
 	
 	
 

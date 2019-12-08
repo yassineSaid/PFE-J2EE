@@ -33,7 +33,6 @@ private static final long serialVersionUID = 1L;
 	private String title;
 	private String description;
 	private String problematic;
-	@JsonIgnore
 	@ManyToOne
 	private Entreprise entreprise;
 	private String features;

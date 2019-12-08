@@ -61,5 +61,6 @@ public interface SheetPFERemote {
 	public List<PFENotification> getAllNotificationByEtudiant(int etudiant_id);
 	public boolean uploadExcel(String file);
 	public List<Object> dashboard();
+	public boolean changeVu(int id,String role);
 
 }

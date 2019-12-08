@@ -43,6 +43,7 @@ import tn.esprit.pfe.entities.PFENotification;
 import tn.esprit.pfe.entities.RequestCancelInternship;
 import tn.esprit.pfe.entities.SheetPFE;
 import tn.esprit.pfe.entities.SheetPFEModification;
+import tn.esprit.pfe.entities.TypeNotification;
 import tn.esprit.pfe.interfaces.SheetPFERemote;
 import tn.esprit.pfe.pdf.PDF;
 import tn.esprit.pfe.qrcode.QRCode;
@@ -312,7 +313,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(directeur);
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("DIRECTEUR");
+				notification.setSendby("DirecteurDesStages");
+				notification.setType(TypeNotification.REFUSE);
 				notification.setTitle("Refuse sheet PFE");
 				notification.setNote("Entreprise does not exist");
 	
@@ -357,7 +359,8 @@ public class SheetPFEService implements SheetPFERemote {
 		notification.setCreated(new Date());
 		notification.setEnseignant(notifyby.getEnseignant());
 		notification.setEtudiant(sheetPFE.getEtudiant());
-		notification.setSendBy("ETUDIANT");
+		notification.setSendby("Etudiant");
+		notification.setType(TypeNotification.ACCEPTED);
 		notification.setTitle("Request Cancel Internship");
 		notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
 				+ " send request cancel internship");
@@ -398,19 +401,13 @@ public class SheetPFEService implements SheetPFERemote {
 				sheetPFE.setEtat(EtatSheetPFE.CANCEL);
 				em.merge(sheetPFE);
 				
-				
-//				List<EnseignantSheetPFE> list = em.createQuery("select es from Enseignantsheet es join es.etudiant e where e.id = :id ",EnseignantSheetPFE.class)
-//						.setParameter("id", sheetPFE.getEtudiant().getId()).getResultList();
-//				for (EnseignantSheetPFE enseignantSheetPFE : list) {
-//					em.remove(enseignantSheetPFE);
-//				}
-
 				PFENotification notification = new PFENotification();
 				notification.setCreated(new Date());
 				notification.setEnseignant(directeur);
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("DIRECTEUR");
 				notification.setTitle("Internship Cancel");
+				notification.setSendby("DirecteurDesStages");
+				notification.setType(TypeNotification.ACCEPTED);
 				notification.setNote(note);
 
 				em.persist(notification);
@@ -421,7 +418,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(directeur);
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("DIRECTEUR");
+				notification.setSendby("DirecteurDesStages");
+				notification.setType(TypeNotification.REFUSE);
 				notification.setTitle("Request Refuse");
 				notification
 						.setNote("Your request to cancel the internship has been refused. Problem of refusing " + note);
@@ -496,7 +494,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.AFFECT);
 			notification.setTitle("Affect Validateur");
 			notification.setNote("Chef Department affect validateur '" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -533,7 +532,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(enseignant);
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("VALIDATEUR");
+				notification.setSendby("Enseignant");
+				notification.setType(TypeNotification.ACCEPTED);
 				notification.setTitle("Validated Sheet PFE");
 				notification.setNote(note);
 
@@ -550,7 +550,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(enseignant);
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("VALIDATEUR");
+				notification.setSendby("Enseignant");
+				notification.setType(TypeNotification.REFUSE);
 				notification.setTitle("Refused subject PFE");
 				notification.setNote(note);
 
@@ -630,7 +631,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.AFFECT);
 			notification.setTitle("Affect Encadreur");
 			notification.setNote("Chef Department affect encadreur '" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -667,7 +669,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.AFFECT);
 			notification.setTitle("Affect Encadreur");
 			notification.setNote("Chef Department affect encadreur '" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -704,7 +707,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.CHANGE);
 			notification.setTitle("Modify Encadreur");
 			notification.setNote("Chef departement set new encadreur'" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -769,7 +773,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.AFFECT);
 			notification.setTitle("Affect Rapporteur");
 			notification.setNote("Chef Department affect rapporteur '" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -805,7 +810,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.AFFECT);
 			notification.setTitle("Affect Rapporteur");
 			notification.setNote("Chef Department affect rapporteur '" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -844,7 +850,8 @@ public class SheetPFEService implements SheetPFERemote {
 			notification.setCreated(new Date());
 			notification.setEnseignant(chef);
 			notification.setEtudiant(sheetPFE.getEtudiant());
-			notification.setSendBy("CHEF DEPARTEMENT");
+			notification.setSendby("ChefDeDepartement");
+			notification.setType(TypeNotification.CHANGE);
 			notification.setTitle("Modify Rapporteur");
 			notification.setNote("Chef Department set new rapporteur '" + enseignant.getNom() + " "
 					+ enseignant.getPrenom() + "' to your sheet PFE");
@@ -894,8 +901,10 @@ public class SheetPFEService implements SheetPFERemote {
 
 		Etudiant etudiant = em.find(Etudiant.class, user_id);
 		try {
+			
 			return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
 					.setParameter("etudiantId", etudiant.getId()).getSingleResult();
+			
 		} catch (Exception e) {
 			return null;
 		}
@@ -940,7 +949,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(notifyby.getEnseignant());
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("ETUDIANT");
+				notification.setSendby("Etudiant");
+				notification.setType(TypeNotification.CHANGE);
 				notification.setTitle("Change sheet PFE");
 				notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom() + " changed the sheet PFE");
 
@@ -961,7 +971,9 @@ public class SheetPFEService implements SheetPFERemote {
 
 				em.persist(sheetPFEModification);
 
-				sheetPFE.setEtat(EtatSheetPFE.PRE_VALIDATE);
+				sheetPFE.getEnseignantsheet().removeAll(sheetPFE.getEnseignantsheet());
+				sheetPFE.getEnseignantsheet().addAll(sheetPFE.getEnseignantsheet());
+				
 				em.merge(sheetPFE);
 
 				Enseignant enseignant = em.createQuery(
@@ -972,7 +984,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(enseignant);
 				notification.setEtudiant(sheetPFE.getEtudiant());
-				notification.setSendBy("ETUDIANT");
+				notification.setSendby("Etudiant");
+				notification.setType(TypeNotification.CHANGE);
 				notification.setTitle("Change sheet PFE");
 				notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom() + " changed the sheet PFE");
 
@@ -995,9 +1008,9 @@ public class SheetPFEService implements SheetPFERemote {
 
 					em.persist(sheetPFEModification);
 					
-					System.out.println(sheetPFE);
+					sheetPFE.getEnseignantsheet().removeAll(sheetPFE.getEnseignantsheet());
+					sheetPFE.getEnseignantsheet().addAll(sheetPFE.getEnseignantsheet());
 
-					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
 					em.merge(sheetPFE);
 
 					Enseignant enseignant = em.createQuery(
@@ -1008,7 +1021,8 @@ public class SheetPFEService implements SheetPFERemote {
 					notification.setCreated(new Date());
 					notification.setEnseignant(enseignant);
 					notification.setEtudiant(sheetPFE.getEtudiant());
-					notification.setSendBy("ETUDIANT");
+					notification.setSendby("Etudiant");
+					notification.setType(TypeNotification.CHANGE);
 					notification.setTitle("Change sheet PFE");
 					notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom() + " changed the sheet PFE");
 
@@ -1017,23 +1031,17 @@ public class SheetPFEService implements SheetPFERemote {
 				} else {
 
 					SheetPFEModification sheetPFEModification = new SheetPFEModification();
-					sheetPFEModification.setTitle(oldsheet.getTitle());
-					sheetPFEModification.setDescription(oldsheet.getDescription());
+					sheetPFEModification.setTitle(sheetPFE.getTitle());
+					sheetPFEModification.setDescription(sheetPFE.getDescription());
 					sheetPFEModification.setFeatures(sheetPFE.getFeatures());
 					sheetPFEModification.setProblematic(sheetPFE.getProblematic());
 					sheetPFEModification.setCreated(new Date());
-					sheetPFEModification.setSheetPFE(oldsheet);
+					sheetPFEModification.setSheetPFE(sheetPFE);
 					sheetPFEModification.setEtat(EtatSheetPFE.DEFAULT);
-					sheetPFEModification.getCategories().addAll(oldsheet.getCategories());
-					sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
+					sheetPFEModification.getCategories().addAll(sheetPFE.getCategories());
+					sheetPFEModification.setEntreprise(sheetPFE.getEntreprise());
 
 					em.persist(sheetPFEModification);
-
-					sheetPFE.setFeatures(oldsheet.getFeatures());
-					sheetPFE.setProblematic(oldsheet.getProblematic());
-					
-					sheetPFE.setEtat(EtatSheetPFE.VALIDATE);
-					em.merge(sheetPFE);
 
 					Enseignant enseignant = em.createQuery(
 							"select e from Enseignant e join e.enseignantsheet es join es.sheetPFE s where s.id = :id and es.type='ENCADREUR'",
@@ -1043,7 +1051,8 @@ public class SheetPFEService implements SheetPFERemote {
 					notification.setCreated(new Date());
 					notification.setEnseignant(enseignant);
 					notification.setEtudiant(sheetPFE.getEtudiant());
-					notification.setSendBy("ETUDIANT");
+					notification.setSendby("Etudiant");
+					notification.setType(TypeNotification.CHANGE);
 					notification.setTitle("Major change sheet PFE");
 					notification.setNote(sheetPFE.getEtudiant().getPrenom() + " " + sheetPFE.getEtudiant().getNom()
 							+ " changed the features and problematic of the sheet PFE");
@@ -1053,6 +1062,15 @@ public class SheetPFEService implements SheetPFERemote {
 
 			}
 
+			List<PFENotification> listnotify = em
+					.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby !='Etudiant' and type = 'REFUSE' and vu= 0",
+							PFENotification.class)
+					.setParameter("id", sheetPFE.getEtudiant().getId()).getResultList();
+			
+			for (PFENotification notify : listnotify) {
+				notify.setVu(1);
+				em.merge(notify);
+			}
 			return true;
 
 		} catch (Exception e) {
@@ -1203,7 +1221,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(enseignant);
 				notification.setEtudiant(sheet.getSheetPFE().getEtudiant());
-				notification.setSendBy("ENCADREUR");
+				notification.setSendby("Enseignant");
+				notification.setType(TypeNotification.ACCEPTED);
 				notification.setTitle("Modification accepted");
 				notification.setNote(note);
 
@@ -1221,7 +1240,8 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setCreated(new Date());
 				notification.setEnseignant(enseignant);
 				notification.setEtudiant(sheet.getSheetPFE().getEtudiant());
-				notification.setSendBy("ENCADREUR");
+				notification.setSendby("Enseignant");
+				notification.setType(TypeNotification.REFUSE);
 				notification.setTitle("Modification refuse");
 				notification.setNote(note);
 
@@ -1373,11 +1393,44 @@ public class SheetPFEService implements SheetPFERemote {
 	public List<Object> dashboard() {
 
 		Query q = em.createQuery(
-				"select e.classe.anneeDeDebut, count(s) from SheetPFE s join s.entreprise es join s.etudiant e  where es.Pays != 'TUNISIA' and s.etat != 'CANCEL' group by(e.classe.anneeDeDebut) ");
+				"select e.classe.anneeDeDebut, count(s) from SheetPFE s join s.entreprise es join s.etudiant e  where es.Pays != 'TUNISIE' and s.etat != 'CANCEL' group by(e.classe.anneeDeDebut) ");
 		List<Object> list = (List<Object>) q.getResultList();
 
 		return list;
 
 	}
 
+	@Override
+	public boolean changeVu(int user_id, String role) {
+		
+		try {
+			if (role.equals("Etudiant")) {
+				
+				List<PFENotification> listnotify = em
+						.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby !='Etudiant' and type != 'REFUSE' and vu=0",
+								PFENotification.class)
+						.setParameter("id", user_id).getResultList();
+				
+				for (PFENotification notify : listnotify) {
+					notify.setVu(1);
+					em.merge(notify);
+				}
+			} else {
+				
+				List<PFENotification> listnotify = em
+						.createQuery("select n from PFENotification n join n.enseignant e where e.id= :id and sendby='Etudiant' and vu=0",
+								PFENotification.class)
+						.setParameter("id", user_id).getResultList();
+				
+				for (PFENotification notify : listnotify) {
+					notify.setVu(1);
+					em.merge(notify);
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }

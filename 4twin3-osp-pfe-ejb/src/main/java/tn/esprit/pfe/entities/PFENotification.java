@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +27,8 @@ public class PFENotification implements Serializable {
 	private Date created;
 	private int vu;
 	private String sendby;
+	@Enumerated(EnumType.STRING)
+	private TypeNotification type;
 	@ManyToOne
 	private Enseignant enseignant;
 	@ManyToOne
@@ -62,14 +66,6 @@ public class PFENotification implements Serializable {
 		this.vu = vu;
 	}
 
-	public String getSendBy() {
-		return sendby;
-	}
-
-	public void setSendBy(String sendby) {
-		this.sendby = sendby;
-	}
-
 	public Enseignant getEnseignant() {
 		return enseignant;
 	}
@@ -82,4 +78,18 @@ public class PFENotification implements Serializable {
 	public void setEtudiant(Etudiant etudiant) {
 		this.etudiant = etudiant;
 	}
+	public String getSendby() {
+		return sendby;
+	}
+	public void setSendby(String sendby) {
+		this.sendby = sendby;
+	}
+	public TypeNotification getType() {
+		return type;
+	}
+	public void setType(TypeNotification type) {
+		this.type = type;
+	}
+	
+	
 }
