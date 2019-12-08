@@ -10,5 +10,5 @@ import tn.esprit.pfe.entities.Admin;
 @Remote
 public interface AdminServiceRemote {
 	public List<Admin> getListAdmin();
-
+	public Admin getAdmin(int id);
 }

@@ -43,7 +43,7 @@ public class SiteWebServices {
 		AuthenticationFilter af=new AuthenticationFilter();
 		Set<ValidationError> violations=ss.addSite(s, af.getIdUser(headers));
 		if (violations==null) {
-			return Response.status(Status.CREATED).entity("add successful").build();
+			return Response.status(Status.CREATED).build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
@@ -57,7 +57,7 @@ public class SiteWebServices {
 		AuthenticationFilter af=new AuthenticationFilter();
 		Set<ValidationError> violations=ss.modifierSiteDirecteurDesStages(s, af.getIdUser(headers));
 		if (violations==null) {
-			return Response.status(Status.OK).entity("modify successful").build();
+			return Response.status(Status.OK).build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
@@ -72,7 +72,7 @@ public class SiteWebServices {
 		AuthenticationFilter af=new AuthenticationFilter();
 		Set<ValidationError> violations=ss.modifierSite(s, af.getIdUser(headers), idSite);
 		if (violations==null) {
-			return Response.status(Status.OK).entity("modify successful").build();
+			return Response.status(Status.OK).build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
@@ -87,7 +87,7 @@ public class SiteWebServices {
 		AuthenticationFilter af=new AuthenticationFilter();
 		Set<ValidationError> violations=ss.supprimerSite(idSite, af.getIdUser(headers));
 		if (violations==null) {
-			return Response.status(Status.OK).entity("delete successful").build();
+			return Response.status(Status.OK).build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}

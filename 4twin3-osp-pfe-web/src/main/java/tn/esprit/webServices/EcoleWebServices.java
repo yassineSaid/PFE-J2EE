@@ -37,6 +37,7 @@ import tn.esprit.pfe.entities.Departement;
 import tn.esprit.pfe.entities.Ecole;
 import tn.esprit.pfe.entities.Site;
 import tn.esprit.pfe.entities.Specialite;
+import tn.esprit.pfe.services.AdminService;
 import tn.esprit.pfe.services.EcoleService;
 import utilities.ValidationError;
 
@@ -46,6 +47,8 @@ public class EcoleWebServices {
 
 	@EJB
 	EcoleService es;
+	@EJB
+	AdminService as;
 
 	@Context
 	private HttpHeaders headers;
@@ -62,7 +65,7 @@ public class EcoleWebServices {
 		AuthenticationFilter af = new AuthenticationFilter();
 		Set<ValidationError> violations = es.addEcole(e, af.getIdUser(headers));
 		if (violations == null) {
-			return Response.status(Status.CREATED).entity("add successful").build();
+			return Response.status(Status.CREATED).entity(as.getAdmin(af.getIdUser(headers))).build();
 		} else
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
@@ -78,7 +81,7 @@ public class EcoleWebServices {
 		AuthenticationFilter af = new AuthenticationFilter();
 		Set<ValidationError> violations = es.modifierEcole(e, af.getIdUser(headers), idEcole);
 		if (violations == null) {
-			return Response.status(Status.OK).entity("modify successful").build();
+			return Response.status(Status.OK).entity(as.getAdmin(af.getIdUser(headers))).build();
 		} else
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
@@ -112,8 +115,7 @@ public class EcoleWebServices {
 		if (ecole != null) {
 			return Response.status(Status.OK).entity(ecole).build();
 		} else
-			return Response.status(Status.INTERNAL_SERVER_ERROR)
-					.entity("Cette ecole n'existe pas ou vous n'etes pas autorisé à la consulter").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Cette ecole n'existe pas ou vous n'etes pas autorisé à la consulter").build();
 	}
 
 	@GET
