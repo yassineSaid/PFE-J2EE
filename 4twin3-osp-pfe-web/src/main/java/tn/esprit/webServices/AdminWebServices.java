@@ -37,7 +37,7 @@ public class AdminWebServices {
 	public Response addEnseignant(Admin e) {
 		Set<ValidationError> violations=us.addUser(e);
 		if (violations==null) {
-			return Response.status(Status.CREATED).entity("add successful").build();
+			return Response.status(Status.CREATED).build();
 		}
 		else return Response.status(Status.INTERNAL_SERVER_ERROR).entity(violations).build();
 	}
