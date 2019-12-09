@@ -302,12 +302,10 @@ public class SheetPFEService implements SheetPFERemote {
 			SheetPFE sheetPFE = em.find(SheetPFE.class, sheet_id);
 			
 			
-			if (sheetPFE.getEtat().equals(EtatSheetPFE.REFUSE)) {
+			if (etat.equals(EtatSheetPFE.REFUSE)) {
 				sheetPFE.setEtat(etat);
 				sheetPFE.setNote("Entreprise does not exist");
 				em.merge(sheetPFE);
-
-				new Email().entrepriseNotExist(sheetPFE);
 				
 				PFENotification notification = new PFENotification();
 				notification.setCreated(new Date());
@@ -317,8 +315,12 @@ public class SheetPFEService implements SheetPFERemote {
 				notification.setType(TypeNotification.REFUSE);
 				notification.setTitle("Refuse sheet PFE");
 				notification.setNote("Entreprise does not exist");
+				
 	
 				em.persist(notification);
+				
+				new Email().entrepriseNotExist(sheetPFE);
+
 			}else {
 				sheetPFE.setEtat(etat);
 				sheetPFE.setNote("Entreprise exist");
@@ -898,12 +900,10 @@ public class SheetPFEService implements SheetPFERemote {
 	//test
 	@Override
 	public SheetPFE getSheetPFEByEtudiant(int user_id) {
-
-		Etudiant etudiant = em.find(Etudiant.class, user_id);
 		try {
-			
-			return em.createQuery("select i from SheetPFE i join i.etudiant e where e.id=:etudiantId", SheetPFE.class)
-					.setParameter("etudiantId", etudiant.getId()).getSingleResult();
+			System.out.println(user_id);
+			return em.createQuery("select s from SheetPFE s join s.etudiant e where e.id=:etudiantId", SheetPFE.class)
+					.setParameter("etudiantId", user_id).getSingleResult();
 			
 		} catch (Exception e) {
 			return null;
@@ -940,7 +940,7 @@ public class SheetPFEService implements SheetPFERemote {
 				em.merge(sheetPFE);
 
 				List<PFENotification> listnotify = em.createQuery(
-						"select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DIRECTEUR'",
+						"select n from PFENotification n join n.etudiant e where e.id= :id and sendby='DirecteurDesStages'",
 						PFENotification.class).setParameter("id", sheetPFE.getEtudiant().getId()).getResultList();
 
 				PFENotification notifyby = listnotify.stream().findFirst().get();
@@ -970,7 +970,7 @@ public class SheetPFEService implements SheetPFERemote {
 				sheetPFEModification.setEntreprise(oldsheet.getEntreprise());
 
 				em.persist(sheetPFEModification);
-
+				sheetPFE.setEtat(EtatSheetPFE.PRE_VALIDATE);
 				sheetPFE.getEnseignantsheet().removeAll(sheetPFE.getEnseignantsheet());
 				sheetPFE.getEnseignantsheet().addAll(sheetPFE.getEnseignantsheet());
 				
@@ -1063,7 +1063,7 @@ public class SheetPFEService implements SheetPFERemote {
 			}
 
 			List<PFENotification> listnotify = em
-					.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby !='Etudiant' and type = 'REFUSE' and vu= 0",
+					.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby !='Etudiant' and n.type = 'REFUSE' and n.vu= 0",
 							PFENotification.class)
 					.setParameter("id", sheetPFE.getEtudiant().getId()).getResultList();
 			
@@ -1081,7 +1081,7 @@ public class SheetPFEService implements SheetPFERemote {
 	//test
 	@Override
 	public List<SheetPFE> getAllSheetPFEWaitNote() {
-		return em.createQuery("select s from SheetPFE s where s.noteRapporteur= -1 or s.noteEncadreur= -1 and etat='VALIDATE'",
+		return em.createQuery("select s from SheetPFE s where s.etat='VALIDATE' and (s.noteRapporteur= -1 or s.noteEncadreur= -1)",
 				SheetPFE.class).getResultList();
 	}
 
@@ -1374,6 +1374,9 @@ public class SheetPFEService implements SheetPFERemote {
 					sheetPFE.setQrcode(row.getCell(5).toString());
 					sheetPFE.setEntreprise(entreprise);
 					sheetPFE.setEtudiant(etudiant);
+					sheetPFE.setNoteEncadreur(-1);
+					sheetPFE.setNoteRapporteur(-1);
+					sheetPFE.setEtudiant(etudiant);
 					sheetPFE.getCategories().addAll(listCategories);
 					em.persist(sheetPFE);
 
@@ -1407,7 +1410,7 @@ public class SheetPFEService implements SheetPFERemote {
 			if (role.equals("Etudiant")) {
 				
 				List<PFENotification> listnotify = em
-						.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby !='Etudiant' and type != 'REFUSE' and vu=0",
+						.createQuery("select n from PFENotification n join n.etudiant e where e.id= :id and sendby !='Etudiant' and n.type != 'REFUSE' and n.vu=0",
 								PFENotification.class)
 						.setParameter("id", user_id).getResultList();
 				

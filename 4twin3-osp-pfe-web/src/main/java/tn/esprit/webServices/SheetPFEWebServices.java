@@ -51,8 +51,9 @@ public class SheetPFEWebServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addSheetPFE(SheetPFE sheetPFE) {
 		
-		if(IsheetPFE.addSheetPFE(sheetPFE) > 0) 
-			return Response.status(Status.CREATED).entity(IsheetPFE.getSheetPFEById(IsheetPFE.addSheetPFE(sheetPFE))).build();
+		int id = IsheetPFE.addSheetPFE(sheetPFE);
+		if(id > 0) 
+			return Response.status(Status.CREATED).entity(IsheetPFE.getSheetPFEById(id)).build();
 		
 		return Response.status(Status.BAD_REQUEST).build();
 		
@@ -216,7 +217,7 @@ public class SheetPFEWebServices {
 	public Response updateSheet(SheetPFE sheetPFE) {
 
 		if (IsheetPFE.updateSheetPFE(sheetPFE))
-			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(IsheetPFE.addSheetPFE(sheetPFE))).build();
+			return Response.status(Status.ACCEPTED).entity(IsheetPFE.getSheetPFEById(sheetPFE.getId())).build();
 
 		return Response.status(Status.NOT_MODIFIED).build();
 
@@ -783,7 +784,7 @@ public class SheetPFEWebServices {
 
 	}
 	
-	@GET
+	@POST
 	@Path("/vu/{user_id}/{role}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllSheetPFEWaitPlaning(@PathParam(value = "user_id") int user_id,  @PathParam(value = "role") String role) {
