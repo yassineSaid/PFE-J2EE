@@ -1,5 +1,12 @@
 package tn.esprit.pfe.services;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -100,10 +107,31 @@ public class ReclamationServices implements ReclamationServiceRemote {
 	//stat
 	
 	@Override
-	public List<Object[]> nombreDeReclamationSelonDateAjout() {
+	public List<Float> nombreDeReclamationSelonDateAjout() {
 		// TODO Auto-generated method stub
-		List<Object[]> reclamation = em.createQuery("select  dateAjout , count(*)  from Reclamation group by  dateAjout", Object[].class).getResultList();
-		return reclamation;
+		List<Date> reclamation = em.createQuery("select  dateAjout  from Reclamation group by  dateAjout", Date.class).getResultList();
+		Date dateajout = reclamation.get(0);
+	
+		 System.out.println("before formatting: " + dateajout);
+			    
+		    SimpleDateFormat formatter= new SimpleDateFormat("dd-MM-yyyy");
+		    Date date = new Date(System.currentTimeMillis());
+		
+	
+		   float count = 0; 
+		
+		if (dateajout.before(date) )
+		{
+		   count = count+1;
+		}
+		else 
+		{
+			count =0;
+		}
+		    
+		   List <Float> d = new ArrayList<Float>();
+		   d.add(count);
+		return d;
 	}
 	
 	@Override

@@ -100,7 +100,7 @@ public class ReclamationWebServices {
 	@Path("/nombreReclamation")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Object[]> nombreDeReclamation() {
+	public List<Float> nombreDeReclamation() {
 	
 	   return rst.nombreDeReclamationSelonDateAjout();
 		

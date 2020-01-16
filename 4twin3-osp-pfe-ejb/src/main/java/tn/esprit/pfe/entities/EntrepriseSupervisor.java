@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name= "EntrepriseSupervisor")
 public class EntrepriseSupervisor implements Serializable {
@@ -92,13 +94,14 @@ public class EntrepriseSupervisor implements Serializable {
 	public void setSpecialiteOptionnel(String specialiteOptionnel) {
 		SpecialiteOptionnel = specialiteOptionnel;
 	}
-
+	
+	@JsonIgnore
 	public Entreprise getEntreprise() {
 		return entreprise;
 	}
 
 	public void setEntreprise(Entreprise entreprise) {
-		entreprise = entreprise;
+		this.entreprise = entreprise;
 	}
 
 	public Set<EntrepriseStudent> getEntrepriseStudents() {

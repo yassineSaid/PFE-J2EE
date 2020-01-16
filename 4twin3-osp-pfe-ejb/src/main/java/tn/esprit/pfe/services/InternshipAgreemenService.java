@@ -23,8 +23,6 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
     
     @Override
    	public int addInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
-		Etudiant etudiant = em.find(Etudiant.class, 1);
-		internshipAgreemen.setEtudiant(etudiant);
    		em.persist(internshipAgreemen);
    		return internshipAgreemen.getId();
    	}
@@ -40,27 +38,26 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
    	}
 
    	@Override
-   	public InternshipAgreemen getAgreemenByEtudiant() {
-		     Etudiant etudiant = em.find(Etudiant.class, 1);
-		     return em.createQuery(
-		    		 "select i from InternshipAgreemen i join i.etudiant e where e.id=:etudiantId", 
-   					  InternshipAgreemen.class)
-		    		 .setParameter("etudiantId", etudiant.getId()).getSingleResult();
+   	public InternshipAgreemen getAgreemenByEtudiant(int user_id) {
+   		try {
+   		 return em.createQuery(
+	    		 "select i from InternshipAgreemen i join i.etudiant e where e.id=:etudiantId", 
+					  InternshipAgreemen.class)
+	    		 .setParameter("etudiantId", user_id).getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+		    
    	}
 
    	@Override
-   	public boolean updateInternshipAgreemen(int id) {
+   	public boolean updateInternshipAgreemen(InternshipAgreemen internshipAgreemen) {
    		
-   		  InternshipAgreemen internshipAgreemen = em.find(InternshipAgreemen.class, id);
 		
    		try {
    			
-   			String filename = new PDF().generateInternshipAgreemen(internshipAgreemen);
-   			internshipAgreemen.setPdf(filename);
    			em.merge(internshipAgreemen);
-   			new Email().sendAgreemen(internshipAgreemen);
 			
-
    			return true;
    			
 
@@ -79,11 +76,60 @@ public class InternshipAgreemenService implements InternshipAgreemenRemote {
    		InternshipAgreemen internshipAgreemen = em.find(InternshipAgreemen.class,id);
    		
    		try {
-   			em.remove(internshipAgreemen);
-   			return true;
+
+   			if(internshipAgreemen.getPdf().isEmpty()) {
+	   			em.remove(internshipAgreemen);
+
+   	   			return true;
+   			}else {
+   				return false;
+   			}
+   			
    		} catch (Exception e) {
    			return false;
    		}
    	}
+
+	@Override
+	public List<InternshipAgreemen> searchInternshipAgreemen(String email) {
+	
+		 if (email.equals("ALL")) {
+			 return em.createQuery(
+		    		 "select i from InternshipAgreemen i",InternshipAgreemen.class).getResultList();
+		 } else {
+			 return em.createQuery(
+		    		 "select i from InternshipAgreemen i join i.etudiant e where  e.email LIKE :email", 
+						  InternshipAgreemen.class)
+		    		 .setParameter("email", "%"+email+"%").getResultList();
+		 }
+	}
+
+	@Override
+	public String exportPDE(int id) {
+		
+		  InternshipAgreemen internshipAgreemen = em.find(InternshipAgreemen.class, id);
+		  String filename ;
+	   	  try {
+	   			
+   			if (internshipAgreemen.getPdf() == null) {
+   				filename = new PDF().generateInternshipAgreemen(internshipAgreemen);
+	   			internshipAgreemen.setPdf(filename);
+	   			em.merge(internshipAgreemen);
+   			} else {
+   				filename = internshipAgreemen.getPdf();
+   			}
+   			
+				
+   			return filename;
+	   			
+	   	  } catch (Exception e) {
+	   		    e.printStackTrace();
+	   			return null;
+	   	  }
+	   		
+		
+	}
+   	
+   	
 
 }

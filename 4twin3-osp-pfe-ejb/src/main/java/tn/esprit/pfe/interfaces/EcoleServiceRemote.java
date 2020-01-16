@@ -16,4 +16,5 @@ public interface EcoleServiceRemote {
 	public Ecole getEcole(int idEcole, int idAdmin);
 	public List<Ecole> getListEcole();
 	public Set<ValidationError> addImage(String image, int idAdmin);
+	public Ecole getEcoleAdmin(int idAdmin);
 }

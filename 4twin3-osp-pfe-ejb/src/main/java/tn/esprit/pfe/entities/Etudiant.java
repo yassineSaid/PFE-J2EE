@@ -17,13 +17,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table
+@Table(name = "Etudiant", uniqueConstraints = { @UniqueConstraint(columnNames = "identifiant", name = "uniqueIdentifiantConstraint") })
 @PrimaryKeyJoinColumn(name = "id")
 public class Etudiant extends User {
 
@@ -35,6 +37,7 @@ public class Etudiant extends User {
 
 
 	@Column
+	@NotBlank
 	private String identifiant;
 
 	@JsonIgnore

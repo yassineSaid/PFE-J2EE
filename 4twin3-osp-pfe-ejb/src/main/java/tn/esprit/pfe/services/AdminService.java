@@ -29,6 +29,13 @@ public class AdminService implements AdminServiceRemote{
 		return listeAdmin;
 	}
 
+	@Override
+	public Admin getAdmin(int id) {
+		Admin admin=em.find(Admin.class, id);
+		return admin;
+	}
+	
+
 	
 
 

@@ -30,7 +30,6 @@ public class InternshipAgreemen implements Serializable {
 	private Date endDate;
 	private String pdf;
 	
-	@JsonBackReference(value="entreprise-internship")
 	@ManyToOne
 	private Entreprise entreprise;
 	@OneToOne

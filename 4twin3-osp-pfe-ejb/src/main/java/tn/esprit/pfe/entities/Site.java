@@ -79,7 +79,7 @@ public class Site implements Serializable {
 	private Ecole ecole;
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="site")
-	private Set<Departement> departements;
+	private Set<Departement> departements = new HashSet<>();
 
 	public Site() {
 		super();

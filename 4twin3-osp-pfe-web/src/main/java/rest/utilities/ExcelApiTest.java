@@ -63,7 +63,7 @@ public class ExcelApiTest {
         catch(Exception e)
         {
             e.printStackTrace();
-            return "row "+rowNum+" or column "+colName +" does not exist  in Excel";
+            return null;
         }
     }
 }

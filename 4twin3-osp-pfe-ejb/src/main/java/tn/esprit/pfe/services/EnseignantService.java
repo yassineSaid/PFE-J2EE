@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -52,9 +53,23 @@ public class EnseignantService implements EnseignantServiceRemote {
 			errors.add(error);
 			return errors;
 		} else {
+			e.setPassword("testtest");
 			e.setEcole(admin.getEcole());
 			e.setSite(site);
-			return us.addUser(e);
+			errors = us.addUser(e);
+			if (errors == null) {
+				MailSender mailSender = new MailSender();
+				try {
+					mailSender.sendMessage("smtp.gmail.com", "esprit.service.pfe@gmail.com", "Esprit2019", "587", "true", "true",
+							e.getEmail(), "Votre inscription à la plateforme de PFE à "+e.getEcole().getNom(),
+									"Vous pouvez à présent vous connecter à la platerforme via ces"
+									+ " informations de connexions: <br>"+ "Login: "+e.getEmail()+"<br>Mot de passe: "+e.getPlainPassword());
+				} catch (MessagingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			return errors;
 		}
 	}
 
@@ -65,6 +80,9 @@ public class EnseignantService implements EnseignantServiceRemote {
 			return null;
 		} else if (user.getRole().equals("Admin")) {
 			Admin admin = (Admin) user;
+			if (admin.getEcole() == null) {
+				return new HashSet<>();
+			}
 			return admin.getEcole().getEnseignants();
 		} else {
 			return null;

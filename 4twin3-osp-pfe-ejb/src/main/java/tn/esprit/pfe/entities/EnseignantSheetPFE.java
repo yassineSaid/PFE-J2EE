@@ -22,7 +22,6 @@ public class EnseignantSheetPFE implements Serializable {
 	@JsonIgnore
 	@ManyToOne
 	private SheetPFE sheetPFE;
-	@JsonIgnore
 	@ManyToOne
 	private Enseignant enseignant;
 	private String type;
