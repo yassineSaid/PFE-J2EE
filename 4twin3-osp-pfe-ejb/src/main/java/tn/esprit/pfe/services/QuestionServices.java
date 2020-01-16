@@ -3,12 +3,13 @@ package tn.esprit.pfe.services;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
+import tn.esprit.pfe.entities.Etudiant;
 import tn.esprit.pfe.entities.ForumQuestion;
 import tn.esprit.pfe.interfaces.QuestionServiceRemote;
 @Stateless
@@ -16,21 +17,22 @@ import tn.esprit.pfe.interfaces.QuestionServiceRemote;
 public class QuestionServices implements QuestionServiceRemote{
 	@PersistenceContext
 	EntityManager em;
-	@Override
+
 	
-	public String addQuestion(ForumQuestion Q) {
-		em.persist(Q);
+ 
+	public String addQuestion(ForumQuestion Q, int ide) {
+		//em.persist(Q);
 		 TypedQuery<String> query = em.createQuery("select m.word from Motindesirable m",String.class);
 		 List<String>ls=new ArrayList<>();
-		
 		 ls=query.getResultList();
-		 System.out.println(ls);
-				 String c=Q.getConetnu_Question();
-		 String[] splited = c.split("\\s+");
+		 Etudiant etudiant = em.find(Etudiant.class, ide);
+		 Q.setEtudiant(etudiant);
+		String c=Q.getConetnu_Question();
+		 String[] str = c.split("\\s+");
 		 Boolean b =false;
-		 for (int x=0; x<splited.length; x++){
+		 for (String a : str) {
              for (int i=0;i<ls.size();i++){
-                 if (ls.get(i).equals(splited[x])){
+                 if (ls.get(i).equals(a)){
                  b=true;
                  break;
                  }}}
@@ -43,12 +45,16 @@ public class QuestionServices implements QuestionServiceRemote{
 		
 	}
 
-	@Override
+	/*@Override
 	public void MetreajourQuestion(boolean question_resolu, int id_Question) {
 		ForumQuestion q = em.find(ForumQuestion.class, id_Question);
 		q.setQuestion_resolu(question_resolu);
 		
 		
+	}*/
+	public void MetreajourQuestion(int id_Question) {
+		ForumQuestion q = em.find(ForumQuestion.class, id_Question);
+		q.setQuestion_resolu(true);
 	}
 
 	@Override
@@ -78,7 +84,10 @@ public class QuestionServices implements QuestionServiceRemote{
 		List<ForumQuestion> c=em.createQuery("from ForumQuestion", ForumQuestion.class).getResultList();
 		return c;
 	}
+	
+	
 
+	
 	
 
 }

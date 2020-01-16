@@ -14,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import tn.esprit.pfe.entities.Categorie;
 import tn.esprit.pfe.interfaces.CategorieServiceRemote;
 
@@ -29,15 +28,22 @@ public class CategorieWebServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void addCategorie(Categorie c) {
-		csr.addCategorie(c);
+	@Path("/{ide}")
+	public Response addCategorie(Categorie c,@PathParam("ide")int ide) {
+		if(c!=null) {
+		csr.addCategorie(c,ide);
+		return Response.status(Status.OK).entity("ajout categorie avec succes").build();
+		}
+		return Response.status(Status.NOT_FOUND).entity("not found").build();
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void deleteCat(@PathParam("id") int idcat) {
+	public Response deleteCat(@PathParam("id") int idcat) {
 	 csr.deleteCategorie(idcat);
+	 return Response.status(Status.OK).entity("categorie supprimer avec succes").build();
+		
 	}
 	
 	@GET
@@ -51,16 +57,26 @@ public class CategorieWebServices {
 	@GET
 	@Path("/{name}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public void rendrecatcommemodule(@PathParam("name") String name) {
+	public Response rendrecatcommemodule(@PathParam("name") String name) {
 	 csr.addCategoriecommemodule(name);
+	 return Response.status(Status.OK).entity("votre categorie a devenir module").build();
+		
 	}
 	@GET
-	@Path("/catprefere/{id}")
+	@Path("/catname/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getcatprefere(@PathParam("id") int idens )
+	public Response getcatbyname(@PathParam("name") String name )
 	{
-		List<Categorie> c=csr.getCategorielesplusdemandées(idens);
-		return Response.status(Status.ACCEPTED).entity(c).build();
+				
+		return Response.ok(csr.getCategoriebyName(name)).build();
+	}
+	
+	@GET
+	@Path("/cat/{idens}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getcatens(@PathParam("idens") int idens )
+	{
+				
+		return Response.ok(csr.getCategorielesplusdemandées(idens)).build();
 	}
 }

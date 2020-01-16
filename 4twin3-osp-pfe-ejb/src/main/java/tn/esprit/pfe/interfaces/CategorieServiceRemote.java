@@ -8,7 +8,7 @@ import tn.esprit.pfe.entities.Categorie;
 @Remote
 public interface CategorieServiceRemote {
 	
-	public int addCategorie(Categorie c);
+	public int addCategorie(Categorie c,int ide);
 
 	public void deleteCategorie(int id);
 
@@ -17,6 +17,10 @@ public interface CategorieServiceRemote {
 	public void addCategoriecommemodule(String name);
 
 	public List<Categorie> getCategorielesplusdemandées(int idens);
+
+	List<Categorie> getCategoriebyName(String name );
+
+	//public int addCategorie(Categorie c, int ide);
 	
 
 }

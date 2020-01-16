@@ -41,7 +41,7 @@ public class Enseignant extends User {
 	private Set<Categorie> c=new HashSet<>();
 	
 	
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 	
 	@Column(nullable=false)
 	private boolean enabled;
@@ -54,10 +54,10 @@ public class Enseignant extends User {
 	@JsonIgnore
 	private Departement chefDeDepartement;
 	
-	@JsonIgnore
-	@ManyToMany(fetch= FetchType.EAGER)
+	/*@JsonIgnore
+	@ManyTo(fetch= FetchType.EAGER)
 	private Set<Categorie> categories = new HashSet<Categorie>();
-	
+	*/
 	@JsonIgnore
 	@OneToMany(mappedBy="enseignant",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<EnseignantSheetPFE> enseignantsheet = new HashSet<EnseignantSheetPFE>();
@@ -132,13 +132,13 @@ public class Enseignant extends User {
 		this.site = site;
 	}
 
-	public Set<Categorie> getCategories() {
+	/*public Set<Categorie> getCategories() {
 		return categories;
 	}
 
 	public void setCategories(Set<Categorie> categories) {
 		this.categories = categories;
-	}
+	}*/
 
 	public Set<EnseignantSheetPFE> getEnseignantsheet() {
 		return enseignantsheet;

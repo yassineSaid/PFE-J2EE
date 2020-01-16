@@ -8,19 +8,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import rest.utilities.authentication.AuthenticationFilter;
-import rest.utilities.authentication.Secure;
-import tn.esprit.pfe.entities.Categorie;
 import tn.esprit.pfe.entities.ForumQuestion;
 import tn.esprit.pfe.interfaces.QuestionServiceRemote;
 
@@ -33,18 +29,19 @@ public class QuestionWebService {
 	
 	
 	@POST
-	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void addQuestion(ForumQuestion Q) {
-		//AuthenticationFilter af=new AuthenticationFilter();
-		qsr.addQuestion(Q/*,af.getIdUser(headers)*/);
+	@Path("/{ide}")
+	public Response addQuestion(ForumQuestion Q,@PathParam("ide")int ide) {
+		if(Q!=null) {
+		qsr.addQuestion(Q,ide);
+		return Response.status(Status.ACCEPTED).entity("ajout question avec succes").build();
 	}
+		return Response.status(Status.ACCEPTED).entity("Erreur").build();}
 	
 	
 	@GET
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
 	public Response getAllquestion()
 	{
 		List<ForumQuestion> q=qsr.getAllquestion();
@@ -52,20 +49,35 @@ public class QuestionWebService {
 	}
 	
 	@GET
-	//@Secure(role={"etudiant"})
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{id_Question}/{question_resolu}")
-	public void Mettreajourquestion(@PathParam("Question_resolu") boolean question_resolu ,@PathParam("id_Question") int idquestion) {
-		qsr.MetreajourQuestion(question_resolu, idquestion);
+	@Path("/getqid/{id_Question}")
+	public Response getAllquestionid(@PathParam("id_Question")int idq)
+	{
+		ForumQuestion q=qsr.getQuestionid(idq);
+		return Response.status(Status.ACCEPTED).entity(q).build();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/update/{id_Question}")
+	public Response Mettreajourquestion(@PathParam("id_Question") int idquestion) {
+		if(idquestion!=0) {
+		qsr.MetreajourQuestion( idquestion);
+		return Response.status(Status.ACCEPTED).entity("votre question et ajour").build();}
 		
-
+		return Response.status(Status.ACCEPTED).entity("verifier id question").build();
+		
 	}
 	
 	@DELETE
-	@Produces(MediaType.TEXT_PLAIN)
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public void deletequestion(@PathParam("id") int idquestion) {
-	 qsr.deleteQuestion(idquestion);	}
+	public Response deletequestion(@PathParam("id") int idquestion) {
+	 if(idquestion!=0) {
+		qsr.deleteQuestion(idquestion);	
+	return Response.status(Status.OK).entity("votre question a été supprimer").build();
+	}
+	return Response.status(Status.OK).entity("verifier id question").build();
+	}
 
 }

@@ -2,7 +2,9 @@ package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="Question")
@@ -37,6 +41,7 @@ public class ForumQuestion implements Serializable{
 			fetch=FetchType.EAGER)
 	
 	private List<ForumReponse> ForumReponse = new ArrayList<>();
+	//private Set<ForumReponse> ForumReponse = new HashSet<ForumReponse>();
     
 	
 	@ManyToOne
@@ -68,17 +73,28 @@ public class ForumQuestion implements Serializable{
 	public void setQuestion_resolu(boolean question_resolu) {
 		Question_resolu = question_resolu;
 	}
+    @JsonIgnore
 	public List<ForumReponse> getForumReponse() {
 		return ForumReponse;
 	}
 	public void setForumReponse(List<ForumReponse> forumReponse) {
 		ForumReponse = forumReponse;
 	}
+	
 	public Etudiant getEtudiant() {
 		return etudiant;
 	}
+	
 	public void setEtudiant(Etudiant etudiant) {
 		this.etudiant = etudiant;
 	}
+	@Override
+	public String toString() {
+		return "ForumQuestion [id_Question=" + id_Question + ", Conetnu_Question=" + Conetnu_Question
+				+ ", Question_resolu=" + Question_resolu + ", ForumReponse=" + ForumReponse + ", etudiant=" + etudiant
+				+ "]";
+	}
+	
+	
 		
 	}

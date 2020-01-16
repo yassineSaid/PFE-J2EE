@@ -41,6 +41,13 @@ public class ForumReponse implements Serializable{
 		Conetnu_Reponse = conetnu_Reponse;
 	}
 	
+	
+	public int getId_Reponse() {
+		return id_Reponse;
+	}
+	public void setId_Reponse(int id_Reponse) {
+		this.id_Reponse = id_Reponse;
+	}
 	public String getConetnu_Reponse() {
 		return Conetnu_Reponse;
 	}

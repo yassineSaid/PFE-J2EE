@@ -2,8 +2,11 @@ package tn.esprit.pfe.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,7 +42,7 @@ public class Categorie implements Serializable{
 	@Column
 	private boolean exixtecommemodule;
 	
-	@JsonIgnore
+//	@JsonIgnore
 /*<<<<<<< HEAD
 	@ManyToMany(mappedBy="categories")
 	private List<SheetPFE> sheetPFEs;
@@ -50,12 +53,12 @@ public class Categorie implements Serializable{
 	Enseignant enseignant; 
 	
 =======*/
-	@ManyToMany(mappedBy="categories", cascade = CascadeType.ALL)
-	private Set<SheetPFE> sheetPFEs;
+	@ManyToMany(mappedBy="categories", cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+	private Set<SheetPFE> sheetPFEs = new HashSet<SheetPFE>();
 
 	@JsonBackReference
-	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	private Set<Enseignant> enseignant;
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	private Enseignant enseignant;
 //>>>>>>> 8610228526b0e04c6b937d08f0a91a08c6a69bb3
 	
 	
@@ -121,13 +124,21 @@ public class Categorie implements Serializable{
 		this.sheetPFEs = sheetPFEs;
 	}
 
-	public Set<Enseignant> getEnseignant() {
+	public Enseignant getEnseignant() {
+		return enseignant;
+	}
+
+	public void setEnseignant(Enseignant enseignant) {
+		this.enseignant = enseignant;
+	}
+
+	/*public Set<Enseignant> getEnseignant() {
 		return enseignant;
 	}
 
 	public void setEnseignant(Set<Enseignant> enseignant) {
 		this.enseignant = enseignant;
-	}
+	}*/
 
 	
 	
